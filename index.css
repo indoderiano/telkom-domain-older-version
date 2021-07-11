@@ -1,0 +1,10 @@
+.navtop-logo:focus {
+    box-shadow: rgb(255 255 255 / 40%) 0px 0px 0px 0.25em;
+}
+.navtop-logo:hover {
+    background: rgba(220,220,220,1)!important;
+}
+.navtop-hover:hover {
+    background: rgba(60,60,60,1)!important;
+    color: var(--bs-blue);
+}

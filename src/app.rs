@@ -13,6 +13,10 @@ use crate::pages::{
 
 };
 
+use crate::components::{
+    navtop::Navtop
+};
+
 
 #[derive(Switch, Clone)]
 enum Route {
@@ -50,6 +54,7 @@ impl Component for App {
         type Anchor = RouterAnchor<Route>;
         html! {
             <div>
+                <Navtop/>
                 <p>{ "Hello world!" }</p>
                 <Anchor route=Route::Home classes="item">
                   {"Home"}
