@@ -11,6 +11,7 @@ use crate::pages::{
     details::Details,
     reducer_global::ReducerGlobal,
 
+    applications::apis::home::ApisHome,
 };
 
 
@@ -63,6 +64,8 @@ impl Component for App {
                 <p></p>
                 <p>{"Reducer"}</p>
                 <WithDispatch<ReducerGlobal>/>
+
+                <ApisHome/>
             </div>
         }
     }
