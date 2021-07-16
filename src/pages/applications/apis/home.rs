@@ -125,16 +125,38 @@ impl Component for ApisHome {
                         </div>
 
                         <div
-                            class="p-3 d-flex align-items-center"
+                            class="p-3 d-flex align-items-center dropdown"
                         >
                             <button
                                 type="button"
                                 style="flex: 0 0 auto; width: 30px; height: 30px;"
                                 class="btn d-flex justify-content-center align-items-center rounded border"
+                                role="button"
+                                id="dropdownMenuButton1"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
                             >
                                 <i class="bi bi-three-dots"></i>
                             </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <li><a class="dropdown-item fs-7" href="#">{"Settings"}</a></li>
+                            </ul>
                         </div>
+
+                        // <div
+                        //     class="p-3 d-flex align-items-center"
+                        // >
+                        //     <button
+                        //         type="button"
+                        //         style="flex: 0 0 auto; width: 30px; height: 30px;"
+                        //         class="btn d-flex justify-content-center align-items-center rounded border"
+                        //     >
+                        //         <i class="bi bi-three-dots"></i>
+                        //     </button>
+                        //     <button type="button" class="btn btn-secondary" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="Bottom popover">
+                        //         {"Popover on bottom"}
+                        //     </button>
+                        // </div>
 
                     </div>
                 </div>
