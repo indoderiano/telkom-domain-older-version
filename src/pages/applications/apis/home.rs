@@ -40,7 +40,11 @@ impl Component for ApisHome {
                         <div
             
                         >
-                            <button type="button" class="btn btn-primary d-flex align-items-center">
+                            <button
+                                type="button"
+                                class="btn btn-primary d-flex align-items-center"
+                                data-bs-toggle="modal" data-bs-target="#exampleModal"
+                            >
                                 <i class="bi bi-plus me-2" style="margin-left: -5px;"></i>
                                 <span>{"Create API"}</span>
                             </button>
@@ -51,7 +55,6 @@ impl Component for ApisHome {
 
 
 
-                // <!-- LIST -->
                 <div>
                     <div
                         class="d-flex border-bottom border-1 list-hover"
@@ -143,21 +146,59 @@ impl Component for ApisHome {
                             </ul>
                         </div>
 
-                        // <div
-                        //     class="p-3 d-flex align-items-center"
-                        // >
-                        //     <button
-                        //         type="button"
-                        //         style="flex: 0 0 auto; width: 30px; height: 30px;"
-                        //         class="btn d-flex justify-content-center align-items-center rounded border"
-                        //     >
-                        //         <i class="bi bi-three-dots"></i>
-                        //     </button>
-                        //     <button type="button" class="btn btn-secondary" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="Bottom popover">
-                        //         {"Popover on bottom"}
-                        //     </button>
-                        // </div>
+                    </div>
+                </div>
 
+
+
+                <div
+                    class="modal fade"
+                    id="exampleModal"
+                    tabindex="-1"
+                    aria-labelledby="exampleModalLabel"
+                    aria-hidden="true"
+                >
+                    <div class="modal-dialog modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">{"New API"}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body" style="font-size: 14px;">
+                                <div
+                                    class="mb-4"
+                                >
+                                    <label for="basic-url" class="form-label fw-bold">{"Name"}</label>
+                                    <div class="input-group mb-2">
+                                        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3"/>
+                                    </div>
+                                    <label class="form-label text-muted">{"A friendly name for the API"}</label>
+                                </div>
+                                <div
+                                    class="mb-4"
+                                >
+                                    <label for="basic-url" class="form-label fw-bold">{"Identifier"}</label>
+                                    <div class="input-group mb-2">
+                                        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3"/>
+                                    </div>
+                                    <label class="form-label text-muted">{"A logical identifier for this API. We recommend using a URL but note that this doesn’t have to be a publicly available URL, Auth0 will not call your API at all.This field cannot be modified."}</label>
+                                </div>
+                                <div
+                                    class="mb-4"
+                                >
+                                    <label for="basic-url" class="form-label fw-bold">{"Signing Algorithm"}</label>
+                                    <select class="form-select mb-2" aria-label="Default select example">
+                                        <option value="1">{"RS256"}</option>
+                                        <option value="2">{"HS256"}</option>
+                                    </select>
+                                    <label class="form-label text-muted">{"Algorithm to sign the tokens with. When selecting RS256 the token will be signed with Auth0's private key."}</label>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{"Cancel"}</button>
+                                <button type="button" class="btn btn-primary">{"Create"}</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
