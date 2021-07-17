@@ -29,8 +29,7 @@ impl Component for Navtop {
             <li class="nav-item justify-content-center my-auto">
                 <div class="bg-white p-1 pt-0 rounded me-3 navtop-logo">
                     <img
-                        class=""
-                        src="https://lh3.googleusercontent.com/proxy/beQ5IGviP1M8_R67rK5sJUM_4P2xRnpf0koQOlqmVfC5xu13ERBj09llsBOIJq292D683vG1ET6a5nMWI_8eaoZpXlcgHcr8eIex2okFTlOf"
+                        src="https://i.stack.imgur.com/3Stuq.png"
                         style="width: 23px;"
                     />
                 </div>

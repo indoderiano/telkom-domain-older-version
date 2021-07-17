@@ -14,7 +14,8 @@ use crate::pages::{
 };
 
 use crate::components::{
-    navtop::Navtop
+    navtop::Navtop,
+    landing_page_navtop::LandingPageNavTop,
 };
 
 
@@ -55,6 +56,7 @@ impl Component for App {
         html! {
             <div>
                 <Navtop/>
+                <LandingPageNavTop/>
                 <p>{ "Hello world!" }</p>
                 <Anchor route=Route::Home classes="item">
                   {"Home"}
@@ -68,6 +70,8 @@ impl Component for App {
                 <p></p>
                 <p>{"Reducer"}</p>
                 <WithDispatch<ReducerGlobal>/>
+
+
             </div>
         }
     }
