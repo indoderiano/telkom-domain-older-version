@@ -1,4 +1,6 @@
 use yew::prelude::*;
+use yew_router::components::RouterAnchor;
+use crate::app::Route;
 
 pub struct ApisHome {}
 
@@ -21,6 +23,7 @@ impl Component for ApisHome {
     }
 
     fn view(&self) -> Html {
+        type Anchor = RouterAnchor<Route>;
         html! {
             <div
                 class="mx-auto pt-5 pb-5 px-4"
@@ -74,19 +77,22 @@ impl Component for ApisHome {
                                 class="d-grid"
                                 style="min-width: 40px;"
                             >
-                                <a
-                                    class="fw-bold mb-0"
-                                    style="
-                                        white-space: nowrap;
-                                        text-overflow: ellipsis;
-                                        overflow: hidden;
-                                        font-size: 14px;
-                                        text-decoration: none;
-                                    "
-                                    href="#"
+                                <Anchor
+                                    route=Route::Settings
+                                    classes="text-decoration-none fw-bold mb-0"
                                 >
-                                    {"Auth0 Management API"}
-                                </a>
+                                    <span
+                                        style="
+                                            white-space: nowrap;
+                                            text-overflow: ellipsis;
+                                            overflow: hidden;
+                                            font-size: 14px;
+                                            text-decoration: none;
+                                        "
+                                    >
+                                        {"Auth0 Management API"}
+                                    </span>
+                                </Anchor>
                                 <p
                                     class="mb-0 text-muted"
                                     style="
@@ -142,7 +148,11 @@ impl Component for ApisHome {
                                 <i class="bi bi-three-dots"></i>
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                <li><a class="dropdown-item fs-7" href="#">{"Settings"}</a></li>
+                                <li>
+                                    <Anchor route=Route::Settings classes="dropdown-item fs-7">
+                                        {"Settings"}
+                                    </Anchor>
+                                </li>
                             </ul>
                         </div>
 
@@ -150,7 +160,7 @@ impl Component for ApisHome {
                 </div>
 
 
-
+                // MODAL CREATE APIs
                 <div
                     class="modal fade"
                     id="exampleModal"

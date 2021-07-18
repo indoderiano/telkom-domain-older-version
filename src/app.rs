@@ -2,23 +2,30 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 use yew_router::components::RouterAnchor;
 // use yew::services::ConsoleService;
-use yewdux::prelude::WithDispatch;
+// use yewdux::prelude::WithDispatch;
 // use yewdux::prelude::*;
 // use yewtil::NeqAssign;
 
 use crate::pages::{
     home::Home,
     details::Details,
-    reducer_global::ReducerGlobal,
+    // reducer_global::ReducerGlobal,
 
-    applications::apis::home::ApisHome,
+    applications::apis::{
+        home::ApisHome,
+        settings::Settings
+    },
 };
 
 
 #[derive(Switch, Clone)]
-enum Route {
+pub enum Route {
     #[to = "/details"]
     Details,
+    #[to = "/apis/settings"]
+    Settings,
+    #[to = "/apis"]
+    ApisHome,
     #[to = "/"]
     Home,
 }
@@ -47,25 +54,30 @@ impl Component for App {
         let render = Router::render(|switch: Route| match switch {
             Route::Home => html! {<Home/>},
             Route::Details => html! {<Details/>},
+            Route::ApisHome => html! {<ApisHome/>},
+            Route::Settings => html! {<Settings/>},
         });
         type Anchor = RouterAnchor<Route>;
         html! {
             <div>
-                <p>{ "Hello world!" }</p>
+                // <p>{ "Hello world!" }</p>
+                // <p>{"Reducer"}</p>
+                // <WithDispatch<ReducerGlobal>/>
                 <Anchor route=Route::Home classes="item">
                   {"Home"}
                 </Anchor>
                 <Anchor route=Route::Details classes="item">
                   {"Details"}
                 </Anchor>
+                <Anchor route=Route::ApisHome classes="item">
+                  {"APIs"}
+                </Anchor>
                 <main>
                     <Router<Route, ()> render=render/>
                 </main>
-                <p></p>
-                <p>{"Reducer"}</p>
-                <WithDispatch<ReducerGlobal>/>
+                // <p></p>
 
-                <ApisHome/>
+                // <ApisHome/>
             </div>
         }
     }
