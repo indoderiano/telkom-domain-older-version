@@ -1,18 +1,18 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
-use yew_router::components::RouterAnchor;
+// use yew_router::components::RouterAnchor;
 // use yew::services::ConsoleService;
-use yewdux::prelude::*;
+// use yewdux::prelude::*;
 use yewtil::NeqAssign;
 
 use crate::store::reducer_account::{
     AppDispatch,
-    DataAccountAction,
+    // DataAccountAction,
     DataAccount
 };
 
 use crate::pages::{
-    home::Home,
+    // home::Home,
     details::Details,
     // reducer_global::ReducerGlobal,
 
@@ -73,7 +73,7 @@ impl Component for App {
             Route::ApisHome => html! {<ApisHome/>},
             Route::Settings => html! {<Settings/>},
         });
-        type Anchor = RouterAnchor<Route>;
+        // type Anchor = RouterAnchor<Route>;
         let account = self.dispatch.state().clone();
         // let update = self.dispatch.callback(|_| {
         //     // ConsoleService::info(&data.name);
