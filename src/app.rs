@@ -2,14 +2,14 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 use yew_router::components::RouterAnchor;
 // use yew::services::ConsoleService;
-use yewdux::prelude::WithDispatch;
-// use yewdux::prelude::*;
-// use yewtil::NeqAssign;
+use yewdux::prelude::*;
+use yewtil::NeqAssign;
 
 use crate::pages::{
     home::Home,
     details::Details,
     reducer_global::ReducerGlobal,
+    reducer_account_view::ReducerAccountView,
 
 };
 
@@ -70,7 +70,7 @@ impl Component for App {
                 <p></p>
                 <p>{"Reducer"}</p>
                 <WithDispatch<ReducerGlobal>/>
-
+                <WithDispatch<ReducerAccountView>/>
 
             </div>
         }
