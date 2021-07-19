@@ -1,6 +1,6 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
-// use yew_router::components::RouterAnchor;
+use yew_router::components::RouterAnchor;
 // use yew::services::ConsoleService;
 use yewdux::prelude::*;
 use yewtil::NeqAssign;
@@ -36,10 +36,10 @@ pub enum Route {
     Details,
     #[to = "/apis/settings"]
     Settings,
-    #[to = "/apis"]
-    ApisHome,
+    // #[to = "/apis"]
+    // ApisHome,
     #[to = "/"]
-    Home,
+    ApisHome,
 }
 
 pub struct App {
@@ -68,27 +68,27 @@ impl Component for App {
 
     fn view(&self) -> Html {
         let render = Router::render(|switch: Route| match switch {
-            Route::Home => html! {<Home/>},
+            // Route::Home => html! {<Home/>},
             Route::Details => html! {<Details/>},
             Route::ApisHome => html! {<ApisHome/>},
             Route::Settings => html! {<Settings/>},
         });
-        // type Anchor = RouterAnchor<Route>;
+        type Anchor = RouterAnchor<Route>;
         let account = self.dispatch.state().clone();
-        let update = self.dispatch.callback(|_| {
-            // ConsoleService::info(&data.name);
-            let newdata = DataAccount {
-                name: Some(String::from("Batman"))
-            };
-            DataAccountAction::Update(newdata)
-        });
+        // let update = self.dispatch.callback(|_| {
+        //     // ConsoleService::info(&data.name);
+        //     let newdata = DataAccount {
+        //         name: Some(String::from("Batman"))
+        //     };
+        //     DataAccountAction::Update(newdata)
+        // });
 
         html! {
             <div>
                 // <Navtop/>
                 // <LandingPageNavTop/>
                 { self.navtop(account) }
-                <button onclick=update>{"update"}</button>
+                // <button onclick=update>{"update"}</button>
 
                 // <p>{ "Hello world!" }</p>
                 // <Anchor route=Route::Home classes="item">
@@ -96,6 +96,9 @@ impl Component for App {
                 // </Anchor>
                 // <Anchor route=Route::Details classes="item">
                 //   {"Details"}
+                // </Anchor>
+                // <Anchor route=Route::ApisHome classes="item">
+                //   {"APIs"}
                 // </Anchor>
                 <main>
                     <Router<Route, ()> render=render/>
