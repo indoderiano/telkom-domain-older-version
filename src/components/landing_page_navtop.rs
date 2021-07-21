@@ -1,26 +1,43 @@
 use yew::prelude::*;
+use yewdux::prelude::*;
+use yewtil::NeqAssign;
 
-pub struct LandingPageNavTop {}
+use crate::store::reducer_account::{
+    AppDispatch,
+    DataAccountAction,
+    DataAccount
+};
+
+pub struct LandingPageNavTop {
+    dispatch: AppDispatch,
+}
 
 pub enum Msg {}
 
 impl Component for LandingPageNavTop {
     type Message = Msg;
-    type Properties = ();
+    type Properties = AppDispatch;
 
-    fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
-        LandingPageNavTop {}
+    fn create(dispatch: Self::Properties, _: ComponentLink<Self>) -> Self {
+        LandingPageNavTop { dispatch }
     }
 
     fn update(&mut self, _msg: Self::Message) -> ShouldRender {
         true
     }
 
-    fn change(&mut self, _: Self::Properties) -> ShouldRender {
-        false
+    fn change(&mut self, dispatch: Self::Properties) -> ShouldRender {
+        self.dispatch.neq_assign(dispatch)
+        // false
     }
 
     fn view(&self) -> Html {
+        let signup = self.dispatch.callback(|_| {
+            let newdata = DataAccount {
+                name: Some(String::from("Batman"))
+            };
+            DataAccountAction::Update(newdata)
+        });
         html! {
             <div>
                 <div
@@ -88,7 +105,7 @@ impl Component for LandingPageNavTop {
                     <div
                         class="d-flex justify-content-between align-items-center"
                     >
-                        <button type="button" class="btn btn-outline-dark">{"Sign Up"}</button>
+                        <button onclick=signup type="button" class="btn btn-outline-dark">{"Sign Up"}</button>
                         
                     </div>
                 </div>
