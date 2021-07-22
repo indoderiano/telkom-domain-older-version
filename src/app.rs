@@ -28,6 +28,7 @@ use crate::pages::{
 
 use crate::components::{
     navtop::Navtop,
+    sidebar::Sidebar,
     // landing_page_navtop::LandingPageNavTop,
 };
 
@@ -108,7 +109,7 @@ impl Component for App {
                         <div
                             class="sidebar"
                         >
-                            {"NAV-SIDEBAR"}
+                            <Sidebar/>
                         </div>
                         <main
                             style="flex: 1;"
