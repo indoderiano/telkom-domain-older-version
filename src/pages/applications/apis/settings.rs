@@ -2,6 +2,7 @@ use yew::prelude::*;
 use yew_router::components::RouterAnchor;
 use crate::app::Route;
 use super::quickstart::Quickstart;
+// use super::tab_settings::TabSettings;
 
 pub struct Settings {}
 
@@ -103,6 +104,7 @@ impl Component for Settings {
                 </div>
 
                 <Quickstart/>
+                // <TabSettings/>
             </div>
         }
     }
