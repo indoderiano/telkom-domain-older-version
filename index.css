@@ -51,3 +51,10 @@
         width: 265px;
     }
 }
+
+.login-page {
+    text-align: center;
+    /* background-color: whitesmoke; */
+    margin: 0 auto;
+    width: 35%;
+  }

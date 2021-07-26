@@ -1,6 +1,8 @@
 use yew::prelude::*;
 use yewdux::prelude::*;
 use yewtil::NeqAssign;
+use yew_router::components::RouterAnchor;
+use crate::app::RouteNonMember;
 
 use crate::store::reducer_account::{
     AppDispatch,
@@ -38,6 +40,7 @@ impl Component for LandingPageNavTop {
             };
             DataAccountAction::Update(newdata)
         });
+        type Anchor = RouterAnchor<RouteNonMember>;
         html! {
             <div>
                 <div
@@ -64,12 +67,12 @@ impl Component for LandingPageNavTop {
                     <div
                         class="d-flex justify-content-between align-items-center"
                     >
-                        <a
-                            class="text-decoration-none text-light px-2 link-primary"
-                            style="cursor: pointer;"
+                        <Anchor
+                            route=RouteNonMember::LoginPage
+                            classes="text-decoration-none text-light px-2 link-primary pe-auto"
                         >
                             {"Login"}
-                        </a>
+                        </Anchor>
             
                         <a class="dropdown-toggle text-decoration-none text-light px-2 d-flex align-items-center" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-globe me-2 fs-5"></i>

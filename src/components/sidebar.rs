@@ -1,4 +1,6 @@
 use yew::prelude::*;
+use yew_router::components::RouterAnchor;
+use crate::app::Route;
 
 pub struct Sidebar {}
 
@@ -21,6 +23,7 @@ impl Component for Sidebar {
   }
 
   fn view(&self) -> Html {
+    type Anchor = RouterAnchor<Route>;
     html! {
       <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-white">
         <div
@@ -46,7 +49,15 @@ impl Component for Sidebar {
                 <li><a class="nav-link" href="#"
                     style=" padding: 4px 8px; font-size: 15px; color: #65676e;">{"Applications"}
                   </a></li>
-                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"APIs"} </a>
+                <li>
+                  <Anchor
+                    route=Route::ApisHome
+                    classes="text-decoration-none"
+                  >
+                    <a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">
+                      {"APIs"}
+                    </a>
+                  </Anchor>
                 </li>
                 <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"SSO Integrations "}</a> </li>
               </ul>
