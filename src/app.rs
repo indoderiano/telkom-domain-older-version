@@ -23,6 +23,7 @@ use crate::pages::{
         settings::Settings
     },
     // reducer_account_view::ReducerAccountView,
+    testing_fetch::TestingFetch,
 
 };
 
@@ -116,7 +117,9 @@ impl Component for App {
                         >
                             <Router<Route, ()> render=render/>
                         </main>
+
                     </div>
+                    <TestingFetch/>
                     // <p></p>
                     // <p>{"Reducer"}</p>
                     // <WithDispatch<ReducerGlobal>/>
