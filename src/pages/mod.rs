@@ -5,3 +5,4 @@ pub mod reducer_global;
 pub mod applications;
 pub mod outer;
 pub mod reducer_account_view;
+pub mod getting_started;

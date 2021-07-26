@@ -2,22 +2,40 @@ use yew::prelude::*;
 use yew_router::components::RouterAnchor;
 use crate::app::Route;
 use super::quickstart::Quickstart;
-// use super::tab_settings::TabSettings;
+use super::tab_settings::TabSettings;
 
-pub struct Settings {}
+pub enum Content {
+    Quickstart,
+    Settings
+}
 
-pub enum Msg {}
+pub struct Settings {
+    content: Content,
+    link: ComponentLink<Self>
+}
+
+pub enum Msg {
+    ChangeContent(Content)
+}
 
 impl Component for Settings {
     type Message = Msg;
     type Properties = ();
 
-    fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
-        Settings {}
+    fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
+        Settings {
+            content: Content::Quickstart,
+            link
+        }
     }
 
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        true
+    fn update(&mut self, msg: Self::Message) -> ShouldRender {
+        match msg {
+            Msg::ChangeContent(content) => {
+                self.content = content;
+                true
+            }
+        }
     }
 
     fn change(&mut self, _: Self::Properties) -> ShouldRender {
@@ -86,11 +104,35 @@ impl Component for Settings {
                     class="mb-4"
                 >
                     <ul class="nav nav-tabs">
-                        <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">{"Quick Start"}</a>
+                        <li
+                            onclick=self.link.callback(|_| Msg::ChangeContent(Content::Quickstart))
+                            class="nav-item"
+                        >
+                        <a
+                            // class="nav-link active"
+                            class={
+                                match self.content {
+                                    Content::Quickstart => "nav-link active",
+                                    _ => "nav-link"
+                                }
+                            }
+                            aria-current="page"
+                            href="#"
+                        >
+                            {"Quick Start"}</a>
                         </li>
-                        <li class="nav-item">
-                        <a class="nav-link" href="#">{"Settings"}</a>
+                        <li
+                            onclick=self.link.callback(|_| Msg::ChangeContent(Content::Settings))
+                            class="nav-item">
+                        <a
+                            // class="nav-link"
+                            class={
+                                match self.content {
+                                    Content::Settings => "nav-link active",
+                                    _ => "nav-link"
+                                }
+                            }
+                            href="#">{"Settings"}</a>
                         </li>
                         <li class="nav-item">
                         <a class="nav-link" href="#">{"Permissions"}</a>
@@ -104,8 +146,15 @@ impl Component for Settings {
                     </ul>
                 </div>
 
-                <Quickstart/>
+                // <Quickstart/>
                 // <TabSettings/>
+
+                {
+                    match self.content {
+                        Content::Quickstart => html! { <Quickstart/> },
+                        Content::Settings => html! { <TabSettings/> }
+                    }
+                }
             </div>
         }
     }

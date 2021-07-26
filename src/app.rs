@@ -14,8 +14,9 @@ use crate::store::reducer_account::{
 
 use crate::pages::{
     // home::Home,
-    details::Details,
+    // details::Details,
     home_page::HomePage,
+    getting_started::GettingStarted,
     // reducer_global::ReducerGlobal,
 
     applications::apis::{
@@ -38,22 +39,26 @@ use crate::components::{
     // landing_page_navtop::LandingPageNavTop,
 };
 
-
 #[derive(Switch, Clone)]
-pub enum Route {
-    #[to = "/apis/settings"]
-    Settings,
+pub enum RouteNonMember {
     #[to = "/login/password"]
     RequestPassPage,
-    #[to = "/details"]
-    Details,
     #[to = "/login"]
     LoginPage,
     #[to = "/register"]
     RegisterPage,
     #[to = "/"]
-    ApisHome,
+    Home,
+}
 
+#[derive(Switch, Clone)]
+pub enum Route {
+    #[to = "/apis/settings"]
+    Settings,
+    #[to = "/apis"]
+    ApisHome,
+    #[to = "/"]
+    GettingStarted,
 }
 
 pub struct App {
@@ -81,14 +86,21 @@ impl Component for App {
     }
 
     fn view(&self) -> Html {
+
+        let renderouter = Router::render(|switch: RouteNonMember| match switch {
+            RouteNonMember::Home => html! {<HomePage/>},
+            RouteNonMember::LoginPage => html! {<LoginPage/>},
+            RouteNonMember::RegisterPage => html! {<RegisterPage/>},
+            RouteNonMember::RequestPassPage => html! {<RequestPassPage/>}
+        });
+
         let render = Router::render(|switch: Route| match switch {
-            // Route::Home => html! {<Home/>},
-            Route::Details => html! {<Details/>},
+            Route::GettingStarted => html! {<GettingStarted/>},
             Route::ApisHome => html! {<ApisHome/>},
             Route::Settings => html! {<Settings/>},
-            Route::LoginPage => html!{<LoginPage/>},
-            Route::RegisterPage => html!{<RegisterPage/>},
-            Route::RequestPassPage => html!{<RequestPassPage/>},
+            // Route::LoginPage => html!{<LoginPage/>},
+            // Route::RegisterPage => html!{<RegisterPage/>},
+            // Route::RequestPassPage => html!{<RequestPassPage/>},
         });
         // type Anchor = RouterAnchor<Route>;
         let account = self.dispatch.state().clone();
@@ -96,7 +108,10 @@ impl Component for App {
         if account.name == None {
             html! {
                 <>
-                    <HomePage/>
+                    // <WithDispatch<LandingPageNavTop>/>
+                    <main>
+                        <Router<RouteNonMember, ()> render=renderouter/>
+                    </main>
                 </>
             }
         } else {
