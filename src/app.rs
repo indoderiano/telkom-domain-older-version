@@ -22,6 +22,12 @@ use crate::pages::{
         home::ApisHome,
         settings::Settings
     },
+
+    outer::{
+        login_page::LoginPage,
+        register_page::RegisterPage,
+        password_page::RequestPassPage,
+    }
     // reducer_account_view::ReducerAccountView,
 
 };
@@ -35,14 +41,19 @@ use crate::components::{
 
 #[derive(Switch, Clone)]
 pub enum Route {
-    #[to = "/details"]
-    Details,
     #[to = "/apis/settings"]
     Settings,
-    // #[to = "/apis"]
-    // ApisHome,
+    #[to = "/login/password"]
+    RequestPassPage,
+    #[to = "/details"]
+    Details,
+    #[to = "/login"]
+    LoginPage,
+    #[to = "/register"]
+    RegisterPage,
     #[to = "/"]
     ApisHome,
+
 }
 
 pub struct App {
@@ -75,6 +86,9 @@ impl Component for App {
             Route::Details => html! {<Details/>},
             Route::ApisHome => html! {<ApisHome/>},
             Route::Settings => html! {<Settings/>},
+            Route::LoginPage => html!{<LoginPage/>},
+            Route::RegisterPage => html!{<RegisterPage/>},
+            Route::RequestPassPage => html!{<RequestPassPage/>},
         });
         // type Anchor = RouterAnchor<Route>;
         let account = self.dispatch.state().clone();
