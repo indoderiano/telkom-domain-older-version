@@ -29,6 +29,7 @@ impl Component for Settings {
         html! {
             <div
                 class="py-5 px-4 m-auto"
+                style="max-width: 1048px;"
             >
                 <Anchor
                     route=Route::ApisHome

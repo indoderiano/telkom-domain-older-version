@@ -14,7 +14,7 @@ impl Reducer for DataAccount {
 
     fn new() -> Self {
         Self { 
-            name: Some(String::from("User"))
+            name: None
         }
     }
 

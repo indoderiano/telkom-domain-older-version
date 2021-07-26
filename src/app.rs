@@ -1,19 +1,21 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
-use yew_router::components::RouterAnchor;
+// use yew_router::components::RouterAnchor;
 // use yew::services::ConsoleService;
-use yewdux::prelude::*;
+// use yewdux::prelude::*;
+// use yewdux::prelude::WithDispatch;
 use yewtil::NeqAssign;
 
 use crate::store::reducer_account::{
     AppDispatch,
-    DataAccountAction,
-    DataAccount
+    // DataAccountAction,
+    // DataAccount
 };
 
 use crate::pages::{
-    home::Home,
+    // home::Home,
     details::Details,
+    home_page::HomePage,
     // reducer_global::ReducerGlobal,
 
     applications::apis::{
@@ -26,7 +28,8 @@ use crate::pages::{
 
 use crate::components::{
     navtop::Navtop,
-    landing_page_navtop::LandingPageNavTop,
+    sidebar::Sidebar,
+    // landing_page_navtop::LandingPageNavTop,
 };
 
 
@@ -73,57 +76,71 @@ impl Component for App {
             Route::ApisHome => html! {<ApisHome/>},
             Route::Settings => html! {<Settings/>},
         });
-        type Anchor = RouterAnchor<Route>;
+        // type Anchor = RouterAnchor<Route>;
         let account = self.dispatch.state().clone();
-        // let update = self.dispatch.callback(|_| {
-        //     // ConsoleService::info(&data.name);
-        //     let newdata = DataAccount {
-        //         name: Some(String::from("Batman"))
-        //     };
-        //     DataAccountAction::Update(newdata)
-        // });
-
-        html! {
-            <div>
-                // <Navtop/>
-                // <LandingPageNavTop/>
-                { self.navtop(account) }
-                // <button onclick=update>{"update"}</button>
-
-                // <p>{ "Hello world!" }</p>
-                // <Anchor route=Route::Home classes="item">
-                //   {"Home"}
-                // </Anchor>
-                // <Anchor route=Route::Details classes="item">
-                //   {"Details"}
-                // </Anchor>
-                // <Anchor route=Route::ApisHome classes="item">
-                //   {"APIs"}
-                // </Anchor>
-                <main>
-                    <Router<Route, ()> render=render/>
-                </main>
-                // <p></p>
-                // <p>{"Reducer"}</p>
-                // <WithDispatch<ReducerGlobal>/>
-                // <WithDispatch<ReducerAccountView>/>
-
-            </div>
-        }
-    }
-}
-
-impl App {
-    fn navtop(&self, account: DataAccount) -> Html {
 
         if account.name == None {
             html! {
-                <LandingPageNavTop/>
+                <>
+                    <HomePage/>
+                </>
             }
         } else {
             html! {
-                <Navtop/>
+                <>
+                    <Navtop/>
+                    // <LandingPageNavTop/>
+                    // { self.navtop(account) }
+                    // <button onclick=update>{"update"}</button>
+
+                    // <p>{ "Hello world!" }</p>
+                    // <Anchor route=Route::Home classes="item">
+                    //   {"Home"}
+                    // </Anchor>
+                    // <Anchor route=Route::Details classes="item">
+                    //   {"Details"}
+                    // </Anchor>
+                    // <Anchor route=Route::ApisHome classes="item">
+                    //   {"APIs"}
+                    // </Anchor>
+                    <div
+                        style="display: flex;"
+                    >
+                        <div
+                            class="sidebar"
+                        >
+                            <Sidebar/>
+                        </div>
+                        <main
+                            style="flex: 1;"
+                        >
+                            <Router<Route, ()> render=render/>
+                        </main>
+                    </div>
+                    // <p></p>
+                    // <p>{"Reducer"}</p>
+                    // <WithDispatch<ReducerGlobal>/>
+                    // <WithDispatch<ReducerAccountView>/>
+                </>
             }
         }
+
     }
 }
+
+// impl App {
+//     fn navtop(&self, account: DataAccount) -> Html {
+
+//         if account.name == None {
+//             html! {
+//                 <>
+//                     <HomePage/>
+//                 </>
+//             }
+//         } else {
+//             html! {
+//                 <Navtop/>
+//             }
+//         }
+//     }
+// }
