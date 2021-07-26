@@ -52,10 +52,9 @@
     }
 }
 
-a.nav-link :hover {
-    color: #635dff;
-    text-decoration: none;
-    --identicons-color-base: #A5A0FF;
-    --identicons-color-dark: #635DFF;
-    --identicons-color-light: #D0CEFF;
+.login-page {
+    text-align: center;
+    /* background-color: whitesmoke; */
+    margin: 0 auto;
+    width: 35%;
 }
