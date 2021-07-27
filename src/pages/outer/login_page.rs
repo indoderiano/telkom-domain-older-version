@@ -39,7 +39,7 @@ impl Component for LoginPage {
                             <label for="floatingInput">{"Email address"}</label>
                         </div>    
             
-                        <button class="w-75 btn btn-lg btn-primary mt-3 fs-6" type="submit">{"Continue"}</button>
+                        <button class="w-75 btn btn-lg btn-primary mt-3 fs-6">{"Continue"}</button>
                         <h1 class="h3 mt-3 mb-1 fw-normal" style="font-family: fakt-web, Helvetica Neue, Helvetica, sans-serif;">{"or"}</h1>
 
                         <button class="w-75 btn btn-lg btn-outline-dark mt-3 fs-6" type="submit">
