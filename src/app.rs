@@ -19,9 +19,17 @@ use crate::pages::{
     getting_started::GettingStarted,
     // reducer_global::ReducerGlobal,
 
-    applications::apis::{
-        home::ApisHome,
-        settings::Settings
+    // applications::apis::{
+    //     home::ApisHome,
+    //     settings::Settings
+    // },
+
+    applications::{
+        applications::home::ApplicationHome,
+        apis::{
+            home::ApisHome,
+            settings::Settings,
+        },
     },
 
     outer::{
@@ -58,6 +66,8 @@ pub enum Route {
     Settings,
     #[to = "/apis"]
     ApisHome,
+    #[to = "/applications"]
+    ApplicationHome,
     #[to = "/"]
     GettingStarted,
 }
@@ -99,6 +109,7 @@ impl Component for App {
             Route::GettingStarted => html! {<GettingStarted/>},
             Route::ApisHome => html! {<ApisHome/>},
             Route::Settings => html! {<Settings/>},
+            Route::ApplicationHome => html! {<ApplicationHome/>},
             // Route::LoginPage => html!{<LoginPage/>},
             // Route::RegisterPage => html!{<RegisterPage/>},
             // Route::RequestPassPage => html!{<RequestPassPage/>},
