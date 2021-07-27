@@ -31,15 +31,7 @@ impl Component for ApplicationHome {
         // type Anchor = RouterAnchor<Route>;
         html! {
         <>
-            <Navtop/>
-            <div 
-                class="container-fluid"
-            >
-                <div 
-                    class="row flex-nowrap"
-                >
-                    // <!-- ini side bar kiri -->
-                    <Sidebar/>
+
 
                     <div 
                         class="col py-3"
@@ -535,8 +527,6 @@ impl Component for ApplicationHome {
                         </div>
                     </div>
                 </div>
-            </div>
-            </div>
         </>
         }
     }

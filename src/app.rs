@@ -145,19 +145,23 @@ impl Component for App {
                     //   {"APIs"}
                     // </Anchor>
                     <div
-                        style="display: flex;"
+                        class="container-fluid"
                     >
                         <div
-                            class="sidebar"
+                            class="row flex-nowrap"
                         >
                             <Sidebar/>
+                            <div 
+                                class="col"
+                            >
+                                <Router<Route, ()> render=render/>
+                            </div>
                         </div>
-                        <main
-                            style="flex: 1;"
-                        >
-                            <Router<Route, ()> render=render/>
-                        </main>
 
+                        // <main
+                        //     style="flex: 1;"
+                        // >
+                        // </main>
                     </div>
                     <TestingFetch/>
                     // <p></p>
