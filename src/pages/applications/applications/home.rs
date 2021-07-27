@@ -1,6 +1,6 @@
 use yew::prelude::*;
 // use yew_router::components::RouterAnchor;
-use crate::app::Route;
+// use crate::app::Route;
 
 use crate::components::{
     navtop::Navtop,
