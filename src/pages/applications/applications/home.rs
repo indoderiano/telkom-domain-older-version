@@ -1,5 +1,5 @@
 use yew::prelude::*;
-use yew_router::components::RouterAnchor;
+// use yew_router::components::RouterAnchor;
 use crate::app::Route;
 
 use crate::components::{
@@ -28,7 +28,7 @@ impl Component for ApplicationHome {
     }
 
     fn view(&self) -> Html {
-        type Anchor = RouterAnchor<Route>;
+        // type Anchor = RouterAnchor<Route>;
         html! {
         <>
             <Navtop/>
