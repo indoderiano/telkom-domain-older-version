@@ -1,23 +1,112 @@
-use yew::prelude::*;
+use yew::{
+    format::{Json, Nothing},
+    prelude::*,
+    services::fetch::{FetchService, FetchTask, Request, Response},
+};
+use crate::store::types::User;
+use yewtil::NeqAssign;
+use crate::store::reducer_account::{
+    AppDispatch,
+    DataAccountAction,
+    DataAccount
+};
+use yewdux::dispatch::Dispatcher;
 
-pub struct LoginPage {}
+pub struct LoginPage {
+    fetch_task: Option<FetchTask>,
+    // user: Option<User>,
+    link: ComponentLink<Self>,
+    error: Option<String>,
+    dispatch: AppDispatch,
+}
 
-pub enum Msg {}
+pub enum Msg {
+    Login,
+    LoginResponse(Result<User, anyhow::Error>),
+}
+
+// impl LoginPage {
+//     fn view_user(&self) -> Html {
+//         match self.user {
+//             Some(ref user) => {
+//                 html! {
+//                     <>
+//                         <p>{ "User profile:" }</p>
+//                         <p>{ format!("Name: {}", user.name) }</p>
+//                         <p>{ format!("Age: {}", user.age) }</p>
+//                     </>
+//                 }
+//             }
+//             None => {
+//                 html! {
+//                      <button
+//                         type="button"
+//                         onclick=self.link.callback(|_| Msg::Login)>
+//                          { "Get User" }
+//                      </button>
+//                 }
+//             }
+//         }
+//     }
+// }
 
 impl Component for LoginPage {
     type Message = Msg;
-    type Properties = ();
+    type Properties = AppDispatch;
 
-    fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
-        LoginPage {}
+    fn create(dispatch: Self::Properties, link: ComponentLink<Self>) -> Self {
+        // let newdata = DataAccount {
+        //     name: Some(String::from("batman"))
+        // };
+        // dispatch.send(DataAccountAction::Update(newdata));
+        LoginPage {
+            fetch_task: None,
+            // user: None,
+            link,
+            error: None,
+            dispatch,
+        }
     }
 
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        true
+    fn update(&mut self, msg: Self::Message) -> ShouldRender {
+        use Msg::*;
+
+        match msg {
+            Login => {
+                let request = Request::get("http://localhost:3000/user")
+                    .body(Nothing)
+                    .expect("Could not build request.");
+                let callback =
+                    self.link
+                        .callback(|response: Response<Json<Result<User, anyhow::Error>>>| {
+                            let Json(data) = response.into_body();
+                            Msg::LoginResponse(data)
+                        });
+                let task = FetchService::fetch(request, callback).expect("failed to start request");
+                self.fetch_task = Some(task);
+                true
+            }
+            LoginResponse(response) => {
+                match response {
+                    Ok(data) => {
+                        // self.user = Some(data.clone());
+                        let newdata = DataAccount {
+                            name: Some(String::from(data.name.clone()))
+                        };
+                        self.dispatch.send(DataAccountAction::Update(newdata));
+                    }
+                    Err(error) => {
+                        self.error = Some(error.to_string())
+                    }
+                }
+                self.fetch_task = None;
+                true
+            }
+        }
     }
 
-    fn change(&mut self, _: Self::Properties) -> ShouldRender {
-        false
+    fn change(&mut self, dispatch: Self::Properties) -> ShouldRender {
+        self.dispatch.neq_assign(dispatch)
     }
 
     fn view(&self) -> Html {
@@ -39,7 +128,16 @@ impl Component for LoginPage {
                             <label for="floatingInput">{"Email address"}</label>
                         </div>    
             
-                        <button class="w-75 btn btn-lg btn-primary mt-3 fs-6">{"Continue"}</button>
+                        <button
+                            type="button"
+                            onclick=self.link.callback(|_| Msg::Login)
+                            class="w-75 btn btn-lg btn-primary mt-3 fs-6"
+                        >
+                            {"Continue"}
+                        </button>
+                        
+                        // { self.view_user() }
+                        
                         <h1 class="h3 mt-3 mb-1 fw-normal" style="font-family: fakt-web, Helvetica Neue, Helvetica, sans-serif;">{"or"}</h1>
 
                         <button class="w-75 btn btn-lg btn-outline-dark mt-3 fs-6" type="submit">
