@@ -115,9 +115,9 @@ impl Component for App {
             AppRoute::LoginPage => html!{<WithDispatch<LoginPage>/>},
             AppRoute::RegisterPage => html!{<RegisterPage/>},
             AppRoute::RequestPassPage => html!{<RequestPassPage/>},
-            _ => html! {
-                <GettingStarted/>
-            },
+            // _ => html! {
+            //     <GettingStarted/>
+            // },
         });
         let account = self.dispatch.state().clone();
 
