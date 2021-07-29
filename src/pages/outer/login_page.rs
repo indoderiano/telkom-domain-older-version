@@ -59,6 +59,7 @@ impl Component for LoginPage {
         //     name: Some(String::from("batman"))
         // };
         // dispatch.send(DataAccountAction::Update(newdata));
+        
         LoginPage {
             fetch_task: None,
             // user: None,

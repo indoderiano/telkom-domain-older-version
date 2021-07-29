@@ -1,6 +1,6 @@
 use yew::prelude::*;
 use yew_router::components::RouterAnchor;
-use crate::app::Route;
+use crate::app::AppRoute;
 
 pub struct ApisHome {}
 
@@ -23,7 +23,7 @@ impl Component for ApisHome {
     }
 
     fn view(&self) -> Html {
-        type Anchor = RouterAnchor<Route>;
+        type Anchor = RouterAnchor<AppRoute>;
         html! {
             <div
                 class="mx-auto pt-5 pb-5 px-4"
@@ -78,7 +78,7 @@ impl Component for ApisHome {
                                 style="min-width: 40px;"
                             >
                                 <Anchor
-                                    route=Route::Settings
+                                    route=AppRoute::Settings
                                     classes="text-decoration-none fw-bold mb-0"
                                 >
                                     <span
@@ -149,7 +149,7 @@ impl Component for ApisHome {
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                 <li>
-                                    <Anchor route=Route::Settings classes="dropdown-item fs-7">
+                                    <Anchor route=AppRoute::Settings classes="dropdown-item fs-7">
                                         {"Settings"}
                                     </Anchor>
                                 </li>

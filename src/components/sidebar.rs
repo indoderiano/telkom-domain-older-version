@@ -1,6 +1,6 @@
 use yew::prelude::*;
 use yew_router::components::RouterAnchor;
-use crate::app::Route;
+use crate::app::AppRoute;
 
 pub struct Sidebar {}
 
@@ -23,7 +23,7 @@ impl Component for Sidebar {
   }
 
   fn view(&self) -> Html {
-    type Anchor = RouterAnchor<Route>;
+    type Anchor = RouterAnchor<AppRoute>;
     html! {
       <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-white">
         <div
@@ -48,7 +48,7 @@ impl Component for Sidebar {
                 style="list-style-type:none; font-weight: 400;">
                 <li>
                   <Anchor
-                    route=Route::ApplicationHome
+                    route=AppRoute::ApplicationHome
                     classes="text-decoration-none"
                   >
                     <a class="nav-link" href="#"
@@ -58,7 +58,7 @@ impl Component for Sidebar {
                 </li>
                 <li>
                   <Anchor
-                    route=Route::ApisHome
+                    route=AppRoute::ApisHome
                     classes="text-decoration-none"
                   >
                     <a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">
