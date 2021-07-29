@@ -2,11 +2,6 @@ use yew::prelude::*;
 // use yew_router::components::RouterAnchor;
 // use crate::app::Route;
 
-use crate::components::{
-    navtop::Navtop,
-    sidebar::Sidebar,
-};
-
 pub struct ApplicationHome {}
 
 pub enum Msg {}
