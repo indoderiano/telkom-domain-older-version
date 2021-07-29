@@ -1,4 +1,5 @@
 use yewdux::prelude::*;
+use yew::services::ConsoleService;
 
 pub enum DataAccountAction {
     Update(DataAccount)
@@ -21,6 +22,7 @@ impl Reducer for DataAccount {
     fn reduce(&mut self, action: Self::Action) -> Changed {
         match action {
             DataAccountAction::Update(data) => {
+                ConsoleService::info("action reducer");
                 self.name = data.name;
                 true
             }

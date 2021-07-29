@@ -3,7 +3,7 @@ use yew_router::prelude::*;
 // use yew_router::components::RouterAnchor;
 // use yew::services::ConsoleService;
 // use yewdux::prelude::*;
-// use yewdux::prelude::WithDispatch;
+use yewdux::prelude::WithDispatch;
 use yewtil::NeqAssign;
 
 use crate::store::reducer_account::{
@@ -100,7 +100,7 @@ impl Component for App {
 
         let renderouter = Router::render(|switch: RouteNonMember| match switch {
             RouteNonMember::Home => html! {<HomePage/>},
-            RouteNonMember::LoginPage => html! {<LoginPage/>},
+            RouteNonMember::LoginPage => html! {<WithDispatch<LoginPage>/>},
             RouteNonMember::RegisterPage => html! {<RegisterPage/>},
             RouteNonMember::RequestPassPage => html! {<RequestPassPage/>}
         });
