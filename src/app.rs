@@ -175,26 +175,29 @@ impl Component for App {
                             <div 
                                 class="col"
                             >
-                                <Router<Route, ()> render=render/>
+                                <Router<AppRoute, ()>
+                                    render=render
+                                    // https://github.com/yewstack/yew_router/blob/master/examples/router_component/src/main.rs#L88
+                                    redirect = Router::redirect(|route: Route| {
+                                        ConsoleService::info(&route.route);
+                                        AppRoute::LoginPage
+                                        // Route::PageNotFound(Permissive(Some(route.route)))
+                                    })
+                                />
                             </div>
                         </div>
-                        <main
-                            style="flex: 1;"
-                        >
-                            <Router<AppRoute, ()>
-                                render=render
-                                // https://github.com/yewstack/yew_router/blob/master/examples/router_component/src/main.rs#L88
-                                redirect = Router::redirect(|route: Route| {
-                                    ConsoleService::info(&route.route);
-                                    AppRoute::LoginPage
-                                    // Route::PageNotFound(Permissive(Some(route.route)))
-                                })
-                            />
-                        </main>
-
                         // <main
                         //     style="flex: 1;"
                         // >
+                        //     <Router<AppRoute, ()>
+                        //         render=render
+                        //         // https://github.com/yewstack/yew_router/blob/master/examples/router_component/src/main.rs#L88
+                        //         redirect = Router::redirect(|route: Route| {
+                        //             ConsoleService::info(&route.route);
+                        //             AppRoute::LoginPage
+                        //             // Route::PageNotFound(Permissive(Some(route.route)))
+                        //         })
+                        //     />
                         // </main>
                     </div>
                     <TestingFetch/>
