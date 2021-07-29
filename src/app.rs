@@ -166,27 +166,36 @@ impl Component for App {
                     //   {"APIs"}
                     // </Anchor>
                     <div
-                        style="display: flex;"
+                        class="container-fluid"
                     >
                         <div
-                            class="sidebar"
+                            class="row flex-nowrap"
                         >
                             <Sidebar/>
+                            <div 
+                                class="col"
+                            >
+                                <Router<Route, ()> render=render/>
+                            </div>
                         </div>
                         <main
                             style="flex: 1;"
                         >
-                        <Router<AppRoute, ()>
-                            render=render
-                            // https://github.com/yewstack/yew_router/blob/master/examples/router_component/src/main.rs#L88
-                            redirect = Router::redirect(|route: Route| {
-                                ConsoleService::info(&route.route);
-                                AppRoute::LoginPage
-                                // Route::PageNotFound(Permissive(Some(route.route)))
-                            })
-                        />
+                            <Router<AppRoute, ()>
+                                render=render
+                                // https://github.com/yewstack/yew_router/blob/master/examples/router_component/src/main.rs#L88
+                                redirect = Router::redirect(|route: Route| {
+                                    ConsoleService::info(&route.route);
+                                    AppRoute::LoginPage
+                                    // Route::PageNotFound(Permissive(Some(route.route)))
+                                })
+                            />
                         </main>
 
+                        // <main
+                        //     style="flex: 1;"
+                        // >
+                        // </main>
                     </div>
                     <TestingFetch/>
                     // <p></p>
