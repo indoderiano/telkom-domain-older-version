@@ -1,10 +1,12 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 // use yew_router::components::RouterAnchor;
-// use yew::services::ConsoleService;
+use yew::services::ConsoleService;
 // use yewdux::prelude::*;
 use yewdux::prelude::WithDispatch;
 use yewtil::NeqAssign;
+// use yew_router::switch::{Permissive};
+use yew_router::route::Route;
 
 use crate::store::reducer_account::{
     AppDispatch,
@@ -38,7 +40,7 @@ use crate::pages::{
         password_page::RequestPassPage,
     },
     // reducer_account_view::ReducerAccountView,
-    testing_fetch::TestingFetch,
+    // testing_fetch::TestingFetch,
 
 };
 
@@ -49,26 +51,25 @@ use crate::components::{
 };
 
 #[derive(Switch, Clone)]
-pub enum RouteNonMember {
-    #[to = "/login/password"]
-    RequestPassPage,
-    #[to = "/login"]
-    LoginPage,
-    #[to = "/register"]
-    RegisterPage,
-    #[to = "/"]
-    Home,
-}
-
-#[derive(Switch, Clone)]
-pub enum Route {
+pub enum AppRoute {
     #[to = "/apis/settings"]
     Settings,
     #[to = "/apis"]
     ApisHome,
     #[to = "/applications"]
     ApplicationHome,
+    
+    #[to = "/login/password"]
+    RequestPassPage,
+    #[to = "/login"]
+    LoginPage,
+    #[to = "/register"]
+    RegisterPage,
+
     #[to = "/"]
+    Home,
+
+    #[to = "/manage"]
     GettingStarted,
 }
 
@@ -98,31 +99,39 @@ impl Component for App {
 
     fn view(&self) -> Html {
 
-        let renderouter = Router::render(|switch: RouteNonMember| match switch {
-            RouteNonMember::Home => html! {<HomePage/>},
-            RouteNonMember::LoginPage => html! {<WithDispatch<LoginPage>/>},
-            RouteNonMember::RegisterPage => html! {<RegisterPage/>},
-            RouteNonMember::RequestPassPage => html! {<RequestPassPage/>}
-        });
+        // let renderouter = Router::render(|switch: RouteNonMember| match switch {
+        //     RouteNonMember::Home => html! {<HomePage/>},
+        //     RouteNonMember::LoginPage => html! {<WithDispatch<LoginPage>/>},
+        //     RouteNonMember::RegisterPage => html! {<RegisterPage/>},
+        //     RouteNonMember::RequestPassPage => html! {<RequestPassPage/>}
+        // });
 
-        let render = Router::render(|switch: Route| match switch {
-            Route::GettingStarted => html! {<GettingStarted/>},
-            Route::ApisHome => html! {<ApisHome/>},
-            Route::Settings => html! {<Settings/>},
-            Route::ApplicationHome => html! {<ApplicationHome/>},
-            // Route::LoginPage => html!{<LoginPage/>},
-            // Route::RegisterPage => html!{<RegisterPage/>},
-            // Route::RequestPassPage => html!{<RequestPassPage/>},
+        let render = Router::render(|switch: AppRoute| match switch {
+            AppRoute::GettingStarted => html! {<GettingStarted/>},
+            AppRoute::ApisHome => html! {<ApisHome/>},
+            AppRoute::Settings => html! {<Settings/>},
+            AppRoute::ApplicationHome => html! {<ApplicationHome/>},
+            AppRoute::Home => html! {<HomePage/>},
+            AppRoute::LoginPage => html!{<WithDispatch<LoginPage>/>},
+            AppRoute::RegisterPage => html!{<RegisterPage/>},
+            AppRoute::RequestPassPage => html!{<RequestPassPage/>},
+            // _ => html! {
+            //     <GettingStarted/>
+            // },
         });
-        // type Anchor = RouterAnchor<Route>;
         let account = self.dispatch.state().clone();
 
         if account.name == None {
             html! {
                 <>
-                    // <WithDispatch<LandingPageNavTop>/>
                     <main>
-                        <Router<RouteNonMember, ()> render=renderouter/>
+                        <Router<AppRoute, ()>
+                            render=render
+                            redirect = Router::redirect(|route: Route| {
+                                ConsoleService::info(&route.route);
+                                AppRoute::LoginPage
+                            })
+                        />
                     </main>
                 </>
             }
@@ -130,20 +139,7 @@ impl Component for App {
             html! {
                 <>
                     <Navtop/>
-                    // <LandingPageNavTop/>
-                    // { self.navtop(account) }
-                    // <button onclick=update>{"update"}</button>
-
-                    // <p>{ "Hello world!" }</p>
-                    // <Anchor route=Route::Home classes="item">
-                    //   {"Home"}
-                    // </Anchor>
-                    // <Anchor route=Route::Details classes="item">
-                    //   {"Details"}
-                    // </Anchor>
-                    // <Anchor route=Route::ApisHome classes="item">
-                    //   {"APIs"}
-                    // </Anchor>
+                    
                     <div
                         class="container-fluid"
                     >
@@ -154,16 +150,20 @@ impl Component for App {
                             <div 
                                 class="col"
                             >
-                                <Router<Route, ()> render=render/>
+                                <Router<AppRoute, ()>
+                                    render=render
+                                    // https://github.com/yewstack/yew_router/blob/master/examples/router_component/src/main.rs#L88
+                                    redirect = Router::redirect(|route: Route| {
+                                        ConsoleService::info(&route.route);
+                                        AppRoute::LoginPage
+                                        // Route::PageNotFound(Permissive(Some(route.route)))
+                                    })
+                                />
                             </div>
                         </div>
-
-                        // <main
-                        //     style="flex: 1;"
-                        // >
-                        // </main>
+                        
                     </div>
-                    <TestingFetch/>
+                    // <TestingFetch/>
                     // <p></p>
                     // <p>{"Reducer"}</p>
                     // <WithDispatch<ReducerGlobal>/>

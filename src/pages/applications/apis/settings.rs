@@ -1,6 +1,6 @@
 use yew::prelude::*;
 use yew_router::components::RouterAnchor;
-use crate::app::Route;
+use crate::app::AppRoute;
 use super::quickstart::Quickstart;
 use super::tab_settings::TabSettings;
 
@@ -43,14 +43,14 @@ impl Component for Settings {
     }
 
     fn view(&self) -> Html {
-        type Anchor = RouterAnchor<Route>;
+        type Anchor = RouterAnchor<AppRoute>;
         html! {
             <div
                 class="py-5 px-4 m-auto"
                 style="max-width: 1048px;"
             >
                 <Anchor
-                    route=Route::ApisHome
+                    route=AppRoute::ApisHome
                     classes="text-decoration-none domain-link-dark"
                 >
                     <i class="bi bi-arrow-left me-2"></i>

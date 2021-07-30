@@ -11,13 +11,19 @@ use crate::store::reducer_account::{
     DataAccount
 };
 use yewdux::dispatch::Dispatcher;
+// use crate::app::AppRoute;
+use yew_router::service::RouteService;
+// use yew_router
+use yew::services::ConsoleService;
 
 pub struct LoginPage {
     fetch_task: Option<FetchTask>,
+    error: Option<String>,
     // user: Option<User>,
     link: ComponentLink<Self>,
-    error: Option<String>,
     dispatch: AppDispatch,
+    route_service: RouteService,
+
 }
 
 pub enum Msg {
@@ -25,46 +31,19 @@ pub enum Msg {
     LoginResponse(Result<User, anyhow::Error>),
 }
 
-// impl LoginPage {
-//     fn view_user(&self) -> Html {
-//         match self.user {
-//             Some(ref user) => {
-//                 html! {
-//                     <>
-//                         <p>{ "User profile:" }</p>
-//                         <p>{ format!("Name: {}", user.name) }</p>
-//                         <p>{ format!("Age: {}", user.age) }</p>
-//                     </>
-//                 }
-//             }
-//             None => {
-//                 html! {
-//                      <button
-//                         type="button"
-//                         onclick=self.link.callback(|_| Msg::Login)>
-//                          { "Get User" }
-//                      </button>
-//                 }
-//             }
-//         }
-//     }
-// }
-
 impl Component for LoginPage {
     type Message = Msg;
     type Properties = AppDispatch;
 
     fn create(dispatch: Self::Properties, link: ComponentLink<Self>) -> Self {
-        // let newdata = DataAccount {
-        //     name: Some(String::from("batman"))
-        // };
-        // dispatch.send(DataAccountAction::Update(newdata));
+        
         LoginPage {
             fetch_task: None,
+            error: None,
             // user: None,
             link,
-            error: None,
             dispatch,
+            route_service: RouteService::new(),
         }
     }
 
@@ -89,13 +68,21 @@ impl Component for LoginPage {
             LoginResponse(response) => {
                 match response {
                     Ok(data) => {
+                        ConsoleService::info("response ok");
                         // self.user = Some(data.clone());
                         let newdata = DataAccount {
                             name: Some(String::from(data.name.clone()))
                         };
                         self.dispatch.send(DataAccountAction::Update(newdata));
+                        // let router = RouteService::new();
+                        self.route_service.set_route("/apis", ());
+                        // router.set_route(AppRoute::ApisHome, );
+                        
+                        // yew_router::push_route(AppRoute::ApisHome);
                     }
                     Err(error) => {
+                        ConsoleService::info("response error");
+                        ConsoleService::info(&error.to_string());
                         self.error = Some(error.to_string())
                     }
                 }
@@ -110,6 +97,7 @@ impl Component for LoginPage {
     }
 
     fn view(&self) -> Html {
+        let is_fetching:bool = self.fetch_task.is_some();
         html! {
             <div style="background-color: #dee2e6; min-height: 100vh;">
                 <div class="login-page form-signin border">
@@ -132,9 +120,45 @@ impl Component for LoginPage {
                             type="button"
                             onclick=self.link.callback(|_| Msg::Login)
                             class="w-75 btn btn-lg btn-primary mt-3 fs-6"
+                            // class={
+                            //     if is_fetching {
+
+                            //     } else {
+                            //         "w-75 btn btn-lg btn-primary mt-3 fs-6"
+                            //     }
+                            // }
+                            disabled={ if is_fetching {true} else {false} }
                         >
-                            {"Continue"}
+                            {
+                                if is_fetching {
+                                    html! {
+                                        <div class="d-flex justify-content-center">
+                                            <div class="spinner-border" role="status">
+                                                <span class="visually-hidden">{"Loading..."}</span>
+                                            </div>
+                                        </div>
+                                    }
+                                } else {
+                                    html! {
+                                        "Continue"
+                                    }
+                                }
+                            }
                         </button>
+
+                        {
+                            if let Some(ref error) = self.error {
+                                html! {
+                                    <p class="mt-3 text-danger">
+                                        { error.clone() }
+                                    </p>
+                                }
+                            } else {
+                                html! { }
+                            }
+                        }
+
+
                         
                         // { self.view_user() }
                         
@@ -179,3 +203,5 @@ impl Component for LoginPage {
         }
     }
 }
+
+// fn show_error ()

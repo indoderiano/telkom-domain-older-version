@@ -2,7 +2,7 @@ use yew::prelude::*;
 use yewdux::prelude::*;
 use yewtil::NeqAssign;
 use yew_router::components::RouterAnchor;
-use crate::app::RouteNonMember;
+use crate::app::AppRoute;
 
 use crate::store::reducer_account::{
     AppDispatch,
@@ -40,7 +40,7 @@ impl Component for LandingPageNavTop {
             };
             DataAccountAction::Update(newdata)
         });
-        type Anchor = RouterAnchor<RouteNonMember>;
+        type Anchor = RouterAnchor<AppRoute>;
         html! {
             <div>
                 <div
@@ -68,7 +68,7 @@ impl Component for LandingPageNavTop {
                         class="d-flex justify-content-between align-items-center"
                     >
                         <Anchor
-                            route=RouteNonMember::LoginPage
+                            route=AppRoute::LoginPage
                             classes="text-decoration-none text-light px-2 link-primary pe-auto"
                         >
                             {"Login"}
