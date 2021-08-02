@@ -107,7 +107,7 @@ impl Component for App {
             let mut route_service = RouteService::new();
             match switch {
                 AppRoute::GettingStarted => html! {<GettingStarted/>},
-                AppRoute::ApisHome if acc.name == None => {
+                AppRoute::ApisHome if acc.username == None => {
                     ConsoleService::info("redirect");
                     route_service.set_route("/", ());
                     html! {<HomePage/>}
@@ -115,13 +115,13 @@ impl Component for App {
                 AppRoute::ApisHome => html! {<ApisHome/>},
                 AppRoute::Settings => html! {<Settings/>},
                 AppRoute::ApplicationHome => html! {<ApplicationHome/>},
-                AppRoute::Home if acc.name == None => html!{<HomePage/>}, 
+                AppRoute::Home if acc.username == None => html!{<HomePage/>}, 
                 AppRoute::Home => {
                     route_service.set_route("/manage", ());
                     html! {<GettingStarted/>}
                 },
                 // html! {<HomePage/>},
-                AppRoute::LoginPage if acc.name == None => {html! {<WithDispatch<LoginPage>/>}},
+                AppRoute::LoginPage if acc.username == None => {html! {<WithDispatch<LoginPage>/>}},
                 AppRoute::LoginPage => {
                     ConsoleService::info("redirect");
                     // self.route_service.set_route("/manage", ());
@@ -137,7 +137,7 @@ impl Component for App {
         });
 
         let account = self.dispatch.state().clone();
-        if account.name == None {
+        if account.username == None {
             html! {
                 <>
                     <main>

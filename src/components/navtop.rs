@@ -33,7 +33,8 @@ impl Component for Navtop {
             Msg::Logout => {
                 ConsoleService::info("logout");
                 let no_user = DataAccount {
-                    name: None,
+                    username: None,
+                    email: None,
                 };
                 self.dispatch.send(DataAccountAction::Update(no_user));
                 false

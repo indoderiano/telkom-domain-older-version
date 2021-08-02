@@ -36,7 +36,8 @@ impl Component for LandingPageNavTop {
     fn view(&self) -> Html {
         let signup = self.dispatch.callback(|_| {
             let newdata = DataAccount {
-                name: Some(String::from("Batman"))
+                username: Some(String::from("Batman")),
+                email: None,
             };
             DataAccountAction::Update(newdata)
         });
