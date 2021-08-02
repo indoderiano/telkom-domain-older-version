@@ -2,16 +2,16 @@ use yew::prelude::*;
 // use yew_router::components::RouterAnchor;
 // use crate::app::Route;
 
-pub struct SsoHome {}
+pub struct CreateSso {}
 
 pub enum Msg {}
 
-impl Component for SsoHome {
+impl Component for CreateSso {
     type Message = Msg;
     type Properties = ();
 
     fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
-        SsoHome {}
+        CreateSso {}
     }
 
     fn update(&mut self, _msg: Self::Message) -> ShouldRender {

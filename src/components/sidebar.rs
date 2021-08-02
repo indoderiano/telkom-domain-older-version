@@ -66,7 +66,14 @@ impl Component for Sidebar {
                     </a>
                   </Anchor>
                 </li>
-                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"SSO Integrations "}</a> </li>
+                <li>
+                <Anchor
+                    route=AppRoute::SsoHome
+                    classes="text-decoration-none"
+                  >
+                    <a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"SSO Integrations "}</a>
+                  </Anchor>
+                </li>
               </ul>
             </li>
 

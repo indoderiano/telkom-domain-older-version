@@ -40,6 +40,11 @@ impl Component for RegisterPage {
                     </div>
                     
                     <div class="form-floating m-auto w-75 d-flex justify-content-center mt-4">
+                        <input type="username" class="d-flex form-control" id={"floatingInput"} placeholder="ex: Johndoe"/>
+                        <label for="floatingInput">{"Username"}</label>
+                    </div>
+
+                    <div class="form-floating m-auto w-75 d-flex justify-content-center mt-4">
                         <input type="password" class="d-flex form-control" id={"floatingInput"}/>
                         <label for="floatingInput">{"Password"}</label>
                     </div>

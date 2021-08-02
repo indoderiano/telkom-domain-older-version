@@ -33,6 +33,7 @@ use crate::pages::{
             home::ApisHome,
             settings::Settings,
         },
+        sso::home::SsoHome,
     },
 
     outer::{
@@ -59,7 +60,8 @@ pub enum AppRoute {
     ApisHome,
     #[to = "/applications"]
     ApplicationHome,
-    
+    #[to = "/sso"]
+    SsoHome,
     #[to = "/login/password"]
     RequestPassPage,
     #[to = "/login"]
@@ -112,6 +114,7 @@ impl Component for App {
                     AppRoute::ApisHome => html! {<ApisHome/>},
                     AppRoute::Settings => html! {<Settings/>},
                     AppRoute::ApplicationHome => html! {<ApplicationHome/>},
+                    AppRoute::SsoHome => html! {<SsoHome/>},
                     _ => {
                         route_service.set_route("/manage", ());
                         html! {<GettingStarted/>}
