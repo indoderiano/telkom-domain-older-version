@@ -7,7 +7,8 @@ pub enum DataAccountAction {
 
 #[derive(Clone)]
 pub struct DataAccount {
-    pub name: Option<String>
+    pub username: Option<String>,
+    pub email: Option<String>,
 }
 
 impl Reducer for DataAccount {
@@ -15,7 +16,8 @@ impl Reducer for DataAccount {
 
     fn new() -> Self {
         Self { 
-            name: None
+            username: None,
+            email: None,
         }
     }
 
@@ -23,7 +25,7 @@ impl Reducer for DataAccount {
         match action {
             DataAccountAction::Update(data) => {
                 ConsoleService::info("action reducer");
-                self.name = data.name;
+                self.username = data.username;
                 true
             }
         }
