@@ -107,6 +107,11 @@ impl Component for App {
             let mut route_service = RouteService::new();
             match switch {
                 AppRoute::GettingStarted => html! {<GettingStarted/>},
+                AppRoute::ApisHome if acc.name == None => {
+                    ConsoleService::info("redirect");
+                    route_service.set_route("/", ());
+                    html! {<HomePage/>}
+                },
                 AppRoute::ApisHome => html! {<ApisHome/>},
                 AppRoute::Settings => html! {<Settings/>},
                 AppRoute::ApplicationHome => html! {<ApplicationHome/>},
@@ -149,7 +154,7 @@ impl Component for App {
         } else {
             html! {
                 <>
-                    <Navtop/>
+                    <WithDispatch<Navtop>/>
                     
                     <div
                         class="container-fluid"
