@@ -1,10 +1,13 @@
 use yew::{
-    format::{Json, Nothing},
+    format::{
+        Json,
+        // Nothing
+    },
     prelude::*,
     services::fetch::{FetchService, FetchTask, Request, Response},
 };
 use crate::store::types::{
-    User,
+    // User,
     ResponseLogin,
 };
 use yewtil::NeqAssign;
@@ -49,8 +52,8 @@ impl Component for LoginPage {
 
     fn create(dispatch: Self::Properties, link: ComponentLink<Self>) -> Self {
         let form_data = RequestLogin {
-            email: String::from("test@email.com"),
-            password: String::from("pass"),
+            email: String::from(""),
+            password: String::from(""),
         };
         LoginPage {
             fetch_task: None,
