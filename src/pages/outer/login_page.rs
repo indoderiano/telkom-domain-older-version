@@ -1,35 +1,50 @@
 use yew::{
-    format::{Json, Nothing},
+    format::{
+        Json,
+        // Nothing
+    },
     prelude::*,
     services::fetch::{FetchService, FetchTask, Request, Response},
 };
-use crate::store::types::User;
+use crate::store::types::{
+    // User,
+    ResponseLogin,
+};
 use yewtil::NeqAssign;
 use crate::store::reducer_account::{
     AppDispatch,
     DataAccountAction,
-    DataAccount
+    DataAccount,
 };
 use yewdux::dispatch::Dispatcher;
 // use crate::app::AppRoute;
 use yew_router::service::RouteService;
 // use yew_router
 use yew::services::ConsoleService;
+use serde::{Deserialize, Serialize};
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct RequestLogin {
+    email: String,
+    password: String,
+}
 
 pub struct LoginPage {
     fetch_task: Option<FetchTask>,
+    form_data: RequestLogin,
     error: Option<String>,
     // user: Option<User>,
     link: ComponentLink<Self>,
     dispatch: AppDispatch,
     route_service: RouteService,
-
 }
 
 
 pub enum Msg {
     Login,
-    LoginResponse(Result<User, anyhow::Error>),
+    LoginResponse(Result<ResponseLogin, anyhow::Error>),
+    EditEmail(String),
+    EditPassword(String),
 }
 
 impl Component for LoginPage {
@@ -37,9 +52,13 @@ impl Component for LoginPage {
     type Properties = AppDispatch;
 
     fn create(dispatch: Self::Properties, link: ComponentLink<Self>) -> Self {
-        
+        let form_data = RequestLogin {
+            email: String::from(""),
+            password: String::from(""),
+        };
         LoginPage {
             fetch_task: None,
+            form_data,
             error: None,
             // user: None,
             link,
@@ -53,12 +72,15 @@ impl Component for LoginPage {
 
         match msg {
             Login => {
-                let request = Request::get("http://localhost:3000/users")
-                    .body(Nothing)
+                // ConsoleService::info(&self.form_data.email);
+                let request = Request::post("http://localhost:3000/user")
+                    .header("Content-Type", "application/json")
+                    .body(Json(&self.form_data))
+                    // .body(Nothing)
                     .expect("Could not build request.");
                 let callback =
                     self.link
-                        .callback(|response: Response<Json<Result<User, anyhow::Error>>>| {
+                        .callback(|response: Response<Json<Result<ResponseLogin, anyhow::Error>>>| {
                             let Json(data) = response.into_body();
                             Msg::LoginResponse(data)
                         });
@@ -70,9 +92,11 @@ impl Component for LoginPage {
                 match response {
                     Ok(data) => {
                         ConsoleService::info("response ok");
+                        ConsoleService::info(&data.email.clone());
                         // self.user = Some(data.clone());
                         let newdata = DataAccount {
-                            name: Some(String::from(data.name.clone()))
+                            username: Some(String::from(data.username.clone())),
+                            email: Some(String::from(data.email.clone())),
                         };
                         self.dispatch.send(DataAccountAction::Update(newdata));
                         // let router = RouteService::new();
@@ -88,6 +112,14 @@ impl Component for LoginPage {
                     }
                 }
                 self.fetch_task = None;
+                true
+            }
+            EditEmail(email) => {
+                self.form_data.email = email;
+                true
+            }
+            EditPassword(password) => {
+                self.form_data.password = password;
                 true
             }
         }
@@ -112,10 +144,33 @@ impl Component for LoginPage {
                         <h1 class="h3 mb-3 fw-normal">{"TelAuth"}</h1>
                         <h1 class="h5 mb-2 fw-normal fs-6">{"Login to TelAuth to continue"}</h1>
                 
-                        <div class="form-floating m-auto w-75 d-flex justify-content-center mt-4">
-                            <input type="email" class="d-flex form-control" id={"floatingInput"} placeholder="name@example.com"/>
+                        <div
+                            class="form-floating m-auto w-75 d-flex justify-content-center mt-4"
+                        >
+                            <input
+                                type="email"
+                                class="d-flex form-control"
+                                id={"floatingInput"}
+                                placeholder="name@example.com"
+                                value=self.form_data.email.clone()
+                                oninput=self.link.callback(|data: InputData| Msg::EditEmail(data.value))
+                            />
                             <label for="floatingInput">{"Email address"}</label>
-                        </div>    
+                        </div>
+
+                        <div
+                            class="form-floating m-auto w-75 d-flex justify-content-center mt-4"
+                        >
+                            <input
+                                type="password"
+                                class="d-flex form-control"
+                                id={"floatingInput"}
+                                placeholder="password"
+                                value=self.form_data.password.clone()
+                                oninput=self.link.callback(|data: InputData| Msg::EditPassword(data.value))
+                            />
+                            <label for="floatingInput">{"Password"}</label>
+                        </div>
             
                         <button
                             type="button"

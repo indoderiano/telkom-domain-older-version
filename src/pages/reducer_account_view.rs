@@ -30,11 +30,12 @@ impl Component for ReducerAccountView {
     }
 
     fn view(&self) -> Html {
-        let name = self.dispatch.state().name.clone();
+        let name = self.dispatch.state().username.clone();
         let update = self.dispatch.callback(|_| {
             // ConsoleService::info(&data.name);
             let newdata = DataAccount {
-                name: Some(String::from("Batman"))
+                username: Some(String::from("Batman")),
+                email: None,
             };
             DataAccountAction::Update(newdata)
         });

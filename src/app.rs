@@ -104,35 +104,64 @@ impl Component for App {
         let acc = self.dispatch.state().clone();
         // let route_service = RouteService::new();
         let render = Router::render(move |switch: AppRoute| {
+            let is_logged_in = if acc.username == None {false} else {true};
             let mut route_service = RouteService::new();
-            match switch {
-                AppRoute::GettingStarted => html! {<GettingStarted/>},
-                AppRoute::ApisHome => html! {<ApisHome/>},
-                AppRoute::Settings => html! {<Settings/>},
-                AppRoute::ApplicationHome => html! {<ApplicationHome/>},
-                AppRoute::Home if acc.name == None => html!{<HomePage/>}, 
-                AppRoute::Home => {
-                    route_service.set_route("/manage", ());
-                    html! {<GettingStarted/>}
-                },
-                // html! {<HomePage/>},
-                AppRoute::LoginPage if acc.name == None => {html! {<WithDispatch<LoginPage>/>}},
-                AppRoute::LoginPage => {
-                    ConsoleService::info("redirect");
-                    // self.route_service.set_route("/manage", ());
-                    route_service.set_route("/manage", ());
-                    html! {<GettingStarted/>}
-                },
-                AppRoute::RegisterPage => html!{<RegisterPage/>},
-                AppRoute::RequestPassPage => html!{<RequestPassPage/>},
-                // _ => html! {
-                //     <GettingStarted/>
-                // },
+            if is_logged_in {
+                match switch {
+                    AppRoute::GettingStarted => html! {<GettingStarted/>},
+                    AppRoute::ApisHome => html! {<ApisHome/>},
+                    AppRoute::Settings => html! {<Settings/>},
+                    AppRoute::ApplicationHome => html! {<ApplicationHome/>},
+                    _ => {
+                        route_service.set_route("/manage", ());
+                        html! {<GettingStarted/>}
+                    },
+                }
+            } else {
+                match switch {
+                    AppRoute::Home => html! {<HomePage/>},
+                    AppRoute::LoginPage => html! {<WithDispatch<LoginPage>/>},
+                    AppRoute::RegisterPage => html!{<RegisterPage/>},
+                    AppRoute::RequestPassPage => html!{<RequestPassPage/>},
+                    _ => {
+                        route_service.set_route("/", ());
+                        html! {<HomePage/>}
+                    },
+                }
             }
+            // match switch {
+            //     AppRoute::GettingStarted => html! {<GettingStarted/>},
+            //     AppRoute::ApisHome if !is_logged_in => {
+            //         ConsoleService::info("redirect");
+            //         route_service.set_route("/", ());
+            //         html! {<HomePage/>}
+            //     },
+            //     AppRoute::ApisHome => html! {<ApisHome/>},
+            //     AppRoute::Settings => html! {<Settings/>},
+            //     AppRoute::ApplicationHome => html! {<ApplicationHome/>},
+            //     AppRoute::Home if !is_logged_in => html!{<HomePage/>}, 
+            //     AppRoute::Home => {
+            //         route_service.set_route("/manage", ());
+            //         html! {<GettingStarted/>}
+            //     },
+            //     // html! {<HomePage/>},
+            //     AppRoute::LoginPage if !is_logged_in => {html! {<WithDispatch<LoginPage>/>}},
+            //     AppRoute::LoginPage => {
+            //         ConsoleService::info("redirect");
+            //         // self.route_service.set_route("/manage", ());
+            //         route_service.set_route("/manage", ());
+            //         html! {<GettingStarted/>}
+            //     },
+            //     AppRoute::RegisterPage => html!{<RegisterPage/>},
+            //     AppRoute::RequestPassPage => html!{<RequestPassPage/>},
+            //     // _ => html! {
+            //     //     <GettingStarted/>
+            //     // },
+            // }
         });
 
         let account = self.dispatch.state().clone();
-        if account.name == None {
+        if account.username == None {
             html! {
                 <>
                     <main>
@@ -149,7 +178,7 @@ impl Component for App {
         } else {
             html! {
                 <>
-                    <Navtop/>
+                    <WithDispatch<Navtop>/>
                     
                     <div
                         class="container-fluid"
