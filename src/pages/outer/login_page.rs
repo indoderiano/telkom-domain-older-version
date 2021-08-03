@@ -10,6 +10,8 @@ use crate::store::types::{
     // User,
     ResponseLogin,
 };
+use yew_router::components::RouterAnchor;
+use crate::app::AppRoute;
 use yewtil::NeqAssign;
 use crate::store::reducer_account::{
     AppDispatch,
@@ -129,6 +131,7 @@ impl Component for LoginPage {
     }
 
     fn view(&self) -> Html {
+        type Anchor = RouterAnchor<AppRoute>;
         let is_fetching:bool = self.fetch_task.is_some();
         html! {
             <div style="background-color: #dee2e6; min-height: 100vh;">
@@ -201,6 +204,17 @@ impl Component for LoginPage {
                             }
                         </button>
 
+                        <button
+                            type="button"
+                            class="w-75 btn btn-lg btn-secondary mt-3 fs-6"
+                        >
+                            <Anchor
+                            route=AppRoute::RegisterPage
+                            classes="text-decoration-none text-light px-2 link-primary pe-auto"
+                            >
+                                {"Register"}
+                            </Anchor>
+                        </button>
                         {
                             if let Some(ref error) = self.error {
                                 html! {
