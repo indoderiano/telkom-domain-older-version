@@ -1,6 +1,6 @@
 use yew::prelude::*;
-// use yew_router::components::RouterAnchor;
-// use crate::app::Route;
+use yew_router::components::RouterAnchor;
+use crate::app::AppRoute;
 
 pub struct SsoHome {}
 
@@ -23,7 +23,7 @@ impl Component for SsoHome {
     }
 
     fn view(&self) -> Html {
-        // type Anchor = RouterAnchor<Route>;
+        type Anchor = RouterAnchor<AppRoute>;
         html! {
         <>
             <div class="col py-3">
@@ -66,7 +66,14 @@ impl Component for SsoHome {
                             border-radius: 4px;
                             padding: 8px 16px;
                             margin: 20px"
-                >{"+ Create SSO Integration"}</button>
+                >
+                <Anchor
+                            route=AppRoute::CreateSso
+                            classes="text-decoration-none text-light px-2 link-primary pe-auto"
+                            >
+                                {"+ Create SSO Integration"}
+                            </Anchor>
+                </button>
                 <a href="https://auth0.com/docs/sso/single-sign-on" target="_blank">{"Learn More"}</a>
             </div>
             </div>
