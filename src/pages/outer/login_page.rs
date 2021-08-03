@@ -26,6 +26,7 @@ pub struct LoginPage {
 
 }
 
+
 pub enum Msg {
     Login,
     LoginResponse(Result<User, anyhow::Error>),
@@ -52,7 +53,7 @@ impl Component for LoginPage {
 
         match msg {
             Login => {
-                let request = Request::get("http://localhost:3000/user")
+                let request = Request::get("http://localhost:3000/users")
                     .body(Nothing)
                     .expect("Could not build request.");
                 let callback =
