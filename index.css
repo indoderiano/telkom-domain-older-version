@@ -42,6 +42,18 @@
     color: var(--bs-blue);
 }
 
+.app-logo{
+    display: block;
+    pointer-events: none;
+    width: 512px;
+    height: 512px;
+    background: url('/src/assets/cyber-security.png')
+}
+
+.landing-page-logo{
+    margin: 0.5cm 0cm 0cm 1cm;
+}
+
 .sidebar {
     width: 68px;
 }

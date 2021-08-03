@@ -41,6 +41,7 @@ pub struct LoginPage {
     route_service: RouteService,
 }
 
+
 pub enum Msg {
     Login,
     LoginResponse(Result<ResponseLogin, anyhow::Error>),
