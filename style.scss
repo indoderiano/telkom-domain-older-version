@@ -1,0 +1,74 @@
+.list-hover:hover {
+  background: rgba(239, 240, 242, 0.5);
+}
+
+.code-keyword {
+  color: rgb(144, 139, 255);
+}
+
+.code-require {
+  color: rgb(49, 206, 168);
+}
+
+.code-string {
+  color: rgb(136, 227, 205);
+}
+
+.code-number {
+  color: rgb(241, 217, 119);
+}
+
+.code-literal {
+  color: rgb(188, 186, 255);
+}
+
+.code-params {
+  color: rgb(188, 186, 255);
+}
+
+.tab-1 {
+  margin-left: 42px;
+}
+
+.tab-2 {
+  margin-left: 84px;
+}
+
+.domain-link-dark {
+  color: #65676e;
+}
+
+.domain-link-dark:hover {
+  color: #1e212a;
+}
+
+.navtop-logo:focus {
+  box-shadow: rgb(255 255 255 / 40%) 0px 0px 0px 0.25em;
+}
+
+.navtop-logo:hover {
+  background: rgba(220, 220, 220, 1) !important;
+}
+
+.navtop-hover:hover {
+  background: rgba(60, 60, 60, 1) !important;
+  color: var(--bs-blue);
+}
+
+.sidebar {
+  width: 68px;
+}
+
+@media (min-width: 1280px) {
+  .sidebar {
+    width: 265px;
+  }
+}
+
+.login-page {
+  text-align: center;
+  /* background-color: whitesmoke; */
+  margin: 0 auto;
+  width: 35%;
+}
+
