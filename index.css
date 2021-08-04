@@ -58,6 +58,13 @@
     width: 68px;
 }
 
+.text-color-primary {
+    color: #1e212a !important;
+}
+.text-color-secondary {
+    color: #635dff;
+}
+
 @media (min-width: 1280px) {
     .sidebar {
         width: 265px;
@@ -69,4 +76,14 @@
     /* background-color: whitesmoke; */
     margin: 0 auto;
     width: 35%;
+}
+
+
+
+
+
+
+/* SIDEBAR */
+.nav-item .bi-caret-down-fill {
+    color: #96989d;
 }

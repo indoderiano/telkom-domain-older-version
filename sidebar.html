@@ -1,40 +1,29 @@
-use yew::prelude::*;
-use yew_router::components::RouterAnchor;
-use crate::app::AppRoute;
+<!doctype html>
+<html lang="en">
 
-pub struct Sidebar {}
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="index.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <title>Telkom Domain</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <script src="/pkg/bundle.js" defer></script>
+</head>
 
-pub enum Msg {}
-
-impl Component for Sidebar {
-  type Message = Msg;
-  type Properties = ();
-
-  fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
-    Sidebar {}
-  }
-
-  fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-    true
-  }
-
-  fn change(&mut self, _: Self::Properties) -> ShouldRender {
-    false
-  }
-
-  fn view(&self) -> Html {
-    type Anchor = RouterAnchor<AppRoute>;
-    html! {
-      <div
+<body>
+    <div
         class="col-auto col-md-3 col-xl-3 px-sm-3 px-0 bg-white fw-bold h-100"
-        style="font-size:14px;"
         >
         <div
-          class="d-flex border-end flex-column align-items-center align-items-sm-start py-4 px-3 text-white h-auto overflow-auto"
+          class="d-flex border-end flex-column align-items-center align-items-sm-start py-4 px-3 text-white h-auto overflow-scroll"
         >
-          // <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-          //   <span class="fs-5 d-none d-sm-inline">{"Menu"}</span>
-          // </a>
+          <!-- <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+            <span class="fs-5 d-none d-sm-inline">{"Menu"}</span>
+          </a> -->
           <ul
             class="nav flex-column w-100 text-color-primary"
             id="nav_accordion"
@@ -201,6 +190,6 @@ impl Component for Sidebar {
           <hr/>
         </div>
       </div>
-    }
-  }
-}
+</body>
+
+</html>
