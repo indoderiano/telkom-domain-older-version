@@ -6,3 +6,6 @@ pkg/
 dist/
 wasm-pack.log
 node_modules
+.firebase
+.firebaserc
+firebase.json
