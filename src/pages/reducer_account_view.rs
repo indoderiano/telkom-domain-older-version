@@ -1,0 +1,60 @@
+use yew::prelude::*;
+use yewdux::prelude::*;
+use yewtil::NeqAssign;
+// use yew::services::ConsoleService;
+
+use crate::store::reducer_account::{
+    AppDispatch,
+    DataAccountAction,
+    DataAccount
+};
+
+pub struct ReducerAccountView {
+    dispatch: AppDispatch,
+}
+
+impl Component for ReducerAccountView {
+    type Message = ();
+    type Properties = AppDispatch;
+
+    fn create(dispatch: Self::Properties, _link: ComponentLink<Self>) -> Self {
+        Self { dispatch }
+    }
+
+    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
+        false
+    }
+
+    fn change(&mut self, dispatch: Self::Properties) -> ShouldRender {
+        self.dispatch.neq_assign(dispatch)
+    }
+
+    fn view(&self) -> Html {
+        let name = self.dispatch.state().username.clone();
+        let update = self.dispatch.callback(|_| {
+            // ConsoleService::info(&data.name);
+            let newdata = DataAccount {
+                username: Some(String::from("Batman")),
+                email: None,
+            };
+            DataAccountAction::Update(newdata)
+        });
+        if let Some(ref namestr) = name {
+            html! {
+                <>
+                    <p>{"Show Reducer Account"}</p>
+                    <h1>{namestr}</h1>
+                    <button onclick=update>{"update"}</button>
+                </>
+            }
+        } else {
+            html! {
+                <>
+                    <p>{"Show Reducer Account"}</p>
+                    <h1>{"not logged in"}</h1>
+                    <button onclick=update>{"update"}</button>
+                </>
+            }
+        }
+    }
+}
