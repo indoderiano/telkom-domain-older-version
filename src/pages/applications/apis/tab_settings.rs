@@ -230,7 +230,7 @@ impl Component for TabSettings {
                                 class="mb-4"
                             >
                                 <p class="mb-2 fw-bold">
-                                    {"Enable RBAC"}
+                                    {"Enable RBAC "}
                                 </p>
                                 <div class="form-check form-switch fs-3 mb-4">
                                     <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"/>
@@ -266,7 +266,7 @@ impl Component for TabSettings {
                     style="font-size: 14px;"
                 >
                     <p
-                        class="fs-5 fw-bold"
+                        class="fw-bold"
                     >
                         {"Danger Zone"}
                     </p>
