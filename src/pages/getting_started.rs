@@ -85,7 +85,7 @@ impl Component for GettingStarted {
                                 <p><i class="bi bi-question-circle px-2"></i> {" Learn more about "} <a href="">{"Connection"} <i class="bi bi-box-arrow-in-up-right px-2"></i></a>  </p>
                             </div>
                             <div class="col-3">
-                                <a href="">{"Add Social Connections"} <i class="bi bi-arrow-right px-2"></i></a>
+                                <a href="">{"Add Social Connection"} <i class="bi bi-arrow-right px-2"></i></a>
                             </div>
                         </div>
                     </div>
