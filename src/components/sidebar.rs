@@ -51,10 +51,15 @@ impl Component for Sidebar {
             </li>
             
             <li class="nav-item">
+              <Anchor
+                route=AppRoute::Activity
+                classes="text-decoration-none"
+              >
               <a class="nav-link text-color-primary" href="#"> <span
                   style="padding: 4px 8px;"><i class="bi bi-graph-up"></i></span>
                 {"Activity"}
               </a>
+              </Anchor>
             </li>
 
             <li class="nav-item">
