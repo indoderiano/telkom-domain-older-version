@@ -1,15 +1,15 @@
 use yew::prelude::*;
 
-pub struct GettingStarted {}
+pub struct Details {}
 
 pub enum Msg {}
 
-impl Component for GettingStarted {
+impl Component for Details {
     type Message = Msg;
     type Properties = ();
 
     fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
-        GettingStarted {}
+        Details {}
     }
 
     fn update(&mut self, _msg: Self::Message) -> ShouldRender {
@@ -22,7 +22,7 @@ impl Component for GettingStarted {
 
     fn view(&self) -> Html {
         html! {
-            <p>{ "GETTING STARTED" }</p>
+            <p>{ "DETAILS" }</p>
         }
     }
 }
