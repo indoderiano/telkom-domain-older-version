@@ -32,26 +32,34 @@ impl Component for Sidebar {
         <div
           class="d-flex border-end flex-column align-items-center align-items-sm-start py-4 px-3 text-white h-auto overflow-auto"
         >
-          // <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-          //   <span class="fs-5 d-none d-sm-inline">{"Menu"}</span>
-          // </a>
+          
           <ul
             class="nav flex-column w-100 text-color-primary"
             id="nav_accordion"
             style="list-style-type:none; font-weight: bold; "
         >
             <li class="nav-item">
+                <Anchor
+                  route=AppRoute::GettingStarted
+                  classes="text-decoration-none"
+                >
                 <a class="nav-link text-color-primary" href="#"> <span
                     style="padding: 4px 8px;"><i class="bi bi-lightning-charge-fill"></i></span>
                   {"Getting Started"}
                 </a>
+                </Anchor>
             </li>
             
             <li class="nav-item">
+              <Anchor
+                route=AppRoute::Activity
+                classes="text-decoration-none"
+              >
               <a class="nav-link text-color-primary" href="#"> <span
                   style="padding: 4px 8px;"><i class="bi bi-graph-up"></i></span>
                 {"Activity"}
               </a>
+              </Anchor>
             </li>
 
             <li class="nav-item">
