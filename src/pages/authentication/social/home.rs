@@ -133,10 +133,13 @@ impl Component for SocialHome {
                             style="width: 40%;"
                         >
                             <div
-                                style="flex: 0 0 auto; width: 40px; height: 40px; background-color: #eff0f2;"
-                                class="d-flex justify-content-center align-items-center rounded me-3"
+                                style="flex: 0 0 auto; width: 40px; height: 40px;"
+                                class="d-flex justify-content-center align-items-center rounded me-3 border"
                             >
-                                <img src="/assets/icons/google-avatar.png" />
+                                <img
+                                    src="/assets/icons/google-avatar.png"
+                                    class="w-50"
+                                />
                             </div>
 
                             <div
@@ -214,10 +217,13 @@ impl Component for SocialHome {
                             style="width: 40%;"
                         >
                             <div
-                                style="flex: 0 0 auto; width: 40px; height: 40px; background-color: #eff0f2;"
-                                class="d-flex justify-content-center align-items-center rounded me-3"
+                                style="flex: 0 0 auto; width: 40px; height: 40px;"
+                                class="d-flex justify-content-center align-items-center rounded me-3 border"
                             >
-                                <img src="/assets/icons/google-avatar.png" />
+                                <img
+                                    src="/assets/icons/google-avatar.png"
+                                    class="w-50"
+                                />
                             </div>
 
                             <div
