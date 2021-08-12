@@ -2,20 +2,38 @@ use yew::prelude::*;
 use yew_router::components::RouterAnchor;
 use crate::app::AppRoute;
 
-pub struct SocialHome {}
+pub struct SocialHome {
+    learn_more: bool,
+    link: ComponentLink<Self>,
+}
 
-pub enum Msg {}
+pub enum Msg {
+    LearnMore,
+    HideDetails
+}
 
 impl Component for SocialHome {
     type Message = Msg;
     type Properties = ();
 
-    fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
-        SocialHome {}
+    fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
+        SocialHome {
+            learn_more: false,
+            link,
+        }
     }
 
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        true
+    fn update(&mut self, msg: Self::Message) -> ShouldRender {
+        match msg {
+            Msg::LearnMore => {
+                self.learn_more = true;
+                true
+            }
+            Msg::HideDetails => {
+                self.learn_more = false;
+                true
+            }
+        }
     }
 
     fn change(&mut self, _: Self::Properties) -> ShouldRender {
@@ -54,71 +72,115 @@ impl Component for SocialHome {
                         </div>
                     </div>
                     <p>
-                        {"Configure social connections like Facebook, Twitter, Github and others so that you can let your users login with them."}
-                        <a
-                            href="javascript: void(0)"
-                            class="text-decoration-none"
-                        >
-                            <span
-                                style="
-                                    white-space: nowrap;
-                                    text-overflow: ellipsis;
-                                    overflow: hidden;
-                                    font-size: 14px;
-                                    text-decoration: none;
-                                "
-                            >
-                                {"Learn more"}
-                                <i
-                                    class="bi bi-arrow-right-short fs-5"
-                                    style="vertical-align: -3px; margin-left: -2px;"></i>
-                            </span>
-                        </a>
+                        {"Configure social connections like Facebook, Twitter, Github and others so that you can let your users login with them. "}
+                        {
+                            if self.learn_more == true {
+                                html! {
+                                    <a
+                                        href="javascript: void(0)"
+                                        class="text-decoration-none"
+                                        onclick=self.link.callback(|_| Msg::HideDetails)
+                                    >
+                                        <span
+                                            style="
+                                                white-space: nowrap;
+                                                text-overflow: ellipsis;
+                                                overflow: hidden;
+                                                font-size: 14px;
+                                                text-decoration: none;
+                                            "
+                                        >
+                                            {"Hide details"}
+                                            <i
+                                                class="bi bi-arrow-right-short fs-5"
+                                                style="vertical-align: -3px; margin-left: -2px;"></i>
+                                        </span>
+                                    </a>
+                                }
+                            } else {
+                                html! {
+                                    <a
+                                        href="javascript: void(0)"
+                                        class="text-decoration-none"
+                                        onclick=self.link.callback(|_| Msg::LearnMore)
+                                    >
+                                        <span
+                                            style="
+                                                white-space: nowrap;
+                                                text-overflow: ellipsis;
+                                                overflow: hidden;
+                                                font-size: 14px;
+                                                text-decoration: none;
+                                            "
+                                        >
+                                            {"Learn more"}
+                                            <i
+                                                class="bi bi-arrow-right-short fs-5"
+                                                style="vertical-align: -3px; margin-left: -2px;"></i>
+                                        </span>
+                                    </a>
+                                }
+                            }
+                        }
+                        
                     </p>
-                    <div class="alert alert-secondary" role="alert">
-                        <div
-                            class="fw-bold mb-3 pb-2"
-                            style="
-                                font-size: 13px;
-                                text-transform: uppercase;
-                                letter-spacing: 1px;
-                                border-bottom: 1px solid rgb(200, 200, 200);
-                            "
-                        >
-                            {"With social connection you can"}
-                        </div>
-                        <div
-                            class="d-inline-flex flex-row w-50"
-                        >
-                            <i class="bi bi-info-circle-fill me-4"></i>
-                            <p
-                                class="pe-5"
-                            >
-                                {"Associate user accounts with multiple connections such as database, enterprise or social with the same user on Auth0, allowing that user to authenticate with any of them."}
-                            </p>
-                        </div>
-                        <div
-                            class="d-inline-flex flex-row"
-                            style="width: 49%;"
-                        >
-                            <i class="bi bi-info-circle-fill me-4"></i>
-                            <p
-                                class="pe-5"
-                            >
-                                {"Let your users login with social connections like Facebook, Twitter, Github and others."}
-                            </p>
-                        </div>
-                        <div
-                            class="d-inline-flex flex-row w-50"
-                        >
-                            <i class="bi bi-info-circle-fill me-4"></i>
-                            <p
-                                class="pe-5"
-                            >
-                                {"Use Auth0's beautiful Login Box to let your users choose how to authenticate."}
-                            </p>
-                        </div>
-                    </div>
+
+                    {
+                        if self.learn_more == true {
+                            html! {
+                                <div
+                                    class="alert alert-secondary"
+                                    role="alert"
+                                    style="font-size: 13px;"
+                                >
+                                    <div
+                                        class="fw-bold mb-3 pb-2"
+                                        style="
+                                            font-size: 13px;
+                                            text-transform: uppercase;
+                                            letter-spacing: 1px;
+                                            border-bottom: 1px solid rgb(200, 200, 200);
+                                        "
+                                    >
+                                        {"With social connection you can"}
+                                    </div>
+                                    <div
+                                        class="d-inline-flex flex-row w-50"
+                                    >
+                                        <i class="bi bi-info-circle-fill me-4"></i>
+                                        <p
+                                            class="pe-5"
+                                        >
+                                            {"Associate user accounts with multiple connections such as database, enterprise or social with the same user on Auth0, allowing that user to authenticate with any of them."}
+                                        </p>
+                                    </div>
+                                    <div
+                                        class="d-inline-flex flex-row"
+                                        style="width: 49%;"
+                                    >
+                                        <i class="bi bi-info-circle-fill me-4"></i>
+                                        <p
+                                            class="pe-5"
+                                        >
+                                            {"Let your users login with social connections like Facebook, Twitter, Github and others."}
+                                        </p>
+                                    </div>
+                                    <div
+                                        class="d-inline-flex flex-row w-50"
+                                    >
+                                        <i class="bi bi-info-circle-fill me-4"></i>
+                                        <p
+                                            class="pe-5"
+                                        >
+                                            {"Use Auth0's beautiful Login Box to let your users choose how to authenticate."}
+                                        </p>
+                                    </div>
+                                </div>
+                            }
+                        } else {
+                            html! {}
+                        }
+                    }
                 </div>
 
 
@@ -137,7 +199,7 @@ impl Component for SocialHome {
                                 class="d-flex justify-content-center align-items-center rounded me-3 border"
                             >
                                 <img
-                                    src="/assets/icons/google-avatar.png"
+                                    src="/assets/icons/facebook-avatar.png"
                                     class="w-50"
                                 />
                             </div>
@@ -147,7 +209,7 @@ impl Component for SocialHome {
                                 style="min-width: 40px;"
                             >
                                 <Anchor
-                                    route=AppRoute::Settings
+                                    route=AppRoute::SocialSettings
                                     classes="text-decoration-none fw-bold mb-0"
                                 >
                                     <span
@@ -200,7 +262,7 @@ impl Component for SocialHome {
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                 <li>
-                                    <Anchor route=AppRoute::Settings classes="dropdown-item fs-7">
+                                    <Anchor route=AppRoute::SocialSettings classes="dropdown-item fs-7">
                                         {"Settings"}
                                     </Anchor>
                                 </li>
@@ -231,7 +293,7 @@ impl Component for SocialHome {
                                 style="min-width: 40px;"
                             >
                                 <Anchor
-                                    route=AppRoute::Settings
+                                    route=AppRoute::SocialSettings
                                     classes="text-decoration-none fw-bold mb-0"
                                 >
                                     <span
@@ -284,7 +346,7 @@ impl Component for SocialHome {
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                 <li>
-                                    <Anchor route=AppRoute::Settings classes="dropdown-item fs-7">
+                                    <Anchor route=AppRoute::ApisSettings classes="dropdown-item fs-7">
                                         {"Settings"}
                                     </Anchor>
                                 </li>

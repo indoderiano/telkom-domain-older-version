@@ -31,7 +31,7 @@ use crate::pages::{
         applications::home::ApplicationHome,
         apis::{
             home::ApisHome,
-            settings::Settings,
+            settings::ApisSettings,
         },
         sso::{
             home::SsoHome,
@@ -42,6 +42,7 @@ use crate::pages::{
     authentication::{
         social::{
             home::SocialHome,
+            settings::SocialSettings,
         },
     },
 
@@ -64,7 +65,7 @@ use crate::components::{
 #[derive(Switch, Clone)]
 pub enum AppRoute {
     #[to = "/apis/settings"]
-    Settings,
+    ApisSettings,
     #[to = "/apis"]
     ApisHome,
     #[to = "/applications"]
@@ -73,6 +74,8 @@ pub enum AppRoute {
     CreateSso,
     #[to = "/sso"]
     SsoHome,
+    #[to = "/social/settings"]
+    SocialSettings,
     #[to = "/social"]
     SocialHome,
     #[to = "/login/password"]
@@ -123,11 +126,12 @@ impl Component for App {
                 match switch {
                     AppRoute::GettingStarted => html! {<GettingStarted/>},
                     AppRoute::ApisHome => html! {<ApisHome/>},
-                    AppRoute::Settings => html! {<Settings/>},
+                    AppRoute::ApisSettings => html! {<ApisSettings/>},
                     AppRoute::ApplicationHome => html! {<ApplicationHome/>},
                     AppRoute::SsoHome => html! {<SsoHome/>},
                     AppRoute::CreateSso => html! {<CreateSso/>},
                     AppRoute::SocialHome => html! {<SocialHome/>},
+                    AppRoute::SocialSettings => html! {<SocialSettings/>},
                     _ => {
                         route_service.set_route("/manage", ());
                         html! {<GettingStarted/>}

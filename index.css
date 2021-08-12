@@ -64,6 +64,9 @@
 .text-color-secondary {
     color: #635dff;
 }
+.text-color-disabled {
+    color: #65676e;
+}
 
 .bg-input-grey, .form-control.bg-input-grey {
     background-color: rgb(239, 240, 242);

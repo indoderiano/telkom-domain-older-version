@@ -78,7 +78,7 @@ impl Component for ApisHome {
                                 style="min-width: 40px;"
                             >
                                 <Anchor
-                                    route=AppRoute::Settings
+                                    route=AppRoute::ApisSettings
                                     classes="text-decoration-none fw-bold mb-0"
                                 >
                                     <span
@@ -149,7 +149,7 @@ impl Component for ApisHome {
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                 <li>
-                                    <Anchor route=AppRoute::Settings classes="dropdown-item fs-7">
+                                    <Anchor route=AppRoute::ApisSettings classes="dropdown-item fs-7">
                                         {"Settings"}
                                     </Anchor>
                                 </li>
