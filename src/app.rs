@@ -73,12 +73,10 @@ pub enum AppRoute {
     LoginPage,
     #[to = "/register"]
     RegisterPage,
-
+    #[to = "/getting-started"]
+    GettingStarted,
     #[to = "/"]
     Home,
-
-    #[to = "/manage"]
-    GettingStarted,
 }
 
 pub struct App {
