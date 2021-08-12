@@ -20,7 +20,6 @@ use crate::pages::{
     // details::Details,
     home_page::HomePage,
     getting_started::GettingStarted,
-    activity::Activity,
     // reducer_global::ReducerGlobal,
 
     // applications::apis::{
@@ -62,8 +61,6 @@ pub enum AppRoute {
     Settings,
     #[to = "/apis"]
     ApisHome,
-    #[to = "/activity"]
-    Activity,
     #[to = "/applications"]
     ApplicationHome,
     #[to = "/sso/create-sso"]
@@ -76,10 +73,12 @@ pub enum AppRoute {
     LoginPage,
     #[to = "/register"]
     RegisterPage,
-    #[to = "/getting-started"]
-    GettingStarted,
+
     #[to = "/"]
     Home,
+
+    #[to = "/manage"]
+    GettingStarted,
 }
 
 pub struct App {
@@ -116,7 +115,6 @@ impl Component for App {
             let mut route_service = RouteService::new();
             if is_logged_in {
                 match switch {
-                    AppRoute::Activity => html!{<Activity/>},
                     AppRoute::GettingStarted => html! {<GettingStarted/>},
                     AppRoute::ApisHome => html! {<ApisHome/>},
                     AppRoute::Settings => html! {<Settings/>},
