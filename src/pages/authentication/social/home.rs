@@ -61,14 +61,25 @@ impl Component for SocialHome {
                         <div
             
                         >
-                            <button
-                                type="button"
-                                class="btn btn-primary d-flex align-items-center"
-                                data-bs-toggle="modal" data-bs-target="#exampleModal"
+                            // <button
+                            //     type="button"
+                            //     class="btn btn-primary d-flex align-items-center"
+                            //     data-bs-toggle="modal" data-bs-target="#exampleModal"
+                            // >
+                            //     <i class="bi bi-plus me-2" style="margin-left: -5px;"></i>
+                            //     <span>{"Create Connection"}</span>
+                            // </button>
+                            <Anchor
+                                route=AppRoute::SocialCreate
+                                // classes="text-decoration-none domain-link-dark"
+                                // type="button"
+                                classes="btn btn-primary d-flex align-items-center"
+                                // data-bs-toggle="modal" data-bs-target="#exampleModal"
                             >
+                                // <i class="bi bi-arrow-left me-2"></i>
                                 <i class="bi bi-plus me-2" style="margin-left: -5px;"></i>
                                 <span>{"Create Connection"}</span>
-                            </button>
+                            </Anchor>
                         </div>
                     </div>
                     <p>

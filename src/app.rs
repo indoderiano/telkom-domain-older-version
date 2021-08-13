@@ -43,6 +43,7 @@ use crate::pages::{
         social::{
             home::SocialHome,
             settings::SocialSettings,
+            create::SocialCreate,
         },
     },
 
@@ -74,6 +75,8 @@ pub enum AppRoute {
     CreateSso,
     #[to = "/sso"]
     SsoHome,
+    #[to = "/social/create"]
+    SocialCreate,
     #[to = "/social/settings"]
     SocialSettings,
     #[to = "/social"]
@@ -132,6 +135,7 @@ impl Component for App {
                     AppRoute::CreateSso => html! {<CreateSso/>},
                     AppRoute::SocialHome => html! {<SocialHome/>},
                     AppRoute::SocialSettings => html! {<SocialSettings/>},
+                    AppRoute::SocialCreate => html! {<SocialCreate/>},
                     _ => {
                         route_service.set_route("/manage", ());
                         html! {<GettingStarted/>}
