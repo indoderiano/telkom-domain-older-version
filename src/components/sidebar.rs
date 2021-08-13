@@ -110,7 +110,15 @@ impl Component for Sidebar {
                 style="list-style-type:none; font-weight: 400">
                 <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Database"}
                   </a></li>
-                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Social"} </a>
+                <li>
+                  <Anchor
+                    route=AppRoute::SocialHome
+                    classes="text-decoration-none"
+                  >
+                    <a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">
+                      {"Social"}
+                    </a>
+                  </Anchor>
                 </li>
                 <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Enterprise"}
                   </a></li>
