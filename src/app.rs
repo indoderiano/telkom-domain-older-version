@@ -46,6 +46,9 @@ use crate::pages::{
             settings::SocialSettings,
             create::SocialCreate,
         },
+        enterprise::{
+            home::EnterpriseHome,
+        }
     },
 
     outer::{
@@ -84,6 +87,8 @@ pub enum AppRoute {
     SocialSettings,
     #[to = "/social"]
     SocialHome,
+    #[to = "/enterprise"]
+    EnterpriseHome,
     #[to = "/login/password"]
     RequestPassPage,
     #[to = "/login"]
@@ -140,6 +145,7 @@ impl Component for App {
                     AppRoute::SocialHome => html! {<SocialHome/>},
                     AppRoute::SocialSettings => html! {<SocialSettings/>},
                     AppRoute::SocialCreate => html! {<SocialCreate/>},
+                    AppRoute::EnterpriseHome => html! {<EnterpriseHome/>},
                     _ => {
                         route_service.set_route("/manage", ());
                         html! {<GettingStarted/>}
