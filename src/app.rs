@@ -48,6 +48,7 @@ use crate::pages::{
         },
         enterprise::{
             home::EnterpriseHome,
+            google_apps::EnterpriseGoogle,
         }
     },
 
@@ -87,6 +88,8 @@ pub enum AppRoute {
     SocialSettings,
     #[to = "/social"]
     SocialHome,
+    #[to = "/enterprise/google-app"]
+    EnterpriseGoogle,
     #[to = "/enterprise"]
     EnterpriseHome,
     #[to = "/login/password"]
@@ -146,6 +149,7 @@ impl Component for App {
                     AppRoute::SocialSettings => html! {<SocialSettings/>},
                     AppRoute::SocialCreate => html! {<SocialCreate/>},
                     AppRoute::EnterpriseHome => html! {<EnterpriseHome/>},
+                    AppRoute::EnterpriseGoogle => html! {<EnterpriseGoogle/>},
                     _ => {
                         route_service.set_route("/manage", ());
                         html! {<GettingStarted/>}

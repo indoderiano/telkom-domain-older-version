@@ -1,21 +1,35 @@
-<!doctype html>
-<html lang="en">
+use yew::prelude::*;
+use yew_router::components::RouterAnchor;
+use crate::app::AppRoute;
 
-<head>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="index.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    <title>Telkom Domain</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
-    <script src="/pkg/bundle.js" defer></script>
-</head>
+pub struct EnterpriseGoogle {
+    // link: ComponentLink<Self>
+}
 
-<body>
-    <div
+pub enum Msg {}
+
+impl Component for EnterpriseGoogle {
+    type Message = Msg;
+    type Properties = ();
+
+    fn create(_: Self::Properties, _link: ComponentLink<Self>) -> Self {
+        EnterpriseGoogle {
+            // link
+        }
+    }
+
+    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
+        true
+    }
+
+    fn change(&mut self, _: Self::Properties) -> ShouldRender {
+        false
+    }
+
+    fn view(&self) -> Html {
+        type Anchor = RouterAnchor<AppRoute>;
+        html! {
+            <div
                 class="py-5 px-4 m-auto"
                 style="max-width: 1048px; font-size:14px;"
             >
@@ -51,7 +65,7 @@
                     <i class="bi bi-briefcase text-color-secondary" style="font-size:150px; opacity:.5;"></i>
 
                     <div>
-                        No items have been added to this section.
+                        {"No items have been added to this section."}
                     </div>
                     <button
                         class="btn btn-primary"
@@ -77,6 +91,6 @@
                 </div>
 
             </div>
-</body>
-
-</html>
+        }
+    }
+}

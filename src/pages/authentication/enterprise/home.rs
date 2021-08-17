@@ -189,7 +189,7 @@ impl Component for EnterpriseHome {
 
                 <div>
                     <Anchor
-                        route=AppRoute::SocialSettings
+                        route=AppRoute::EnterpriseGoogle
                         classes="d-flex border-bottom border-1 list-hover justify-content-between pe-auto text-decoration-none"
                     >
                         <div

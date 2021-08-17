@@ -72,6 +72,10 @@
   background-color: rgb(239, 240, 242);
 }
 
+.card-hover:hover {
+  box-shadow: 0px 2px 4px rgb(0 0 0 / 12%);
+}
+
 @media (min-width: 1280px) {
   .sidebar {
       width: 265px;
