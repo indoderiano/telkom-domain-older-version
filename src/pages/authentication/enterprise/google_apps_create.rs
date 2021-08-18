@@ -1,26 +1,37 @@
-<!doctype html>
-<html lang="en">
+use yew::prelude::*;
+use yew_router::components::RouterAnchor;
+use crate::app::AppRoute;
 
-<head>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="index.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    <title>Telkom Domain</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
-    <script src="/pkg/bundle.js" defer></script>
-</head>
+pub struct EnterpriseGoogleCreate {}
 
-<body>
-    <div
+pub enum Msg {}
+
+impl Component for EnterpriseGoogleCreate {
+    type Message = Msg;
+    type Properties = ();
+
+    fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
+        EnterpriseGoogleCreate {}
+    }
+
+    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
+        true
+    }
+
+    fn change(&mut self, _: Self::Properties) -> ShouldRender {
+        false
+    }
+
+    fn view(&self) -> Html {
+        type Anchor = RouterAnchor<AppRoute>;
+        html! {
+
+            <div
                 class="py-5 px-4 m-auto"
                 style="max-width: 1048px; font-size:14px;"
             >
                 <Anchor
-                    route=AppRoute::EnterpriseHome
+                    route=AppRoute::EnterpriseGoogle
                     classes="text-decoration-none domain-link-dark"
                 >
                     <i class="bi bi-arrow-left me-2"></i>
@@ -269,43 +280,18 @@
                                     </div>
                                 </div>
                 
-                                <button type="button" class="btn btn-primary mb-5 mt-3">{"Save Changes"}</button>
+                                <button type="button" class="btn btn-primary mb-5 mt-3">{"Create"}</button>
                 
                 
                             </div>
                         </div>
                 
-                    </div>
-    
-                    <div
-                        style="font-size: 14px;"
-                    >
-                        <p
-                            class="fw-bold"
-                        >
-                            {"Danger Zone"}
-                        </p>
-    
-                        <div class="alert alert-danger d-flex flex-row justify-content-between" role="alert">
-                            <div>
-                                <p
-                                    class="fw-bold"
-                                >
-                                    {"Delete Connection"}
-                                </p>
-                                {"Once confirmed, this operation can't be undone!"}
-                            </div>
-                            <div>
-                                <button
-                                    type="button"
-                                    class="btn btn-danger"
-                                >{"Delete"}</button>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
             </div>
-</body>
 
-</html>
+
+        }
+    }
+}
