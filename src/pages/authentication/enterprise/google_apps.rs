@@ -77,10 +77,10 @@ impl Component for EnterpriseGoogle {
                                 margin: 20px"
                     >
                         <Anchor
-                            route=AppRoute::CreateSso
+                            route=AppRoute::EnterpriseGoogleCreate
                             classes="text-decoration-none text-light px-2 link-primary pe-auto"
                             >
-                                {"+ Create SSO Integration"}
+                                {"+ Create Connection"}
                         </Anchor>
                     </button>
                     <a

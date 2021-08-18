@@ -184,6 +184,7 @@ impl Component for EnterpriseHome {
 
 
                 <div class="alert alert-warning mb-5" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
                     {"This feature is not included in your current plan. Upgrade your Subscription Enterprise connections in production."}
                 </div>
 
