@@ -15,297 +15,485 @@
 </head>
 
 <body>
-    <div
-                class="py-5 px-4 m-auto"
-                style="max-width: 1048px; font-size:14px;"
+    <div>
+
+        <div
+            class="border rounded p-4 d-flex flex-column mb-5"
+            style="font-size: 14px;"
+        >
+            <div
+                class="d-flex flex-row border-bottom"
             >
-                <Anchor
-                    route=AppRoute::EnterpriseHome
-                    classes="text-decoration-none domain-link-dark"
-                >
-                    <i class="bi bi-arrow-left me-2"></i>
-                    {"Back to Google Workplace"}
-                </Anchor>
-
                 <div
-                    class="d-flex mb-5 mt-3 align-items-center"
+                    class="w-50 text-color-primary fw-bold"
+                    style="font-size: 16px;"
+                >
+                    {"Settings"}
+                </div>
+                <div
+                    class="w-50"
                 >
                     <div
-                        style="flex: 0 0 auto; width: 64px; height: 64px;"
-                        class="d-flex justify-content-center align-items-center rounded me-3 border"
+                        class="mb-4"
                     >
-                        <img
-                            src="/assets/icons/google-avatar.png"
-                            class="w-75"
-                            style="filter: grayscale(100%);"
-                        />
-                    </div>
-
-                    <div
-                        class="d-flex flex-column"
-                    >
-                        <h2>{"New Google Workspace Connection"}</h2>
-                    </div>
-                </div>
-
-                <div>
-                    <div
-                        class="border rounded p-4 d-flex flex-column mb-5"
-                        style="font-size: 14px;"
-                    >
-                        <div
-                            class="d-flex flex-row border-bottom"
-                        >
-                            <div
-                                class="text-color-primary fw-bold"
-                                style="width: 40%;"
-                            >
-                                {"General"}
-                            </div>
-                            <div
-                                style="width: 60%;"
-                            >
-                                <div
-                                    class="mb-4"
-                                >
-                                    <p class="mb-2 fw-bold">
-                                        {"Name"}
-                                    </p>
-                                    <div class="input-group mb-2">
-                                        <input
-                                            type="text"
-                                            class="form-control bg-input-grey"
-                                            aria-label="Dollar amount (with dot and two decimal places)"
-                                            value="google-oauth2"
-                                        />   
-                                    </div>
-                                    <p
-                                        class="text-color-disabled"
-                                    >
-                                        {"If you are triggering a login manually, this is the identifier you would use on the connection parameter."}
-                                    </p>
-                                </div>
-                
-                                <div
-                                    class="mb-4"
-                                >
-                                    <p class="mb-2 fw-bold">
-                                        {"Client ID"}
-                                    </p>
-                                    <div class="input-group mb-2">
-                                        <input
-                                            type="text"
-                                            class="form-control"
-                                            aria-label="Dollar amount (with dot and two decimal places)"
-                                            placeholder="Leave blank to use telkom-dev keys"
-                                        />   
-                                    </div>
-                                    <a
-                                        href="javascript: void(0)"
-                                        class="text-decoration-none"
-                                    >
-                                        <span
-                                            style="
-                                                white-space: nowrap;
-                                                text-overflow: ellipsis;
-                                                overflow: hidden;
-                                                font-size: 14px;
-                                                text-decoration: none;
-                                            "
-                                        >
-                                            {"How to obtain a Client ID?"}
-                                        </span>
-                                    </a>
-                                </div>
-                
-                                <div
-                                    class="mb-5"
-                                >
-                                    <p class="mb-2 fw-bold">
-                                        {"Client Secret"}
-                                    </p>
-                                    <div class="input-group mb-2">
-                                        <input
-                                            type="text"
-                                            class="form-control"
-                                            aria-label="Dollar amount (with dot and two decimal places)"
-                                            placeholder="Leave blank to use telkom-dev keys"
-                                        />
-                                    </div>
-                                    <p
-                                        class="text-color-disabled"
-                                    >
-                                        {"For security purposes, we don’t show your existing Client Secret."}
-                                    </p>
-                                </div>
-    
-                                <div
-                                    class="mb-5"
-                                >
-                                    <p class="mb-2 fw-bold">
-                                        {"Allowed Mobile Client IDs"}
-                                    </p>
-                                    <div class="input-group mb-2">
-                                        <textarea
-                                            class="form-control"
-                                            rows="4"
-                                        ></textarea>
-                                    </div>
-                                    <p
-                                        class="text-color-disabled"
-                                    >
-                                        {"You can specify multiple valid client IDs by comma-separating them"}
-                                    </p>
-                                </div>
-    
-                                <div
-                                    class="mb-5"
-                                >
-                                    <p class="mb-2 fw-bold">
-                                        {"Attributes"}
-                                    </p>
-                                    <div
-                                        class="d-flex"
-                                    >
-                                        <div class="form-check mb-2 d-flex align-items-center w-50">
-                                            <input
-                                                class="form-check-input me-2 mt-0" style="font-size: 16px;" type="checkbox"
-                                                checked=true
-                                                disabled=true
-                                            />
-                                            <label class="form-check-label" style="font-size: 14px;" for="flexCheckCheckedDisabled">
-                                                {"Basic Profile "}
-                                                <i class="bi bi-question-circle"></i>
-                                                <span class="badge bg-light text-dark" style="text-transform: uppercase; letter-spacing: 1px;">{"REQUIRED"}</span>
-                                            </label>
-                                        </div>
-    
-                                        <div class="form-check mb-2 d-flex align-items-center w-50">
-                                            <input
-                                                class="form-check-input me-2 mt-0"
-                                                style="font-size: 16px;"
-                                                type="checkbox"
-                                                checked=true
-                                                disabled=true
-                                            />
-                                            <label class="form-check-label" style="font-size: 14px;" for="flexCheckCheckedDisabled">
-                                                {"Extended Profile "}
-                                                <i class="bi bi-question-circle"></i>
-                                                <span class="badge bg-light text-dark" style="text-transform: uppercase; letter-spacing: 1px;">{"REQUIRED"}</span>
-                                            </label>
-                                        </div>
-    
-                                    </div>
-                                </div>
-    
-                                <div
-                                    class="mb-5"
-                                >
-                                    <p class="mb-2 fw-bold">
-                                        {"Permissions"}
-                                    </p>
-                                    <div
-                                        class="d-flexs"
-                                    >
-                                        <div
-                                            class="form-check mb-2 d-flex align-items-center d-inline-flex"
-                                            style="width: 49%;"
-                                        >
-                                            <input class="form-check-input me-2 mt-0" style="font-size: 16px;" type="checkbox"/>
-                                            <label class="form-check-label" style="font-size: 14px;" for="flexCheckCheckedDisabled">
-                                                {"Contacts"}
-                                                <i class="bi bi-question-circle ms-1"></i>
-                                            </label>
-                                        </div>
-    
-                                        <div
-                                            class="form-check mb-2 d-flex align-items-center w-50 d-inline-flex"
-                                            style="width: 49%;"
-                                        >
-                                            <input class="form-check-input me-2 mt-0" style="font-size: 16px;" type="checkbox"/>
-                                            <label class="form-check-label" style="font-size: 14px;" for="flexCheckCheckedDisabled">
-                                                {"Blogger"}
-                                                <i class="bi bi-question-circle ms-1"></i>
-                                            </label>
-                                        </div>
-    
-                                        <div
-                                            class="form-check mb-2 d-flex align-items-center w-50 d-inline-flex"
-                                            style="width: 49%;"    
-                                        >
-                                            <input class="form-check-input me-2 mt-0" style="font-size: 16px;" type="checkbox"/>
-                                            <label class="form-check-label" style="font-size: 14px;" for="flexCheckCheckedDisabled">
-                                                {"Calendar"}
-                                                <i class="bi bi-question-circle ms-1"></i>
-                                            </label>
-                                        </div>
-    
-                                    </div>
-                                </div>
-                
-                            </div>
-                        </div>    
-                
-                        <div
-                            class="d-flex flex-row border-bottom mt-5"
-                        >
-                            <div
-                                class="text-color-primary fw-bold"
-                                style="width: 40%;"
-                            >
-                                {"Advanced"}
-                            </div>
-                            <div
-                                style="width: 60%;"
-                            >
-                                <div
-                                    class="mb-4"
-                                >
-                                    <p class="mb-2 fw-bold">
-                                        {"Sync user profile attributes at each login"}
-                                    </p>
-                                    <div class="form-check form-switch fs-3 mb-4">
-                                        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"/>
-                                    </div>
-                                </div>
-                
-                                <button type="button" class="btn btn-primary mb-5 mt-3">{"Save Changes"}</button>
-                
-                
-                            </div>
-                        </div>
-                
-                    </div>
-    
-                    <div
-                        style="font-size: 14px;"
-                    >
-                        <p
-                            class="fw-bold"
-                        >
-                            {"Danger Zone"}
+                        <p class="mb-2 fw-bold">
+                            {"Friendly Name"}
                         </p>
-    
-                        <div class="alert alert-danger d-flex flex-row justify-content-between" role="alert">
-                            <div>
-                                <p
-                                    class="fw-bold"
-                                >
-                                    {"Delete Connection"}
-                                </p>
-                                {"Once confirmed, this operation can't be undone!"}
-                            </div>
-                            <div>
-                                <button
-                                    type="button"
-                                    class="btn btn-danger"
-                                >{"Delete"}</button>
-                            </div>
+                        <div class="input-group mb-2">
+                            <input
+                                type="text"
+                                class="form-control bg-input-grey"
+                                aria-label="Dollar amount (with dot and two decimal places)"
+                                placeholder="My Company Inc."
+                            />   
                         </div>
                     </div>
-                </div>
 
+                    <div
+                        class="mb-4"
+                    >
+                        <p class="mb-2 fw-bold">
+                            {"Support Email"}
+                        </p>
+                        <div class="input-group mb-2">
+                            <input
+                                type="text"
+                                class="form-control bg-input-grey"
+                                aria-label="Dollar amount (with dot and two decimal places)"
+                                placeholder="support@my_company.com"
+                            />   
+                        </div>
+                    </div>
+
+                    <div
+                        class="mb-4"
+                    >
+                        <p class="mb-2 fw-bold">
+                            {"Support URL"}
+                        </p>
+                        <div class="input-group mb-4">
+                            <input
+                                type="text"
+                                class="form-control bg-input-grey"
+                                aria-label="Dollar amount (with dot and two decimal places)"
+                                placeholder="https://my-company.com"
+                            />   
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary mb-5 mt-3">{"Save"}</button>
+    
+                </div>
             </div>
+    
+    
+            
+            <div
+                class="d-flex flex-row border-bottom mt-5"
+            >
+                <div
+                    class="w-50"
+                >
+                    <div
+                        class="text-color-primary fw-bold"
+                        style="font-size: 16px;"
+                    >
+                        {"Environment Tag"}
+                    </div>
+
+                    <p
+                        class="mt-2 text-color-disabled"
+                    >
+                        {"Assign an environment tag to your tenant to differentiate between development, staging and production environments."}
+                    </p>
+                    <p
+                        class="text-color-disabled"
+                    >
+                        {"Higher rate limits are applied to tenants tagged as Production with a paid subscription."}
+                    </p>
+                </div>
+                <div
+                    class="w-50"
+                >
+                    <div
+                        class="mb-4"
+                    >
+                        <p class="mb-2 fw-bold">
+                            {"Assign Environment Tag"}
+                        </p>
+                        <div class="card card-hover mb-2" style="cursor: pointer;">
+                            <div class="card-body p-3">
+
+                                <div
+                                    class="d-flex"
+                                >
+                                    <div
+                                        style="flex: 0 0 auto; width: 40px; height: 40px;"
+                                        class="d-flex justify-content-center align-items-center rounded me-3 border bg-domain-secondary"
+                                    >
+                                        <i class="bi bi-code-slash fs-5 text-color-secondary"></i>
+                                    </div>
+
+                                    <div
+                                        class="d-grid"
+                                        style="min-width: 40px;"
+                                    >
+                                        <div
+                                            class="text-decoration-none fw-bold mb-0"
+                                        >
+                                            <span
+                                                class="fw-bold"
+                                                style="
+                                                    white-space: nowrap;
+                                                    text-overflow: ellipsis;
+                                                    overflow: hidden;
+                                                    text-decoration: none;
+                                                "
+                                            >
+                                                {"Development"}
+                                            </span>
+                                        </div>
+                                        <p
+                                            class="mb-0 text-muted"
+                                        >
+                                            {"The tenant is mainly used by engineers as a working environment to make configuration changes."}
+                                        </p>
+                                    </div>
+                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card card-hover mb-2" style="cursor: pointer;">
+                            <div class="card-body p-3">
+
+                                <div
+                                    class="d-flex"
+                                >
+                                    <div
+                                        style="flex: 0 0 auto; width: 40px; height: 40px;"
+                                        class="d-flex justify-content-center align-items-center rounded me-3 border bg-domain-secondary"
+                                    >
+                                        <i class="bi bi-search fs-5 text-color-secondary"></i>
+                                    </div>
+
+                                    <div
+                                        class="d-grid"
+                                        style="min-width: 40px;"
+                                    >
+                                        <div
+                                            class="text-decoration-none fw-bold mb-0"
+                                        >
+                                            <span
+                                                class="fw-bold"
+                                                style="
+                                                    white-space: nowrap;
+                                                    text-overflow: ellipsis;
+                                                    overflow: hidden;
+                                                    text-decoration: none;
+                                                "
+                                            >
+                                                {"Staging"}
+                                            </span>
+                                        </div>
+                                        <p
+                                            class="mb-0 text-muted"
+                                        >
+                                            {"The tenant is mainly used by your testing team and is used to test changes before releasing them to Production."}
+                                        </p>
+                                    </div>
+                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card card-hover mb-2" style="cursor: pointer;">
+                            <div class="card-body p-3">
+
+                                <div
+                                    class="d-flex"
+                                >
+                                    <div
+                                        style="flex: 0 0 auto; width: 40px; height: 40px;"
+                                        class="d-flex justify-content-center align-items-center rounded me-3 border bg-domain-secondary"
+                                    >
+                                        <i class="bi bi-check2 fs-4 text-color-secondary"></i>
+                                    </div>
+
+                                    <div
+                                        class="d-grid"
+                                        style="min-width: 40px;"
+                                    >
+                                        <div
+                                            class="text-decoration-none fw-bold mb-0"
+                                        >
+                                            <span
+                                                class="fw-bold"
+                                                style="
+                                                    white-space: nowrap;
+                                                    text-overflow: ellipsis;
+                                                    overflow: hidden;
+                                                    text-decoration: none;
+                                                "
+                                            >
+                                                {"Production"}
+                                            </span>
+                                        </div>
+                                        <p
+                                            class="mb-0 text-muted"
+                                        >
+                                            {"The tenant is pointed to a production instance used by your end users. This environment should be treated carefully since it could break your application."}
+                                        </p>
+                                    </div>
+                    
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <button type="button" class="btn btn-primary mb-5 mt-3">{"Save"}</button>
+    
+                </div>
+            </div>
+    
+    
+            <div
+                class="d-flex flex-row border-bottom mt-5"
+            >
+                <div
+                    class="w-50 text-color-primary fw-bold"
+                >
+                    {"RBAC Settings"}
+                </div>
+                <div
+                    class="w-50"
+                >
+                    <div
+                        class="mb-4"
+                    >
+                        <p class="mb-2 fw-bold">
+                            {"Default Audience"}
+                        </p>
+                        <div class="input-group mb-2">
+                            <input
+                                type="text"
+                                class="form-control bg-input-grey"
+                                aria-label="Dollar amount (with dot and two decimal places)"
+                                placeholder="https://your-default-endpoint/"
+                            />   
+                        </div>
+                        <p>
+                            {"API Audience to use by default for API Authorization flows . Note: This setting is equivalent to appending the audience to every authorization request made to the tenant for every application. This will cause new behavior that might result in breaking changes for some of your applications. If you require assistance, contact support."}
+                        </p>
+                    </div>
+                    <div
+                        class="mb-4"
+                    >
+                        <p class="mb-2 fw-bold">
+                            {"Default Directory"}
+                        </p>
+                        <div class="input-group mb-2">
+                            <input
+                                type="text"
+                                class="form-control bg-input-grey"
+                                aria-label="Dollar amount (with dot and two decimal places)"
+                                placeholder="Connection Name"
+                            />   
+                        </div>
+                        <p>
+                            {"Name of the connection to be use for Password Grant exchanges. The default_directory value should be the exact name of an existing connections of one of the following strategies: ad, auth0, email, sms, waad, adfs"}
+                        </p>
+                    </div>
+
+
+                    <button type="button" class="btn btn-primary mb-5 mt-3">{"Save"}</button>
+    
+    
+                </div>
+            </div>
+
+
+            <div
+                class="d-flex flex-row border-bottom mt-5"
+            >
+                <div
+                    class="w-50"
+                >
+                    <div
+                        class="text-color-primary fw-bold"
+                        style="font-size: 16px;"
+                    >
+                        {"Error Pages"}
+                    </div>
+                </div>
+                <div
+                    class="w-50"
+                >
+                    <div
+                        class="mb-4"
+                    >
+                        <p class="mb-2 fw-bold">
+                            {"Default Error Page"}
+                        </p>
+                        <div class="card card-hover mb-2" style="cursor: pointer;">
+                            <div class="card-body p-3">
+
+                                <div
+                                    class="d-flex"
+                                >
+                                    <input class="form-check-input me-2" type="radio" name="flexRadioDefault" id="flexRadioDefault1"/>
+
+                                    <div
+                                        class="d-grid"
+                                        style="min-width: 40px;"
+                                    >
+                                        <div
+                                            class="text-decoration-none fw-bold mb-0"
+                                        >
+                                            <span
+                                                class="fw-bold"
+                                                style="
+                                                    white-space: nowrap;
+                                                    text-overflow: ellipsis;
+                                                    overflow: hidden;
+                                                    text-decoration: none;
+                                                "
+                                            >
+                                                {"Generic"}
+                                            </span>
+                                        </div>
+                                        <p
+                                            class="mb-0 text-muted"
+                                        >
+                                            {"Use a generic error page generated from your account data"}
+                                        </p>
+                                    </div>
+                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card card-hover mb-2" style="cursor: pointer;">
+                            <div class="card-body p-3">
+
+                                <div
+                                    class="d-flex"
+                                >
+                                    <input class="form-check-input me-2" type="radio" name="flexRadioDefault" id="flexRadioDefault2"/>
+
+                                    <div
+                                        class="d-grid"
+                                        style="min-width: 40px;"
+                                    >
+                                        <div
+                                            class="text-decoration-none fw-bold mb-0"
+                                        >
+                                            <span
+                                                class="fw-bold"
+                                                style="
+                                                    white-space: nowrap;
+                                                    text-overflow: ellipsis;
+                                                    overflow: hidden;
+                                                    text-decoration: none;
+                                                "
+                                            >
+                                                {"Custom"}
+                                            </span>
+                                        </div>
+                                        <p
+                                            class="mb-0 text-muted"
+                                        >
+                                            {"Redirect users to a specified URL instead of showing the default error page"}
+                                        </p>
+                                    </div>
+                    
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <button type="button" class="btn btn-primary mb-5 mt-3">{"Save"}</button>
+    
+                </div>
+            </div>
+
+            <div
+                class="d-flex flex-row border-bottom mt-5"
+            >
+                <div
+                    class="w-50 text-color-primary fw-bold"
+                    style="font-size: 16px;"
+                >
+                    {"Languages"}
+                </div>
+                <div
+                    class="w-50"
+                >
+                    <div
+                        class="mb-4"
+                    >
+                        <p class="mb-2 fw-bold">
+                            {"Default Language"}
+                        </p>
+                        <select class="form-select" aria-label="Default select example">
+                            <option selected>Open this select menu</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                    </div>
+
+                    <div
+                        class="mb-4"
+                    >
+                        <p class="mb-2 fw-bold">
+                            {"Support Languages"}
+                        </p>
+                        <div
+                            class="d-flexs"
+                        >
+                            <div
+                                class="form-check mb-2 d-flex align-items-center d-inline-flex"
+                                style="width: 49%;"
+                            >
+                                <input class="form-check-input me-2 mt-0" style="font-size: 16px;" type="checkbox"/>
+                                <label class="form-check-label" style="font-size: 14px;" for="flexCheckCheckedDisabled">
+                                    {"Bosnian (bs)"}
+                                </label>
+                            </div>
+
+                            <div
+                                class="form-check mb-2 d-flex align-items-center w-50 d-inline-flex"
+                                style="width: 49%;"
+                            >
+                                <input class="form-check-input me-2 mt-0" style="font-size: 16px;" type="checkbox"/>
+                                <label class="form-check-label" style="font-size: 14px;" for="flexCheckCheckedDisabled">
+                                    {"Bulgarian (bg)"}
+                                </label>
+                            </div>
+
+                            <div
+                                class="form-check mb-2 d-flex align-items-center w-50 d-inline-flex"
+                                style="width: 49%;"    
+                            >
+                                <input class="form-check-input me-2 mt-0" style="font-size: 16px;" type="checkbox"/>
+                                <label class="form-check-label" style="font-size: 14px;" for="flexCheckCheckedDisabled">
+                                    {"Croatian (hr)"}
+                                </label>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary mb-5 mt-3">{"Save"}</button>
+    
+                </div>
+            </div>
+    
+        </div>
+
+    </div>
 </body>
 
 </html>

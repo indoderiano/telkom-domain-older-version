@@ -16,17 +16,16 @@ use crate::store::reducer_account::{
 };
 
 use crate::pages::{
-    // home::Home,
-    // details::Details,
+
+    outer::{
+        login_page::LoginPage,
+        register_page::RegisterPage,
+        password_page::RequestPassPage,
+    },
+    
     home_page::HomePage,
     getting_started::GettingStarted,
     activity::Activity,
-    // reducer_global::ReducerGlobal,
-
-    // applications::apis::{
-    //     home::ApisHome,
-    //     settings::Settings
-    // },
 
     applications::{
         applications::home::ApplicationHome,
@@ -53,26 +52,29 @@ use crate::pages::{
         }
     },
 
-    outer::{
-        login_page::LoginPage,
-        register_page::RegisterPage,
-        password_page::RequestPassPage,
-    },
-    // reducer_account_view::ReducerAccountView,
-    // testing_fetch::TestingFetch,
+    settings::{
+        home::SettingsHome,
+    }
 
 };
 
 use crate::components::{
     navtop::Navtop,
     sidebar::Sidebar,
-    // landing_page_navtop::LandingPageNavTop,
 };
 
 #[derive(Switch, Clone)]
 pub enum AppRoute {
+    #[to = "/login/password"]
+    RequestPassPage,
+    #[to = "/login"]
+    LoginPage,
+    #[to = "/register"]
+    RegisterPage,
     #[to = "/apis/settings"]
     ApisSettings,
+    #[to = "/getting-started"]
+    GettingStarted,
     #[to = "/apis"]
     ApisHome,
     #[to = "/activity"]
@@ -95,14 +97,8 @@ pub enum AppRoute {
     EnterpriseGoogle,
     #[to = "/enterprise"]
     EnterpriseHome,
-    #[to = "/login/password"]
-    RequestPassPage,
-    #[to = "/login"]
-    LoginPage,
-    #[to = "/register"]
-    RegisterPage,
-    #[to = "/getting-started"]
-    GettingStarted,
+    #[to = "/tenant"]
+    SettingsHome,
     #[to = "/"]
     Home,
 }
@@ -154,6 +150,7 @@ impl Component for App {
                     AppRoute::EnterpriseHome => html! {<EnterpriseHome/>},
                     AppRoute::EnterpriseGoogle => html! {<EnterpriseGoogle/>},
                     AppRoute::EnterpriseGoogleCreate => html! {<EnterpriseGoogleCreate/>},
+                    AppRoute::SettingsHome => html! {<SettingsHome/>},
                     _ => {
                         route_service.set_route("/manage", ());
                         html! {<GettingStarted/>}
