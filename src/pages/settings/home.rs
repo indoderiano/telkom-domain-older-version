@@ -1,5 +1,6 @@
 use yew::prelude::*;
 use super::general::SettingsGeneral;
+use super::tenant_members::SettingsTenantMembers;
 
 pub enum Content {
     General,
@@ -107,6 +108,7 @@ impl Component for SettingsHome {
                 {
                     match self.content {
                         Content::General => html! { <SettingsGeneral/> },
+                        Content::TenantMembers => html! { <SettingsTenantMembers/> },
                         _ => html! {}
                     }
                 }
