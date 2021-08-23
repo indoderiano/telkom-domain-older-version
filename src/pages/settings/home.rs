@@ -1,13 +1,15 @@
 use yew::prelude::*;
 use super::general::SettingsGeneral;
 use super::tenant_members::SettingsTenantMembers;
+use super::custom_domain::SettingsCustomDomain;
+use super::signing_keys::SettingsSigningKeys;
 
 pub enum Content {
     General,
     TenantMembers,
     CustomDomains,
     SigningKeys,
-    Advanced
+    Advanced,
 }
 
 pub struct SettingsHome {
@@ -84,7 +86,6 @@ impl Component for SettingsHome {
                             onclick=self.link.callback(|_| Msg::ChangeContent(Content::TenantMembers))
                             class="nav-item">
                         <a
-                            // class="nav-link"
                             class={
                                 match self.content {
                                     Content::TenantMembers => "nav-link active",
@@ -93,11 +94,35 @@ impl Component for SettingsHome {
                             }
                             href="#">{"Tenant Members"}</a>
                         </li>
-                        <li class="nav-item">
-                        <a class="nav-link" href="#">{"Custom Domain"}</a>
+                        <li
+                            onclick=self.link.callback(|_| Msg::ChangeContent(Content::CustomDomains))
+                            class="nav-item">
+                            <a
+                                class={
+                                    match self.content {
+                                        Content::CustomDomains => "nav-link active",
+                                        _ => "nav-link"
+                                    }
+                                }
+                                href="#"
+                            >
+                                {"Custom Domain"}
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">{"Signing Keys"}</a>
+                        <li
+                            onclick=self.link.callback(|_| Msg::ChangeContent(Content::SigningKeys))
+                            class="nav-item">
+                            <a
+                                class={
+                                    match self.content {
+                                        Content::SigningKeys => "nav-link active",
+                                        _ => "nav-link"
+                                    }
+                                }
+                                href="#"
+                            >
+                                {"Signing Keys"}
+                            </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">{"Advanced"}</a>
@@ -109,6 +134,8 @@ impl Component for SettingsHome {
                     match self.content {
                         Content::General => html! { <SettingsGeneral/> },
                         Content::TenantMembers => html! { <SettingsTenantMembers/> },
+                        Content::CustomDomains => html! { <SettingsCustomDomain/> },
+                        Content::SigningKeys => html! { <SettingsSigningKeys/> },
                         _ => html! {}
                     }
                 }
