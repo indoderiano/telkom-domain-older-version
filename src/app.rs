@@ -49,12 +49,21 @@ use crate::pages::{
             home::EnterpriseHome,
             google_apps::EnterpriseGoogle,
             google_apps_create::EnterpriseGoogleCreate,
-        }
+        },
+        passwrodless::home::AuthPasswordLess,
     },
 
     settings::{
         home::SettingsHome,
     }
+    outer::{
+        login_page::LoginPage,
+        register_page::RegisterPage,
+        password_page::RequestPassPage,
+    },
+
+    // reducer_account_view::ReducerAccountView,
+    // testing_fetch::TestingFetch,
 
 };
 
@@ -81,6 +90,8 @@ pub enum AppRoute {
     Activity,
     #[to = "/applications"]
     ApplicationHome,
+    #[to = "/authentication/passwordless"]
+    AuthPasswordless,
     #[to = "/sso/create-sso"]
     CreateSso,
     #[to = "/sso"]
@@ -142,6 +153,7 @@ impl Component for App {
                     AppRoute::ApisHome => html! {<ApisHome/>},
                     AppRoute::ApisSettings => html! {<ApisSettings/>},
                     AppRoute::ApplicationHome => html! {<ApplicationHome/>},
+                    AppRoute::AuthPasswordless => html! {<AuthPasswordLess/>},
                     AppRoute::SsoHome => html! {<SsoHome/>},
                     AppRoute::CreateSso => html! {<CreateSso/>},
                     AppRoute::SocialHome => html! {<SocialHome/>},

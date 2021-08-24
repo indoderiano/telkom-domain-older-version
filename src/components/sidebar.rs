@@ -130,8 +130,15 @@ impl Component for Sidebar {
                     </a>
                   </Anchor>
                 </li>
-                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Passwordless"}
-                  </a></li>
+                <li>
+                  <Anchor
+                    route=AppRoute::AuthPasswordless
+                    classes="text-decoration-none"
+                  >
+                  <a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Passwordless"}
+                  </a>
+                  </Anchor>
+                </li>
                 <li><a class="nav-link" href="#"
                     style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Authentication Profile"} </a>
                 </li>

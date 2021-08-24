@@ -75,6 +75,13 @@
   background-color: rgb(239, 240, 242);
 }
 
+.btn-default {
+  background-color: #e3e4e6;
+}
+.btn-default:hover {
+  background-color: #c9cace !important;
+}
+
 .card-hover:hover {
   box-shadow: 0px 2px 4px rgb(0 0 0 / 12%);
 }
