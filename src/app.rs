@@ -58,6 +58,8 @@ use crate::pages::{
         register_page::RegisterPage,
         password_page::RequestPassPage,
     },
+
+    authentication::passwordless::home::AuthPasswordLess,
     // reducer_account_view::ReducerAccountView,
     // testing_fetch::TestingFetch,
 
@@ -79,6 +81,8 @@ pub enum AppRoute {
     Activity,
     #[to = "/applications"]
     ApplicationHome,
+    #[to = "/authentication/passwordless"]
+    AuthPasswordless,
     #[to = "/sso/create-sso"]
     CreateSso,
     #[to = "/sso"]
@@ -146,6 +150,7 @@ impl Component for App {
                     AppRoute::ApisHome => html! {<ApisHome/>},
                     AppRoute::ApisSettings => html! {<ApisSettings/>},
                     AppRoute::ApplicationHome => html! {<ApplicationHome/>},
+                    AppRoute::AuthPasswordless => html! {<AuthPasswordLess/>},
                     AppRoute::SsoHome => html! {<SsoHome/>},
                     AppRoute::CreateSso => html! {<CreateSso/>},
                     AppRoute::SocialHome => html! {<SocialHome/>},
