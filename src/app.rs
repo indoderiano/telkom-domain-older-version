@@ -32,12 +32,25 @@ use crate::pages::{
         applications::home::ApplicationHome,
         apis::{
             home::ApisHome,
-            settings::Settings,
+            settings::ApisSettings,
         },
         sso::{
             home::SsoHome,
             create_sso::CreateSso,
         },
+    },
+
+    authentication::{
+        social::{
+            home::SocialHome,
+            settings::SocialSettings,
+            create::SocialCreate,
+        },
+        enterprise::{
+            home::EnterpriseHome,
+            google_apps::EnterpriseGoogle,
+            google_apps_create::EnterpriseGoogleCreate,
+        }
     },
 
     outer::{
@@ -61,7 +74,7 @@ use crate::components::{
 #[derive(Switch, Clone)]
 pub enum AppRoute {
     #[to = "/apis/settings"]
-    Settings,
+    ApisSettings,
     #[to = "/apis"]
     ApisHome,
     #[to = "/activity"]
@@ -74,6 +87,18 @@ pub enum AppRoute {
     CreateSso,
     #[to = "/sso"]
     SsoHome,
+    #[to = "/social/create"]
+    SocialCreate,
+    #[to = "/social/settings"]
+    SocialSettings,
+    #[to = "/social"]
+    SocialHome,
+    #[to = "/enterprise/google-app/create"]
+    EnterpriseGoogleCreate,
+    #[to = "/enterprise/google-app"]
+    EnterpriseGoogle,
+    #[to = "/enterprise"]
+    EnterpriseHome,
     #[to = "/login/password"]
     RequestPassPage,
     #[to = "/login"]
@@ -123,11 +148,17 @@ impl Component for App {
                     AppRoute::Activity => html!{<Activity/>},
                     AppRoute::GettingStarted => html! {<GettingStarted/>},
                     AppRoute::ApisHome => html! {<ApisHome/>},
-                    AppRoute::Settings => html! {<Settings/>},
+                    AppRoute::ApisSettings => html! {<ApisSettings/>},
                     AppRoute::ApplicationHome => html! {<ApplicationHome/>},
                     AppRoute::AuthPasswordless => html! {<AuthPasswordLess/>},
                     AppRoute::SsoHome => html! {<SsoHome/>},
                     AppRoute::CreateSso => html! {<CreateSso/>},
+                    AppRoute::SocialHome => html! {<SocialHome/>},
+                    AppRoute::SocialSettings => html! {<SocialSettings/>},
+                    AppRoute::SocialCreate => html! {<SocialCreate/>},
+                    AppRoute::EnterpriseHome => html! {<EnterpriseHome/>},
+                    AppRoute::EnterpriseGoogle => html! {<EnterpriseGoogle/>},
+                    AppRoute::EnterpriseGoogleCreate => html! {<EnterpriseGoogleCreate/>},
                     _ => {
                         route_service.set_route("/manage", ());
                         html! {<GettingStarted/>}
