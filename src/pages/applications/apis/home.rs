@@ -40,9 +40,7 @@ impl Component for ApisHome {
                         >
                             {"APIs"}
                         </div>
-                        <div
-            
-                        >
+                        <div>
                             <button
                                 type="button"
                                 class="btn btn-primary d-flex align-items-center"
