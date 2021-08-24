@@ -50,16 +50,11 @@ use crate::pages::{
             google_apps::EnterpriseGoogle,
             google_apps_create::EnterpriseGoogleCreate,
         },
-        passwrodless::home::AuthPasswordLess,
+        passwordless::home::AuthPasswordLess,
     },
 
     settings::{
         home::SettingsHome,
-    }
-    outer::{
-        login_page::LoginPage,
-        register_page::RegisterPage,
-        password_page::RequestPassPage,
     },
 
     // reducer_account_view::ReducerAccountView,
