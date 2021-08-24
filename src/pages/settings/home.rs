@@ -124,8 +124,20 @@ impl Component for SettingsHome {
                                 {"Signing Keys"}
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">{"Advanced"}</a>
+                        <li
+                            onclick=self.link.callback(|_| Msg::ChangeContent(Content::Advanced))
+                            class="nav-item">
+                            <a
+                                class={
+                                    match self.content {
+                                        Content::Advanced => "nav-link active",
+                                        _ => "nav-link"
+                                    }
+                                }
+                                href="#"
+                            >
+                                {"Advanced"}
+                            </a>
                         </li>
                     </ul>
                 </div>
@@ -136,7 +148,8 @@ impl Component for SettingsHome {
                         Content::TenantMembers => html! { <SettingsTenantMembers/> },
                         Content::CustomDomains => html! { <SettingsCustomDomain/> },
                         Content::SigningKeys => html! { <SettingsSigningKeys/> },
-                        _ => html! {}
+                        Content::Advanced => html! {},
+                        // _ => html! {}
                     }
                 }
             </div>
