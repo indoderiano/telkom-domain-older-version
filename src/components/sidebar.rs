@@ -230,10 +230,26 @@ impl Component for Sidebar {
                 </li>
               </ul>
             </li>
+
+            // <li class="nav-item">
+            //   <a class="nav-link text-color-primary" href="#"> <span style="padding: 4px 8px;"><i
+            //         class="bi bi-gear"></i></span> {"Settings"} </a>
+            // </li>
+
             <li class="nav-item">
-              <a class="nav-link text-color-primary" href="#"> <span style="padding: 4px 8px;"><i
-                    class="bi bi-gear"></i></span> {"Settings"} </a>
+              <Anchor
+                route=AppRoute::SettingsHome
+                classes="text-decoration-none"
+              >
+                <a class="nav-link text-color-primary" href="#">
+                  <span style="padding: 4px 8px;">
+                    <i class="bi bi-gear"></i>
+                  </span>
+                  {"Settings"}
+                </a>
+              </Anchor>
             </li>
+            
           </ul>
           <hr/>
         </div>
