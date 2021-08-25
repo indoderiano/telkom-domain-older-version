@@ -157,7 +157,13 @@ impl Component for Sidebar {
                 style="list-style-type:none; font-weight: 400">
                 <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Users"} </a>
                 </li>
-                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Roles"} </a>
+                <li>
+                  <Anchor
+                    route=AppRoute::RolesManagement
+                    classes="text-decoration-none"
+                  >
+                  <a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Roles"} </a>
+                  </Anchor>
                 </li>
               </ul>
             </li>

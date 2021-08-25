@@ -63,6 +63,7 @@ use crate::pages::{
     // reducer_account_view::ReducerAccountView,
     // testing_fetch::TestingFetch,
 
+    management::roles::home::RolesManagement,
 };
 
 use crate::components::{
@@ -93,6 +94,8 @@ pub enum AppRoute {
     SocialSettings,
     #[to = "/social"]
     SocialHome,
+    #[to = "/user-management-roles"]
+    RolesManagement,
     #[to = "/enterprise/google-app/create"]
     EnterpriseGoogleCreate,
     #[to = "/enterprise/google-app"]
@@ -156,6 +159,7 @@ impl Component for App {
                     AppRoute::SocialHome => html! {<SocialHome/>},
                     AppRoute::SocialSettings => html! {<SocialSettings/>},
                     AppRoute::SocialCreate => html! {<SocialCreate/>},
+                    AppRoute::RolesManagement => html! {<RolesManagement/>},
                     AppRoute::EnterpriseHome => html! {<EnterpriseHome/>},
                     AppRoute::EnterpriseGoogle => html! {<EnterpriseGoogle/>},
                     AppRoute::EnterpriseGoogleCreate => html! {<EnterpriseGoogleCreate/>},
