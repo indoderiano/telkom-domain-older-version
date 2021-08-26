@@ -155,7 +155,13 @@ impl Component for Sidebar {
                   class="bi small bi-caret-down-fill float-end"></i> </a>
               <ul id="menu_item3" class="submenu collapse" data-bs-parent="#nav_accordion"
                 style="list-style-type:none; font-weight: 400">
-                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Users"} </a>
+                <li>
+                  <Anchor
+                    route=AppRoute::UsersManagement
+                    classes="text-decoration-none"
+                  >
+                  <a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Users"} </a>
+                  </Anchor>
                 </li>
                 <li>
                   <Anchor
