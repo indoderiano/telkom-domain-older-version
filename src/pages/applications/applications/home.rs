@@ -26,8 +26,6 @@ impl Component for ApplicationHome {
         // type Anchor = RouterAnchor<Route>;
         html! {
         <>
-
-
                     <div 
                         class="col py-3"
                     >

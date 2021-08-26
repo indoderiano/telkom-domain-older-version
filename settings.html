@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="test.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -15,230 +15,131 @@
 </head>
 
 <body>
-    <div
-        class="py-5 px-4 m-auto"
-        style="max-width: 1048px; font-size:14px;"
-    >
-        <Anchor
-            route=AppRoute::SocialHome
-            classes="text-decoration-none domain-link-dark"
-        >
-            <i class="bi bi-arrow-left me-2"></i>
-            {"Social Connections"}
-        </Anchor>
-
-        <div
-            class="d-flex mb-5 mt-3"
-        >
-
-            <div
-                class="d-flex flex-column"
-            >
-                <h2>{"New Social Connection"}</h2>
-                
-            </div>
+    
+    <div class="MuiPaper-root MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthMd MuiDialog-paperFullWidth MuiPaper-elevation4 MuiPaper-rounded"
+        role="dialog" aria-labelledby="quantum-product-41355-title">
+        <div class="MuiDialogTitle-root jss296" data-cosmos-key="dialog.title">
+            <h5 class="MuiTypography-root jss298 MuiTypography-h5 MuiTypography-colorTextPrimary"
+                data-cosmos-key="heading" id="quantum-product-41355-title">Create application</h5><button
+                class="MuiButtonBase-root MuiIconButton-root jss11 jss14 jss297 MuiIconButton-sizeSmall" tabindex="0"
+                type="button" data-cosmos-key="dialog,close" aria-label="Close"><span
+                    class="MuiIconButton-label jss13"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg></span></button>
         </div>
-        
-        <div class="input-group mb-3">
-            <span class="input-group-text"><i class="bi bi-search"></i></span>
-            <input
-                type="text"
-                class="form-control"
-                style="font-size: 14px;"
-                placeholder="Search for social connection"
-                aria-label="Username"
-                aria-describedby="basic-addon1"
-            />
+        <div class="MuiDialogContent-root" data-cosmos-key="dialog.body">
+            <fieldset class="sc-cfAQHH eoFefw">
+                <form novalidate="">
+                    <div class="jss2 jss299" data-cosmos-key="row-layout">
+                        <fieldset class="jss2 jss306 jss300" data-cosmos-key="form.fieldset">
+                            <div class="jss2 jss307 jss302" data-cosmos-key="row-layout"></div>
+                            <div class="jss2 jss308 jss305" data-cosmos-key="row-layout">
+                                <div class="MuiFormControl-root MuiFormControl-fullWidth" data-cosmos-key="form.field">
+                                    <label
+                                        class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined MuiFormLabel-filled Mui-required Mui-required"
+                                        data-shrink="true" for="quantum-product-41537-control">Name<span
+                                            aria-hidden="true"
+                                            class="MuiFormLabel-asterisk MuiInputLabel-asterisk"> *</span></label>
+                                    <div class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-formControl"><input
+                                            aria-invalid="false" aria-describedby="quantum-product-41537-helperText"
+                                            id="quantum-product-41537-control" name="name" required="" type="text"
+                                            data-cosmos-key="text-input"
+                                            class="MuiInputBase-input MuiOutlinedInput-input" value="My App">
+                                        <fieldset aria-hidden="true" style="padding-left: 8px;"
+                                            class="jss149 MuiOutlinedInput-notchedOutline">
+                                            <legend class="jss150" style="width: 0.01px;"><span>​</span></legend>
+                                        </fieldset>
+                                    </div>
+                                    <p class="MuiFormHelperText-root MuiFormHelperText-contained MuiFormHelperText-filled Mui-required"
+                                        id="quantum-product-41537-helperText">You can change the application name later
+                                        in the application settings.</p>
+                                </div>
+                                <div class="MuiFormGroup-root"><label class="MuiFormLabel-root">Choose an application
+                                        type</label>
+                                    <div class="jss2 jss309" data-cosmos-key="column-layout">
+                                        <div
+                                            class="MuiPaper-root MuiCard-root jss319 jss320 jss310 jss312 jss317 jss314 MuiPaper-outlined MuiPaper-rounded">
+                                            <div class="jss2 jss321" data-cosmos-key="row-layout">
+                                                <div class="jss2 jss322 jss222 jss236 jss231 jss241"
+                                                    data-cosmos-key="avatar"><img data-cosmos-key="image"
+                                                        src="https://cdn.auth0.com/manhattan/versions/1.3318.0/assets/native.svg"
+                                                        class="jss223"></div>
+                                                <h6 class="MuiTypography-root MuiTypography-subtitle2"
+                                                    data-cosmos-key="text">Native</h6>
+                                                <p class="MuiTypography-root MuiTypography-body2"
+                                                    data-cosmos-key="text">Mobile, desktop, CLI and smart device apps
+                                                    running natively.</p>
+                                                <p class="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary"
+                                                    data-cosmos-key="text">e.g.: iOS, Electron, Apple TV apps</p>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="MuiPaper-root MuiCard-root jss319 jss323 jss310 jss312 jss314 MuiPaper-outlined MuiPaper-rounded">
+                                            <div class="jss2 jss324" data-cosmos-key="row-layout">
+                                                <div class="jss2 jss325 jss222 jss236 jss231 jss241"
+                                                    data-cosmos-key="avatar"><img data-cosmos-key="image"
+                                                        src="https://cdn.auth0.com/manhattan/versions/1.3318.0/assets/spa.svg"
+                                                        class="jss223"></div>
+                                                <h6 class="MuiTypography-root MuiTypography-subtitle2"
+                                                    data-cosmos-key="text">Single Page Web Applications</h6>
+                                                <p class="MuiTypography-root MuiTypography-body2"
+                                                    data-cosmos-key="text">A JavaScript front-end app that uses an API.
+                                                </p>
+                                                <p class="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary"
+                                                    data-cosmos-key="text">e.g.: Angular, React, Vue</p>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="MuiPaper-root MuiCard-root jss319 jss326 jss310 jss312 jss314 MuiPaper-outlined MuiPaper-rounded">
+                                            <div class="jss2 jss327" data-cosmos-key="row-layout">
+                                                <div class="jss2 jss328 jss222 jss236 jss231 jss241"
+                                                    data-cosmos-key="avatar"><img data-cosmos-key="image"
+                                                        src="https://cdn.auth0.com/manhattan/versions/1.3318.0/assets/regular_web.svg"
+                                                        class="jss223"></div>
+                                                <h6 class="MuiTypography-root MuiTypography-subtitle2"
+                                                    data-cosmos-key="text">Regular Web Applications</h6>
+                                                <p class="MuiTypography-root MuiTypography-body2"
+                                                    data-cosmos-key="text">Traditional web app using redirects.</p>
+                                                <p class="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary"
+                                                    data-cosmos-key="text">e.g.: Node.js Express, ASP.NET, Java, PHP</p>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="MuiPaper-root MuiCard-root jss319 jss329 jss310 jss312 jss314 MuiPaper-outlined MuiPaper-rounded">
+                                            <div class="jss2 jss330" data-cosmos-key="row-layout">
+                                                <div class="jss2 jss331 jss222 jss236 jss231 jss241"
+                                                    data-cosmos-key="avatar"><img data-cosmos-key="image"
+                                                        src="https://cdn.auth0.com/manhattan/versions/1.3318.0/assets/non_interactive.svg"
+                                                        class="jss223"></div>
+                                                <h6 class="MuiTypography-root MuiTypography-subtitle2"
+                                                    data-cosmos-key="text">Machine to Machine Applications</h6>
+                                                <p class="MuiTypography-root MuiTypography-body2"
+                                                    data-cosmos-key="text">CLIs, daemons or services running on your
+                                                    backend.</p>
+                                                <p class="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary"
+                                                    data-cosmos-key="text">e.g.: Shell script</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </form>
+            </fieldset>
         </div>
-
-        <div class="row">
-
-
-            <div class="col-sm-6 mb-4">
-                <div class="card">
-                    <div class="card-body p-4">
-
-                        <div
-                            class="d-flex mb-3"
-                        >
-                            <div
-                                style="flex: 0 0 auto; width: 40px; height: 40px;"
-                                class="d-flex justify-content-center align-items-center rounded me-3 border"
-                            >
-                                <img
-                                    src="/assets/icons/google-avatar.png"
-                                    class="w-50"
-                                />
-                            </div>
-
-                            <div
-                                class="d-grid"
-                                style="min-width: 40px;"
-                            >
-                                <div
-                                    class="text-decoration-none fw-bold mb-0"
-                                >
-                                    <span
-                                        class="fw-bold"
-                                        style="
-                                            white-space: nowrap;
-                                            text-overflow: ellipsis;
-                                            overflow: hidden;
-                                            font-size: 16px;
-                                            text-decoration: none;
-                                        "
-                                    >
-                                        {"Google / Gmail"}
-                                    </span>
-                                </div>
-                                <p
-                                    class="mb-0 text-muted"
-                                    style="
-                                        white-space: nowrap;
-                                        text-overflow: ellipsis;
-                                        overflow: hidden;
-                                        font-size: 12px;
-                                        text-transform: uppercase;
-                                        letter-spacing: 1px;
-                                    "
-                                >
-                                    {"social connection"}
-                                </p>
-                            </div>
-            
-                        </div>
-                    <p class="card-text">{"Allow your users to login with their Google Account"}</p>
-                    </div>
-                </div>
-            </div>
-
-
-
-            <div class="col-sm-6 mb-4">
-                <div class="card">
-                    <div class="card-body p-4">
-
-                        <div
-                            class="d-flex mb-3"
-                        >
-                            <div
-                                style="flex: 0 0 auto; width: 40px; height: 40px;"
-                                class="d-flex justify-content-center align-items-center rounded me-3 border"
-                            >
-                                <img
-                                    src="/assets/icons/facebook-avatar.png"
-                                    class="w-50"
-                                />
-                            </div>
-
-                            <div
-                                class="d-grid"
-                                style="min-width: 40px;"
-                            >
-                                <div
-                                    route=AppRoute::SocialSettings
-                                    classes="text-decoration-none fw-bold mb-0"
-                                >
-                                    <span
-                                        class="fw-bold"
-                                        style="
-                                            white-space: nowrap;
-                                            text-overflow: ellipsis;
-                                            overflow: hidden;
-                                            font-size: 16px;
-                                            text-decoration: none;
-                                        "
-                                    >
-                                        {"Facebook"}
-                                    </span>
-                                </div>
-                                <p
-                                    class="mb-0 text-muted"
-                                    style="
-                                        white-space: nowrap;
-                                        text-overflow: ellipsis;
-                                        overflow: hidden;
-                                        font-size: 12px;
-                                        text-transform: uppercase;
-                                        letter-spacing: 1px;
-                                    "
-                                >
-                                    {"social connection"}
-                                </p>
-                            </div>
-            
-                        </div>
-                    <p class="card-text">{"Allow your users to login with their Google Account"}</p>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="col-sm-6 mb-4">
-                <div class="card">
-                    <div class="card-body p-4">
-
-                        <div
-                            class="d-flex mb-3"
-                        >
-                            <div
-                                style="flex: 0 0 auto; width: 40px; height: 40px;"
-                                class="d-flex justify-content-center align-items-center rounded me-3 border"
-                            >
-                                <img
-                                    src="/assets/icons/facebook-avatar.png"
-                                    class="w-50"
-                                />
-                            </div>
-
-                            <div
-                                class="d-grid"
-                                style="min-width: 40px;"
-                            >
-                                <div
-                                    route=AppRoute::SocialSettings
-                                    classes="text-decoration-none fw-bold mb-0"
-                                >
-                                    <span
-                                        class="fw-bold"
-                                        style="
-                                            white-space: nowrap;
-                                            text-overflow: ellipsis;
-                                            overflow: hidden;
-                                            font-size: 16px;
-                                            text-decoration: none;
-                                        "
-                                    >
-                                        {"Facebook"}
-                                    </span>
-                                </div>
-                                <p
-                                    class="mb-0 text-muted"
-                                    style="
-                                        white-space: nowrap;
-                                        text-overflow: ellipsis;
-                                        overflow: hidden;
-                                        font-size: 12px;
-                                        text-transform: uppercase;
-                                        letter-spacing: 1px;
-                                    "
-                                >
-                                    {"social connection"}
-                                </p>
-                            </div>
-            
-                        </div>
-                    <p class="card-text">{"Allow your users to login with their Google Account"}</p>
-                    </div>
-                </div>
-            </div>
-
-
-
-
-        </div>
-
+        <div class="MuiDialogActions-root MuiDialogActions-spacing" data-cosmos-key="dialog.footer"><button
+                class="MuiButtonBase-root MuiButton-root MuiButton-outlined jss46 jss51 MuiButton-outlinedSizeLarge MuiButton-sizeLarge MuiButton-disableElevation"
+                tabindex="0" type="button" data-cosmos-key="button"><span class="MuiButton-label">Cancel
+                </span></button><button
+                class="MuiButtonBase-root MuiButton-root MuiButton-contained jss46 MuiButton-containedPrimary MuiButton-containedSizeLarge MuiButton-sizeLarge MuiButton-disableElevation"
+                tabindex="0" type="button" data-cosmos-key="button"><span class="MuiButton-label">Create
+                </span></button></div>
     </div>
+
 </body>
 
 </html>
