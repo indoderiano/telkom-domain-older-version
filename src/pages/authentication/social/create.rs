@@ -70,7 +70,7 @@ impl Component for SocialCreate {
 
 
                     <div class="col-sm-6 mb-4">
-                        <div class="card">
+                        <div class="card card-hover" style="cursor: pointer;">
                             <div class="card-body p-4">
 
                                 <div
@@ -78,11 +78,11 @@ impl Component for SocialCreate {
                                 >
                                     <div
                                         style="flex: 0 0 auto; width: 40px; height: 40px;"
-                                        class="d-flex justify-content-center align-items-center rounded me-3 border"
+                                        class="d-flex justify-content-center align-items-center me-3"
                                     >
                                         <img
                                             src="/assets/icons/google-avatar.png"
-                                            class="w-50"
+                                            class="w-75"
                                         />
                                     </div>
 
@@ -130,7 +130,7 @@ impl Component for SocialCreate {
 
 
                     <div class="col-sm-6 mb-4">
-                        <div class="card">
+                        <div class="card card-hover" style="cursor: pointer;">
                             <div class="card-body p-4">
 
                                 <div
@@ -138,11 +138,11 @@ impl Component for SocialCreate {
                                 >
                                     <div
                                         style="flex: 0 0 auto; width: 40px; height: 40px;"
-                                        class="d-flex justify-content-center align-items-center rounded me-3 border"
+                                        class="d-flex justify-content-center align-items-center me-3"
                                     >
                                         <img
                                             src="/assets/icons/facebook-avatar.png"
-                                            class="w-50"
+                                            class="w-75"
                                         />
                                     </div>
 
@@ -189,7 +189,7 @@ impl Component for SocialCreate {
 
 
                     <div class="col-sm-6 mb-4">
-                        <div class="card">
+                        <div class="card card-hover" style="cursor: pointer;">
                             <div class="card-body p-4">
 
                                 <div
