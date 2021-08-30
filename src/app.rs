@@ -1,7 +1,11 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 // use yew_router::components::RouterAnchor;
-use yew::services::ConsoleService;
+use yew::services::{
+    ConsoleService,
+    storage::{ StorageService, Area },
+};
+use yew::format::{ Json, Text };
 // use yewdux::prelude::*;
 use yewdux::prelude::WithDispatch;
 use yewtil::NeqAssign;
@@ -67,6 +71,8 @@ use crate::components::{
     sidebar::Sidebar,
 };
 
+use crate::store::types::LocalStorage;
+
 #[derive(Switch, Clone)]
 pub enum AppRoute {
     #[to = "/login/password"]
@@ -109,6 +115,9 @@ pub enum AppRoute {
     Home,
 }
 
+
+const KEY: &str = "telkom-domain";
+
 pub struct App {
     dispatch: AppDispatch,
 }
@@ -120,6 +129,37 @@ impl Component for App {
     type Properties = AppDispatch;
 
     fn create(dispatch: Self::Properties, _: ComponentLink<Self>) -> Self {
+        
+        let mut storage = StorageService::new(Area::Local).expect("storage was disabled");
+        
+        // SET LOCALSTORAGE
+        // let user_data = LocalStorage{
+        //     username: String::from("batman"),
+        //     email: String::from("batman@mail.com"),
+        // };
+        // let localstorage_data = Json(&user_data);
+
+        // // let localstorage_data: Result<String, anyhow::Error> = Ok(String::from("tokendata_telkomdomain"));
+        // storage.store(KEY, localstorage_data);
+
+
+        // GET LOCALSTORAGE
+        let localstorage_data = {
+            if let Json(Ok(data)) = storage.restore(KEY) {
+                // ConsoleService::info(&token);
+                data
+            } else {
+                ConsoleService::info("token does not exist");
+                LocalStorage {
+                    username: None,
+                    email: None,
+                    token: None,
+                }
+            }
+        };
+
+        ConsoleService::info(&format!("{:?}", localstorage_data));
+
         App {
             dispatch,
         }

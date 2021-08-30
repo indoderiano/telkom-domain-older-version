@@ -35,6 +35,7 @@ impl Component for Navtop {
                 let no_user = DataAccount {
                     username: None,
                     email: None,
+                    token: None,
                 };
                 self.dispatch.send(DataAccountAction::Update(no_user));
                 false

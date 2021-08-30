@@ -1,9 +1,13 @@
-use serde::Deserialize;
+use serde::{
+    Deserialize,
+    Serialize,
+};
 
-#[derive(Deserialize, Debug, Clone)]
-pub struct User {
-    pub name: String,
-    pub age: u8
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct LocalStorage {
+    pub username: Option<String>,
+    pub email: Option<String>,
+    pub token: Option<String>,
 }
 
 #[derive(Deserialize, Debug, Clone)]

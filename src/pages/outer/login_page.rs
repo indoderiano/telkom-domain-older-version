@@ -98,6 +98,7 @@ impl Component for LoginPage {
                         let newdata = DataAccount {
                             username: Some(String::from(data.username.clone())),
                             email: Some(String::from(data.email.clone())),
+                            token: Some(String::from(data.token.clone())),
                         };
                         self.dispatch.send(DataAccountAction::Update(newdata));
                         // let router = RouteService::new();
