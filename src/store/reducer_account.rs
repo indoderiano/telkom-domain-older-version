@@ -5,7 +5,7 @@ pub enum DataAccountAction {
     Update(DataAccount)
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct DataAccount {
     pub username: Option<String>,
     pub email: Option<String>,

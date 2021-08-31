@@ -43,8 +43,8 @@ impl Component for LandingPageNavTop {
         let signup = self.dispatch.callback(|_| {
             let newdata = DataAccount {
                 username: Some(String::from("Batman")),
-                email: None,
-                token: None,
+                email: Some(String::from("bat@mail.com")),
+                token: Some(String::from("token-batman")),
             };
 
             // SET LOCALSTORAGE

@@ -15,9 +15,10 @@ use yew_router::service::RouteService;
 
 use crate::store::reducer_account::{
     AppDispatch,
-    // DataAccountAction,
-    // DataAccount
+    DataAccountAction,
+    DataAccount,
 };
+use yewdux::dispatch::Dispatcher;
 
 use crate::pages::{
 
@@ -72,6 +73,7 @@ use crate::components::{
 };
 
 use crate::store::types::LocalStorage;
+use crate::types::localstorage_key;
 
 #[derive(Switch, Clone)]
 pub enum AppRoute {
@@ -115,38 +117,28 @@ pub enum AppRoute {
     Home,
 }
 
-
-const KEY: &str = "telkom-domain";
-
 pub struct App {
     dispatch: AppDispatch,
+    link: ComponentLink<Self>,
 }
 
-pub enum Msg {}
+pub enum Msg {
+    AutoLogin(DataAccount),
+}
 
 impl Component for App {
     type Message = Msg;
     type Properties = AppDispatch;
 
-    fn create(dispatch: Self::Properties, _: ComponentLink<Self>) -> Self {
+    fn create(dispatch: Self::Properties, link: ComponentLink<Self>) -> Self {
         
         let mut storage = StorageService::new(Area::Local).expect("storage was disabled");
-        
-        // SET LOCALSTORAGE
-        // let user_data = LocalStorage{
-        //     username: String::from("batman"),
-        //     email: String::from("batman@mail.com"),
-        // };
-        // let localstorage_data = Json(&user_data);
-
-        // // let localstorage_data: Result<String, anyhow::Error> = Ok(String::from("tokendata_telkomdomain"));
-        // storage.store(KEY, localstorage_data);
-
 
         // GET LOCALSTORAGE
         let localstorage_data = {
-            if let Json(Ok(data)) = storage.restore(KEY) {
-                // ConsoleService::info(&token);
+            if let Json(Ok(data)) = storage.restore(localstorage_key) {
+                // ConsoleService::info("get localstorage");
+                // ConsoleService::info(&format!("{:?}", data));
                 data
             } else {
                 ConsoleService::info("token does not exist");
@@ -160,13 +152,30 @@ impl Component for App {
 
         ConsoleService::info(&format!("{:?}", localstorage_data));
 
+        // IF LOCALSTORAGE EXISTS
+        // UPDATE REDUCER
+        let data_account = DataAccount {
+            username: Some(String::from(localstorage_data.username.unwrap())),
+            email: Some(String::from(localstorage_data.email.unwrap())),
+            token: Some(String::from(localstorage_data.token.unwrap())),
+        };
+        // // dispatch.send(DataAccountAction::Update(data_account));
+        link.send_message(Msg::AutoLogin(data_account));
+
         App {
             dispatch,
+            link,
         }
     }
 
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        true
+    fn update(&mut self, msg: Self::Message) -> ShouldRender {
+        match msg {
+            Msg::AutoLogin(user) => {
+                ConsoleService::info("autologin");
+                self.dispatch.send(DataAccountAction::Update(user));
+                true
+            }
+        }
     }
 
     fn change(&mut self, dispatch: Self::Properties) -> ShouldRender {
