@@ -62,7 +62,9 @@ use crate::pages::{
             home::UsersManagement
         },
         roles::{
-            home::RolesManagement
+            // home::RolesManagement,
+            role_created::RolesCreated,
+            dropdown_viewdetail::ViewDetail,
         },
     },
 };
@@ -102,9 +104,11 @@ pub enum AppRoute {
     SocialSettings,
     #[to = "/social"]
     SocialHome,
-    #[to = "/user-management-roles"]
-    RolesManagement,
-    #[to = "/user-management-users"]
+    #[to = "/user-management/roles/settings"]
+    ViewDetail,
+    #[to = "/user-management/roles"]
+    RolesCreated,
+    #[to = "/user-management/users"]
     UsersManagement,
     #[to = "/enterprise/google-app/create"]
     EnterpriseGoogleCreate,
@@ -163,12 +167,13 @@ impl Component for App {
                     AppRoute::SocialHome => html! {<SocialHome/>},
                     AppRoute::SocialSettings => html! {<SocialSettings/>},
                     AppRoute::SocialCreate => html! {<SocialCreate/>},
-                    AppRoute::RolesManagement => html! {<RolesManagement/>},
+                    AppRoute::RolesCreated => html! {<RolesCreated/>},
                     AppRoute::UsersManagement => html! {<UsersManagement/>},
                     AppRoute::EnterpriseHome => html! {<EnterpriseHome/>},
                     AppRoute::EnterpriseGoogle => html! {<EnterpriseGoogle/>},
                     AppRoute::EnterpriseGoogleCreate => html! {<EnterpriseGoogleCreate/>},
                     AppRoute::SettingsHome => html! {<SettingsHome/>},
+                    AppRoute::ViewDetail => html! {<ViewDetail/>},
                     _ => {
                         route_service.set_route("/manage", ());
                         html! {<GettingStarted/>}

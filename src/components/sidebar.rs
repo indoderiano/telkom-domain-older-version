@@ -108,8 +108,10 @@ impl Component for Sidebar {
                   class="bi small bi-caret-down-fill  float-end"></i> </a>
               <ul id="menu_item2" class="submenu collapse" data-bs-parent="#nav_accordion"
                 style="list-style-type:none; font-weight: 400">
-                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Database"}
-                  </a></li>
+                <li>              
+                  <a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Database"}
+                  </a>
+                </li>
                 <li>
                   <Anchor
                     route=AppRoute::SocialHome
@@ -165,7 +167,7 @@ impl Component for Sidebar {
                 </li>
                 <li>
                   <Anchor
-                    route=AppRoute::RolesManagement
+                    route=AppRoute::RolesCreated
                     classes="text-decoration-none"
                   >
                   <a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Roles"} </a>

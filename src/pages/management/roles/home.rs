@@ -23,9 +23,12 @@ impl Component for RolesManagement {
     fn view(&self) -> Html {
         html! {
             <>
-                <div class="p-3">
+                <div
+                    class="mx-auto pt-5 pb-5 px-4"
+                    style="max-width: 1048px;"
+                >
                     
-                    <h1>{"Roles"}</h1>
+                    <h1 class="fw-bold">{"Roles"}</h1>
 
                     <div class="mt-3">
                         <div class="card">
