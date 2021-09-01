@@ -82,6 +82,10 @@
     color: #65676e;
 }
 
+.bg-domain-primary {
+    background-color: rgb(233, 232, 255);
+}
+
 .bg-domain-secondary {
     background-color: rgb(233, 232, 255);
 }
@@ -89,6 +93,14 @@
 .bg-input-grey,
 .form-control.bg-input-grey {
     background-color: rgb(239, 240, 242);
+}
+
+.btn-default {
+    background-color: #e3e4e6;
+}
+
+.btn-default:hover {
+    background-color: #c9cace !important;
 }
 
 .btn-default {

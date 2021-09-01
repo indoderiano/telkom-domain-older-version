@@ -2,6 +2,7 @@ mod app;
 mod pages;
 mod components;
 mod store;
+mod types;
 
 use yewdux::prelude::WithDispatch;
 

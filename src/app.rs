@@ -1,9 +1,14 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 // use yew_router::components::RouterAnchor;
-use yew::services::ConsoleService;
+use yew::services::{
+    ConsoleService,
+    storage::{ StorageService, Area },
+};
+use yew::format::{ Json, Text };
 // use yewdux::prelude::*;
 use yewdux::prelude::WithDispatch;
+use yewdux::dispatch::Dispatcher;
 use yewtil::NeqAssign;
 // use yew_router::switch::{Permissive};
 use yew_router::route::Route;
@@ -11,8 +16,8 @@ use yew_router::service::RouteService;
 
 use crate::store::reducer_account::{
     AppDispatch,
-    // DataAccountAction,
-    // DataAccount
+    DataAccountAction,
+    DataAccount,
 };
 
 use crate::pages::{
@@ -40,6 +45,11 @@ use crate::pages::{
     },
 
     authentication::{
+        database::{
+            home::DatabaseHome,
+            create_db::DbCreate,
+            settings::DatabaseSettings,
+        },
         social::{
             home::SocialHome,
             settings::SocialSettings,
@@ -74,14 +84,12 @@ use crate::components::{
     sidebar::Sidebar,
 };
 
+use crate::store::types::LocalStorage;
+use crate::types::localstorage_key;
+
 #[derive(Switch, Clone)]
 pub enum AppRoute {
-    #[to = "/login/password"]
-    RequestPassPage,
-    #[to = "/login"]
-    LoginPage,
-    #[to = "/register"]
-    RegisterPage,
+    // MEMBER PAGES
     #[to = "/apis/settings"]
     ApisSettings,
     #[to = "/getting-started"]
@@ -91,6 +99,12 @@ pub enum AppRoute {
     #[to = "/activity"]
     Activity,
     #[to = "/applications"]
+    DatabaseSettings,
+    #[to = "/authentication/database/settings"]
+    DbCreate,
+    #[to = "/authentication/database/create"]
+    DatabaseHome,
+    #[to = "/authentication/database"]
     ApplicationHome,
     #[to = "/authentication/passwordless"]
     AuthPasswordless,
@@ -118,28 +132,85 @@ pub enum AppRoute {
     EnterpriseHome,
     #[to = "/tenant"]
     SettingsHome,
+
+    // NOT LOGGED IN PAGES
+    #[to = "/login/password"]
+    RequestPassPage,
+    #[to = "/login"]
+    LoginPage,
+    #[to = "/register"]
+    RegisterPage,
     #[to = "/"]
     Home,
 }
 
 pub struct App {
     dispatch: AppDispatch,
+    link: ComponentLink<Self>,
 }
 
-pub enum Msg {}
+pub enum Msg {
+    AutoLogin(DataAccount),
+}
 
 impl Component for App {
     type Message = Msg;
     type Properties = AppDispatch;
 
-    fn create(dispatch: Self::Properties, _: ComponentLink<Self>) -> Self {
+    fn create(dispatch: Self::Properties, link: ComponentLink<Self>) -> Self {
+        
+        let mut storage = StorageService::new(Area::Local).expect("storage was disabled");
+
+        // LOCALSTORAGE RESOURCE
+        // https://github.com/yewstack/yew/issues/1287
+        // GET LOCALSTORAGE
+        let localstorage_data = {
+            if let Json(Ok(data)) = storage.restore(localstorage_key) {
+                // ConsoleService::info("get localstorage");
+                ConsoleService::info(&format!("{:?}", data));
+
+                data
+            } else {
+                ConsoleService::info("token does not exist");
+                LocalStorage {
+                    username: None,
+                    email: None,
+                    token: None,
+                }
+            }
+        };
+
+        ConsoleService::info(&format!("{:?}", localstorage_data));
+
+        // IF LOCALSTORAGE EXISTS
+        // UPDATE REDUCER
+        // NEED BETTER WAY TO PARSE JSON DATA
+        let data_account = DataAccount {
+            // username: Some(String::from(data.username.unwrap())),
+            // email: Some(String::from(data.email.unwrap())),
+            // token: Some(String::from(data.token.unwrap())),
+            username: localstorage_data.username,
+            email: localstorage_data.email,
+            token: localstorage_data.token,
+        };
+        // // dispatch.send(DataAccountAction::Update(data_account));
+        link.send_message(Msg::AutoLogin(data_account));
+
+
         App {
             dispatch,
+            link,
         }
     }
 
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        true
+    fn update(&mut self, msg: Self::Message) -> ShouldRender {
+        match msg {
+            Msg::AutoLogin(user) => {
+                ConsoleService::info("autologin");
+                self.dispatch.send(DataAccountAction::Update(user));
+                true
+            }
+        }
     }
 
     fn change(&mut self, dispatch: Self::Properties) -> ShouldRender {
@@ -174,18 +245,26 @@ impl Component for App {
                     AppRoute::EnterpriseGoogleCreate => html! {<EnterpriseGoogleCreate/>},
                     AppRoute::SettingsHome => html! {<SettingsHome/>},
                     AppRoute::ViewDetail => html! {<ViewDetail/>},
+                    AppRoute::DatabaseHome => html! {<DatabaseHome/>},
+                    AppRoute::DbCreate => html! {<DbCreate/>},
+                    AppRoute::DatabaseSettings => html! {<DatabaseSettings/>},
                     _ => {
+                        // ConsoleService::info("SET ROUTE TO MANAGE");
                         route_service.set_route("/manage", ());
                         html! {<GettingStarted/>}
                     },
                 }
             } else {
                 match switch {
-                    AppRoute::Home => html! {<HomePage/>},
+                    AppRoute::Home => {
+                        // ConsoleService::info("ROUTE HOMEPAGE");
+                        html! {<HomePage/>}
+                    },
                     AppRoute::LoginPage => html! {<WithDispatch<LoginPage>/>},
                     AppRoute::RegisterPage => html!{<RegisterPage/>},
                     AppRoute::RequestPassPage => html!{<RequestPassPage/>},
                     _ => {
+                        // ConsoleService::info("SET ROUTE /");
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
                     },
