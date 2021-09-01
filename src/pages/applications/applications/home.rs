@@ -472,50 +472,36 @@ impl Component for ApplicationHome {
 
 
                         // <!-- Modal -->
-                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                            aria-hidden="true">
+                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-scrollable">
                                 <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">{"New API"}</h5>
+                                    <h5 class="modal-title" id="exampleModalLabel">{"Create Application"}</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body" style="font-size: 14px;">
                                     <div class="mb-4">
                                     <label for="basic-url" class="form-label fw-bold">{"Name"}</label>
                                     <div class="input-group mb-2">
-                                        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3"/>
+                                        <input type="text" class="form-control" placeholder="My App" id="basic-url" aria-describedby="basic-addon3" />
                                     </div>
-                                    <label class="form-label text-muted">{"A friendly name for the API"}</label>
-                                </div>
-                                <div class="mb-4">
-                                    <label for="basic-url" class="form-label fw-bold">{"Identifier"}</label>
+                                    <label class="form-label text-muted">{"This is your application name"}</label>
+                                    </div>
+                                    <div class="mb-4">
+                                    <label for="basic-url" class="form-label fw-bold">{"Application type"}</label>
                                     <div class="input-group mb-2">
-                                        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3"/>
+                                        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3" />
                                     </div>
-                                    <label 
-                                        class="form-label text-muted"
-                                    >
-                                        {"A logical identifier for this API. We recommend using a URL but note that this doesn’t have to be a publicly available URL, Auth0 will not call your API at
-                                        all.This field cannot be modified."}
-                                    </label>
-                                </div>
-                                <div class="mb-4">
-                                    <label for="basic-url" class="form-label fw-bold">{"Signing Algorithm"}</label>
-                                    <select class="form-select mb-2" aria-label="Default select example">
-                                        <option value="1">{"RS256"}</option>
-                                        <option value="2">{"HS256"}</option>
-                                    </select>
-                                    <label class="form-label text-muted">{"Algorithm to sign the tokens with. When selecting RS256 the token will be signed with Auth0's private key."}</label>
-                                </div>
+                                    <label class="form-label text-muted">{"Ex: Web Application"}</label>
+                                    </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{"Cancel"}</button>
                                     <button type="button" class="btn btn-primary">{"Create"}</button>
                                 </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
+                            </div>
 
                         </div>
                     </div>
