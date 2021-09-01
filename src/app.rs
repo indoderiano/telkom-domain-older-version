@@ -219,7 +219,7 @@ impl Component for App {
                     AppRoute::EnterpriseGoogleCreate => html! {<EnterpriseGoogleCreate/>},
                     AppRoute::SettingsHome => html! {<SettingsHome/>},
                     _ => {
-                        ConsoleService::info("SET ROUTE TO MANAGE");
+                        // ConsoleService::info("SET ROUTE TO MANAGE");
                         route_service.set_route("/manage", ());
                         html! {<GettingStarted/>}
                     },
@@ -227,14 +227,14 @@ impl Component for App {
             } else {
                 match switch {
                     AppRoute::Home => {
-                        ConsoleService::info("ROUTE HOMEPAGE");
+                        // ConsoleService::info("ROUTE HOMEPAGE");
                         html! {<HomePage/>}
                     },
                     AppRoute::LoginPage => html! {<WithDispatch<LoginPage>/>},
                     AppRoute::RegisterPage => html!{<RegisterPage/>},
                     AppRoute::RequestPassPage => html!{<RequestPassPage/>},
                     _ => {
-                        ConsoleService::info("SET ROUTE /");
+                        // ConsoleService::info("SET ROUTE /");
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
                     },
