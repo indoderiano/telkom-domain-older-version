@@ -36,6 +36,7 @@ impl Component for ReducerAccountView {
             let newdata = DataAccount {
                 username: Some(String::from("Batman")),
                 email: None,
+                token: None,
             };
             DataAccountAction::Update(newdata)
         });

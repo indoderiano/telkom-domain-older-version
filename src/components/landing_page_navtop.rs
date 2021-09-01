@@ -3,6 +3,10 @@ use yewdux::prelude::*;
 use yewtil::NeqAssign;
 use yew_router::components::RouterAnchor;
 use crate::app::AppRoute;
+use yew::services::storage::{
+    StorageService,
+    Area,
+};
 
 use crate::store::reducer_account::{
     AppDispatch,
@@ -15,6 +19,8 @@ pub struct LandingPageNavTop {
 }
 
 pub enum Msg {}
+
+const KEY: &str = "telkom-domain";
 
 impl Component for LandingPageNavTop {
     type Message = Msg;
@@ -37,8 +43,14 @@ impl Component for LandingPageNavTop {
         let signup = self.dispatch.callback(|_| {
             let newdata = DataAccount {
                 username: Some(String::from("Batman")),
-                email: None,
+                email: Some(String::from("bat@mail.com")),
+                token: Some(String::from("token-batman")),
             };
+
+            // SET LOCALSTORAGE
+            let mut storage = StorageService::new(Area::Local).expect("storage was disabled");
+            let localstorage_data: Result<String, anyhow::Error> = Ok(String::from("datafromnavbar"));
+            storage.store(KEY, localstorage_data);
             DataAccountAction::Update(newdata)
         });
         type Anchor = RouterAnchor<AppRoute>;
