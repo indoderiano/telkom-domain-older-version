@@ -1,0 +1,14 @@
+.hdsXFb {
+  padding: 40px 24px 50px;
+  max-width: 1048px;
+  margin: 0px auto;
+}
+
+.jss423 {
+  flex: 1 1 0%;
+  display: grid;
+  padding: 0px;
+  gap: 40px;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: 1fr;
+}

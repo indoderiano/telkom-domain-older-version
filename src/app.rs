@@ -45,6 +45,11 @@ use crate::pages::{
     },
 
     authentication::{
+        database::{
+            home::DatabaseHome,
+            create_db::DbCreate,
+            settings::DatabaseSettings,
+        },
         social::{
             home::SocialHome,
             settings::SocialSettings,
@@ -87,6 +92,12 @@ pub enum AppRoute {
     #[to = "/activity"]
     Activity,
     #[to = "/applications"]
+    DatabaseSettings,
+    #[to = "/authentication/database/settings"]
+    DbCreate,
+    #[to = "/authentication/database/create"]
+    DatabaseHome,
+    #[to = "/authentication/database"]
     ApplicationHome,
     #[to = "/authentication/passwordless"]
     AuthPasswordless,
@@ -218,6 +229,9 @@ impl Component for App {
                     AppRoute::EnterpriseGoogle => html! {<EnterpriseGoogle/>},
                     AppRoute::EnterpriseGoogleCreate => html! {<EnterpriseGoogleCreate/>},
                     AppRoute::SettingsHome => html! {<SettingsHome/>},
+                    AppRoute::DatabaseHome => html! {<DatabaseHome/>},
+                    AppRoute::DbCreate => html! {<DbCreate/>},
+                    AppRoute::DatabaseSettings => html! {<DatabaseSettings/>},
                     _ => {
                         // ConsoleService::info("SET ROUTE TO MANAGE");
                         route_service.set_route("/manage", ());
