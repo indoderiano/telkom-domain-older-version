@@ -8,6 +8,7 @@ use yew::services::{
 use yew::format::{ Json, Text };
 // use yewdux::prelude::*;
 use yewdux::prelude::WithDispatch;
+use yewdux::dispatch::Dispatcher;
 use yewtil::NeqAssign;
 // use yew_router::switch::{Permissive};
 use yew_router::route::Route;
@@ -18,7 +19,6 @@ use crate::store::reducer_account::{
     DataAccountAction,
     DataAccount,
 };
-use yewdux::dispatch::Dispatcher;
 
 use crate::pages::{
 
@@ -77,12 +77,7 @@ use crate::types::localstorage_key;
 
 #[derive(Switch, Clone)]
 pub enum AppRoute {
-    #[to = "/login/password"]
-    RequestPassPage,
-    #[to = "/login"]
-    LoginPage,
-    #[to = "/register"]
-    RegisterPage,
+    // MEMBER PAGES
     #[to = "/apis/settings"]
     ApisSettings,
     #[to = "/getting-started"]
@@ -113,6 +108,14 @@ pub enum AppRoute {
     EnterpriseHome,
     #[to = "/tenant"]
     SettingsHome,
+
+    // NOT LOGGED IN PAGES
+    #[to = "/login/password"]
+    RequestPassPage,
+    #[to = "/login"]
+    LoginPage,
+    #[to = "/register"]
+    RegisterPage,
     #[to = "/"]
     Home,
 }
@@ -134,11 +137,14 @@ impl Component for App {
         
         let mut storage = StorageService::new(Area::Local).expect("storage was disabled");
 
+        // LOCALSTORAGE RESOURCE
+        // https://github.com/yewstack/yew/issues/1287
         // GET LOCALSTORAGE
         let localstorage_data = {
             if let Json(Ok(data)) = storage.restore(localstorage_key) {
                 // ConsoleService::info("get localstorage");
-                // ConsoleService::info(&format!("{:?}", data));
+                ConsoleService::info(&format!("{:?}", data));
+
                 data
             } else {
                 ConsoleService::info("token does not exist");
@@ -154,13 +160,18 @@ impl Component for App {
 
         // IF LOCALSTORAGE EXISTS
         // UPDATE REDUCER
+        // NEED BETTER WAY TO PARSE JSON DATA
         let data_account = DataAccount {
-            username: Some(String::from(localstorage_data.username.unwrap())),
-            email: Some(String::from(localstorage_data.email.unwrap())),
-            token: Some(String::from(localstorage_data.token.unwrap())),
+            // username: Some(String::from(data.username.unwrap())),
+            // email: Some(String::from(data.email.unwrap())),
+            // token: Some(String::from(data.token.unwrap())),
+            username: localstorage_data.username,
+            email: localstorage_data.email,
+            token: localstorage_data.token,
         };
         // // dispatch.send(DataAccountAction::Update(data_account));
         link.send_message(Msg::AutoLogin(data_account));
+
 
         App {
             dispatch,
@@ -208,17 +219,22 @@ impl Component for App {
                     AppRoute::EnterpriseGoogleCreate => html! {<EnterpriseGoogleCreate/>},
                     AppRoute::SettingsHome => html! {<SettingsHome/>},
                     _ => {
+                        ConsoleService::info("SET ROUTE TO MANAGE");
                         route_service.set_route("/manage", ());
                         html! {<GettingStarted/>}
                     },
                 }
             } else {
                 match switch {
-                    AppRoute::Home => html! {<HomePage/>},
+                    AppRoute::Home => {
+                        ConsoleService::info("ROUTE HOMEPAGE");
+                        html! {<HomePage/>}
+                    },
                     AppRoute::LoginPage => html! {<WithDispatch<LoginPage>/>},
                     AppRoute::RegisterPage => html!{<RegisterPage/>},
                     AppRoute::RequestPassPage => html!{<RequestPassPage/>},
                     _ => {
+                        ConsoleService::info("SET ROUTE /");
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
                     },
