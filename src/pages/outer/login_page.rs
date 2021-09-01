@@ -22,8 +22,14 @@ use yewdux::dispatch::Dispatcher;
 // use crate::app::AppRoute;
 use yew_router::service::RouteService;
 // use yew_router
-use yew::services::ConsoleService;
+use yew::services::{
+    ConsoleService,
+    storage::{ StorageService, Area },
+};
 use serde::{Deserialize, Serialize};
+
+use crate::store::types::LocalStorage;
+use crate::types::localstorage_key;
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct RequestLogin {
@@ -93,18 +99,41 @@ impl Component for LoginPage {
                 match response {
                     Ok(data) => {
                         ConsoleService::info("response ok");
-                        ConsoleService::info(&data.email.clone());
+                        ConsoleService::info(&format!("{:?}", data));
+                        // ConsoleService::info(&data.email.clone());
                         // self.user = Some(data.clone());
+
+                        // UPDATE REDUCER
                         let newdata = DataAccount {
                             username: Some(String::from(data.username.clone())),
                             email: Some(String::from(data.email.clone())),
+                            token: Some(String::from(data.token.clone())),
                         };
                         self.dispatch.send(DataAccountAction::Update(newdata));
+
+
+                        // SET LOCALSTORAGE
+                        let mut storage = StorageService::new(Area::Local).expect("storage was disabled");
+                        let user_data = LocalStorage{
+                            username: Some(data.username),
+                            email: Some(data.email),
+                            token: Some(data.token),
+                        };
+                        let localstorage_data = Json(&user_data);
+
+                        // // let localstorage_data: Result<String, anyhow::Error> = Ok(String::from("tokendata_telkomdomain"));
+                        storage.store(localstorage_key, localstorage_data);
+
+
+
+
+                        // REDIRECT ROUTE
                         // let router = RouteService::new();
                         self.route_service.set_route("/apis", ());
                         // router.set_route(AppRoute::ApisHome, );
                         
                         // yew_router::push_route(AppRoute::ApisHome);
+
                     }
                     Err(error) => {
                         ConsoleService::info("response error");

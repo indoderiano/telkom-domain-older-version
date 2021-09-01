@@ -1,0 +1,1 @@
+pub const localstorage_key: &str = "telkom-domain";
