@@ -67,9 +67,16 @@ use crate::pages::{
         home::SettingsHome,
     },
 
-    // reducer_account_view::ReducerAccountView,
-    // testing_fetch::TestingFetch,
-
+    management::{
+        users::{
+            home::UsersManagement
+        },
+        roles::{
+            // home::RolesManagement,
+            role_created::RolesCreated,
+            dropdown_viewdetail::ViewDetail,
+        },
+    },
 };
 
 use crate::components::{
@@ -111,6 +118,12 @@ pub enum AppRoute {
     SocialSettings,
     #[to = "/social"]
     SocialHome,
+    #[to = "/user-management/roles/settings"]
+    ViewDetail,
+    #[to = "/user-management/roles"]
+    RolesCreated,
+    #[to = "/user-management/users"]
+    UsersManagement,
     #[to = "/enterprise/google-app/create"]
     EnterpriseGoogleCreate,
     #[to = "/enterprise/google-app"]
@@ -225,10 +238,13 @@ impl Component for App {
                     AppRoute::SocialHome => html! {<SocialHome/>},
                     AppRoute::SocialSettings => html! {<SocialSettings/>},
                     AppRoute::SocialCreate => html! {<SocialCreate/>},
+                    AppRoute::RolesCreated => html! {<RolesCreated/>},
+                    AppRoute::UsersManagement => html! {<UsersManagement/>},
                     AppRoute::EnterpriseHome => html! {<EnterpriseHome/>},
                     AppRoute::EnterpriseGoogle => html! {<EnterpriseGoogle/>},
                     AppRoute::EnterpriseGoogleCreate => html! {<EnterpriseGoogleCreate/>},
                     AppRoute::SettingsHome => html! {<SettingsHome/>},
+                    AppRoute::ViewDetail => html! {<ViewDetail/>},
                     AppRoute::DatabaseHome => html! {<DatabaseHome/>},
                     AppRoute::DbCreate => html! {<DbCreate/>},
                     AppRoute::DatabaseSettings => html! {<DatabaseSettings/>},

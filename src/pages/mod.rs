@@ -8,4 +8,5 @@ pub mod outer;
 pub mod getting_started;
 pub mod testing_fetch;
 pub mod authentication;
+pub mod management;
 pub mod settings;
