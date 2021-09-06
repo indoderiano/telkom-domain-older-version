@@ -50,7 +50,7 @@ impl Component for ApisSettings {
                 style="max-width: 1048px; font-size:14px;"
             >
                 <Anchor
-                    route=AppRoute::ApisHome
+                    route=AppRoute::ApisHome{ tenant_id: String::from("testing_id") }
                     classes="text-decoration-none domain-link-dark"
                 >
                     <i class="bi bi-arrow-left me-2"></i>

@@ -5,7 +5,7 @@ use yew::services::{
     ConsoleService,
     storage::{ StorageService, Area },
 };
-use yew::format::{ Json, Text };
+use yew::format::{ Json };
 // use yewdux::prelude::*;
 use yewdux::prelude::WithDispatch;
 use yewdux::dispatch::Dispatcher;
@@ -17,7 +17,10 @@ use yew_router::service::RouteService;
 use crate::store::reducer_account::{
     AppDispatch,
     DataAccountAction,
-    DataAccount,
+    // DataAccount,
+};
+use crate::types::{
+    ResponseLogin,
 };
 
 use crate::pages::{
@@ -84,8 +87,8 @@ use crate::components::{
     sidebar::Sidebar,
 };
 
-use crate::store::types::LocalStorage;
-use crate::types::localstorage_key;
+use crate::types::LocalStorage;
+use crate::types::LOCALSTORAGE_KEY;
 
 #[derive(Switch, Clone)]
 pub enum AppRoute {
@@ -94,8 +97,8 @@ pub enum AppRoute {
     ApisSettings,
     #[to = "/getting-started"]
     GettingStarted,
-    #[to = "/apis"]
-    ApisHome,
+    #[to = "/{tenant_id}/apis"]
+    ApisHome { tenant_id: String },
     #[to = "/activity"]
     Activity,
     #[to = "/applications"]
@@ -146,11 +149,11 @@ pub enum AppRoute {
 
 pub struct App {
     dispatch: AppDispatch,
-    link: ComponentLink<Self>,
+    // link: ComponentLink<Self>,
 }
 
 pub enum Msg {
-    AutoLogin(DataAccount),
+    AutoLogin(ResponseLogin),
 }
 
 impl Component for App {
@@ -159,13 +162,14 @@ impl Component for App {
 
     fn create(dispatch: Self::Properties, link: ComponentLink<Self>) -> Self {
         
-        let mut storage = StorageService::new(Area::Local).expect("storage was disabled");
+        let storage = StorageService::new(Area::Local).expect("storage was disabled");
 
         // LOCALSTORAGE RESOURCE
         // https://github.com/yewstack/yew/issues/1287
         // GET LOCALSTORAGE
+        // NEED BETTER WAY TO PARSE JSON DATA
         let localstorage_data = {
-            if let Json(Ok(data)) = storage.restore(localstorage_key) {
+            if let Json(Ok(data)) = storage.restore(LOCALSTORAGE_KEY) {
                 // ConsoleService::info("get localstorage");
                 ConsoleService::info(&format!("{:?}", data));
 
@@ -184,22 +188,23 @@ impl Component for App {
 
         // IF LOCALSTORAGE EXISTS
         // UPDATE REDUCER
-        // NEED BETTER WAY TO PARSE JSON DATA
-        let data_account = DataAccount {
-            // username: Some(String::from(data.username.unwrap())),
-            // email: Some(String::from(data.email.unwrap())),
-            // token: Some(String::from(data.token.unwrap())),
-            username: localstorage_data.username,
-            email: localstorage_data.email,
-            token: localstorage_data.token,
-        };
-        // // dispatch.send(DataAccountAction::Update(data_account));
-        link.send_message(Msg::AutoLogin(data_account));
+        if let Some(_) = localstorage_data.username {
+            let data_account = ResponseLogin {
+                // username: Some(String::from(data.username.unwrap())),
+                // email: Some(String::from(data.email.unwrap())),
+                // token: Some(String::from(data.token.unwrap())),
+                username: localstorage_data.username.unwrap(),
+                email: localstorage_data.email.unwrap(),
+                token: localstorage_data.token.unwrap(),
+            };
+            // dispatch.send(DataAccountAction::Update(data_account));
+            link.send_message(Msg::AutoLogin(data_account));
+        }
 
 
         App {
             dispatch,
-            link,
+            // link,
         }
     }
 
@@ -229,7 +234,7 @@ impl Component for App {
                 match switch {
                     AppRoute::Activity => html!{<Activity/>},
                     AppRoute::GettingStarted => html! {<GettingStarted/>},
-                    AppRoute::ApisHome => html! {<ApisHome/>},
+                    AppRoute::ApisHome{ tenant_id } => html! {<ApisHome tenant_id=tenant_id />},
                     AppRoute::ApisSettings => html! {<ApisSettings/>},
                     AppRoute::ApplicationHome => html! {<ApplicationHome/>},
                     AppRoute::AuthPasswordless => html! {<AuthPasswordLess/>},
@@ -327,7 +332,7 @@ impl Component for App {
                         <div
                             class="row flex-nowrap"
                         >
-                            <Sidebar/>
+                            <WithDispatch<Sidebar>/>
                             <div 
                                 class="col"
                             >

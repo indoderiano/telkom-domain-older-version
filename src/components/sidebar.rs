@@ -1,17 +1,27 @@
 use yew::prelude::*;
+use yew::services::ConsoleService;
 use yew_router::components::RouterAnchor;
 use crate::app::AppRoute;
+use crate::store::reducer_account::{
+  AppDispatch,
+  // DataAccountAction,
+  // DataAccount,
+};
 
-pub struct Sidebar {}
+pub struct Sidebar {
+  dispatch: AppDispatch,
+}
 
 pub enum Msg {}
 
 impl Component for Sidebar {
   type Message = Msg;
-  type Properties = ();
+  type Properties = AppDispatch;
 
-  fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
-    Sidebar {}
+  fn create(dispatch: Self::Properties, _: ComponentLink<Self>) -> Self {
+    Sidebar {
+      dispatch,
+    }
   }
 
   fn update(&mut self, _msg: Self::Message) -> ShouldRender {
@@ -24,6 +34,9 @@ impl Component for Sidebar {
 
   fn view(&self) -> Html {
     type Anchor = RouterAnchor<AppRoute>;
+    let acc = self.dispatch.state().clone();
+    ConsoleService::info(&format!("sidebar acc tenant id is {:?}", acc.tenant_id));
+    let tenant_id = if let Some(id) = acc.tenant_id { id } else { String::from("no_tenant_id") };
     html! {
       <div
         class="col-auto col-md-3 col-xl-3 px-sm-3 px-0 bg-white fw-bold h-100"
@@ -82,7 +95,7 @@ impl Component for Sidebar {
                 </li>
                 <li>
                   <Anchor
-                    route=AppRoute::ApisHome
+                    route=AppRoute::ApisHome{ tenant_id: tenant_id }
                     classes="text-decoration-none"
                   >
                     <a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">

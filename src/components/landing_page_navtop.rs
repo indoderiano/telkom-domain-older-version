@@ -11,7 +11,10 @@ use yew::services::storage::{
 use crate::store::reducer_account::{
     AppDispatch,
     DataAccountAction,
-    DataAccount
+    // DataAccount,
+};
+use crate::types::{
+    ResponseLogin,
 };
 
 pub struct LandingPageNavTop {
@@ -41,10 +44,10 @@ impl Component for LandingPageNavTop {
 
     fn view(&self) -> Html {
         let signup = self.dispatch.callback(|_| {
-            let newdata = DataAccount {
-                username: Some(String::from("Batman")),
-                email: Some(String::from("bat@mail.com")),
-                token: Some(String::from("token-batman")),
+            let newdata = ResponseLogin {
+                username: String::from("Batman"),
+                email: String::from("bat@mail.com"),
+                token: String::from("token-batman"),
             };
 
             // SET LOCALSTORAGE

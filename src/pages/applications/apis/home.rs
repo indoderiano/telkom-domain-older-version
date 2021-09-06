@@ -1,6 +1,12 @@
 use yew::prelude::*;
 use yew_router::components::RouterAnchor;
+use yew::services::ConsoleService;
 use crate::app::AppRoute;
+
+#[derive(Clone, Debug, Eq, PartialEq, Properties)]
+pub struct ApisState {
+    pub tenant_id: String,
+}
 
 pub struct ApisHome {}
 
@@ -8,9 +14,10 @@ pub enum Msg {}
 
 impl Component for ApisHome {
     type Message = Msg;
-    type Properties = ();
+    type Properties = ApisState;
 
-    fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
+    fn create(props: Self::Properties, _: ComponentLink<Self>) -> Self {
+        ConsoleService::info(&format!("Apis home state, tenant id = {}", props.tenant_id));
         ApisHome {}
     }
 
