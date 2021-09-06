@@ -1,8 +1,13 @@
 use yewdux::prelude::*;
 use yew::services::ConsoleService;
 
+use crate::types::{
+    ResponseLogin
+};
+
 pub enum DataAccountAction {
-    Update(DataAccount)
+    Update(ResponseLogin),
+    Logout
 }
 
 #[derive(Clone, Debug)]
@@ -10,6 +15,7 @@ pub struct DataAccount {
     pub username: Option<String>,
     pub email: Option<String>,
     pub token: Option<String>,
+    pub tenant_id: Option<String>,
 }
 
 impl Reducer for DataAccount {
@@ -20,6 +26,7 @@ impl Reducer for DataAccount {
             username: None,
             email: None,
             token: None,
+            tenant_id: Some(String::from("dev-ofzd5p1b"))
         }
     }
 
@@ -27,9 +34,13 @@ impl Reducer for DataAccount {
         match action {
             DataAccountAction::Update(data) => {
                 ConsoleService::info("action reducer");
-                self.username = data.username;
-                self.email = data.email;
-                self.token = data.token;
+                self.username = Some(data.username);
+                self.email = Some(data.email);
+                self.token = Some(data.token);
+                true
+            }
+            DataAccountAction::Logout => {
+                *self = DataAccount::new();
                 true
             }
         }

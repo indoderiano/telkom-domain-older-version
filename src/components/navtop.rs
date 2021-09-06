@@ -3,14 +3,17 @@ use yewdux::dispatch::Dispatcher;
 use crate::store::reducer_account::{
     AppDispatch,
     DataAccountAction,
-    DataAccount,
+    // DataAccount,
 };
+// use crate::types::{
+//     ResponseLogin,
+// };
 use yewtil::NeqAssign;
 use yew::services::{
     ConsoleService,
     storage::{ StorageService, Area },
 };
-use crate::types::localstorage_key;
+use crate::types::LOCALSTORAGE_KEY;
 
 pub struct Navtop {
     dispatch: AppDispatch,
@@ -37,17 +40,12 @@ impl Component for Navtop {
             Msg::Logout => {
                 ConsoleService::info("logout");
 
-                // UPDATE REDUCER
-                let no_user = DataAccount {
-                    username: None,
-                    email: None,
-                    token: None,
-                };
-                self.dispatch.send(DataAccountAction::Update(no_user));
+                // RESET REDUCER
+                self.dispatch.send(DataAccountAction::Logout);
                 
                 // REMOVE LOCALSTORAGE
                 let mut storage = StorageService::new(Area::Local).expect("storage was disabled");
-                storage.remove(localstorage_key);
+                storage.remove(LOCALSTORAGE_KEY);
                 
                 false
             }

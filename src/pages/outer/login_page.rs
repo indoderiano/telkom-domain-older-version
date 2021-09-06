@@ -6,17 +6,18 @@ use yew::{
     prelude::*,
     services::fetch::{FetchService, FetchTask, Request, Response},
 };
-use crate::store::types::{
-    // User,
-    ResponseLogin,
-};
 use yew_router::components::RouterAnchor;
 use crate::app::AppRoute;
 use yewtil::NeqAssign;
 use crate::store::reducer_account::{
     AppDispatch,
     DataAccountAction,
-    DataAccount,
+    // DataAccount,
+};
+use crate::types::{
+    ResponseLogin,
+    LocalStorage,
+    LOCALSTORAGE_KEY,
 };
 use yewdux::dispatch::Dispatcher;
 // use crate::app::AppRoute;
@@ -27,9 +28,6 @@ use yew::services::{
     storage::{ StorageService, Area },
 };
 use serde::{Deserialize, Serialize};
-
-use crate::store::types::LocalStorage;
-use crate::types::localstorage_key;
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct RequestLogin {
@@ -104,10 +102,10 @@ impl Component for LoginPage {
                         // self.user = Some(data.clone());
 
                         // UPDATE REDUCER
-                        let newdata = DataAccount {
-                            username: Some(String::from(data.username.clone())),
-                            email: Some(String::from(data.email.clone())),
-                            token: Some(String::from(data.token.clone())),
+                        let newdata = ResponseLogin {
+                            username: String::from(data.username.clone()),
+                            email: String::from(data.email.clone()),
+                            token: String::from(data.token.clone()),
                         };
                         self.dispatch.send(DataAccountAction::Update(newdata));
 
@@ -122,7 +120,7 @@ impl Component for LoginPage {
                         let localstorage_data = Json(&user_data);
 
                         // // let localstorage_data: Result<String, anyhow::Error> = Ok(String::from("tokendata_telkomdomain"));
-                        storage.store(localstorage_key, localstorage_data);
+                        storage.store(LOCALSTORAGE_KEY, localstorage_data);
 
 
 

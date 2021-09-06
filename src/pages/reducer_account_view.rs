@@ -6,7 +6,10 @@ use yewtil::NeqAssign;
 use crate::store::reducer_account::{
     AppDispatch,
     DataAccountAction,
-    DataAccount
+    // DataAccount,
+};
+use crate::types::{
+    ResponseLogin,
 };
 
 pub struct ReducerAccountView {
@@ -33,10 +36,10 @@ impl Component for ReducerAccountView {
         let name = self.dispatch.state().username.clone();
         let update = self.dispatch.callback(|_| {
             // ConsoleService::info(&data.name);
-            let newdata = DataAccount {
-                username: Some(String::from("Batman")),
-                email: None,
-                token: None,
+            let newdata = ResponseLogin {
+                username: String::from("Batman"),
+                email: String::from("bat@mail.com"),
+                token: String::from("testingtoken"),
             };
             DataAccountAction::Update(newdata)
         });
