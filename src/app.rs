@@ -154,6 +154,7 @@ pub struct App {
 
 pub enum Msg {
     AutoLogin(ResponseLogin),
+    SetIsAuth(bool),
 }
 
 impl Component for App {
@@ -199,7 +200,10 @@ impl Component for App {
             };
             // dispatch.send(DataAccountAction::Update(data_account));
             link.send_message(Msg::AutoLogin(data_account));
+        } else {
+            link.send_message(Msg::SetIsAuth(false));
         }
+
 
 
         App {
@@ -213,6 +217,12 @@ impl Component for App {
             Msg::AutoLogin(user) => {
                 ConsoleService::info("autologin");
                 self.dispatch.send(DataAccountAction::Update(user));
+                self.dispatch.send(DataAccountAction::SetIsAuth(false));
+                true
+            }
+            Msg::SetIsAuth(state) => {
+                ConsoleService::info("set is auth from app");
+                self.dispatch.send(DataAccountAction::SetIsAuth(state));
                 true
             }
         }
@@ -226,55 +236,287 @@ impl Component for App {
 
         // let acc_ref = &account;
         let acc = self.dispatch.state().clone();
+        let is_auth = acc.is_auth;
+        let is_logged_in = if acc.username == None {false} else {true};
         // let route_service = RouteService::new();
         let render = Router::render(move |switch: AppRoute| {
-            let is_logged_in = if acc.username == None {false} else {true};
             let mut route_service = RouteService::new();
-            if is_logged_in {
-                match switch {
-                    AppRoute::Activity => html!{<Activity/>},
-                    AppRoute::GettingStarted => html! {<GettingStarted/>},
-                    AppRoute::ApisHome{ tenant_id } => html! {<ApisHome tenant_id=tenant_id />},
-                    AppRoute::ApisSettings => html! {<ApisSettings/>},
-                    AppRoute::ApplicationHome => html! {<ApplicationHome/>},
-                    AppRoute::AuthPasswordless => html! {<AuthPasswordLess/>},
-                    AppRoute::SsoHome => html! {<SsoHome/>},
-                    AppRoute::CreateSso => html! {<CreateSso/>},
-                    AppRoute::SocialHome => html! {<SocialHome/>},
-                    AppRoute::SocialSettings => html! {<SocialSettings/>},
-                    AppRoute::SocialCreate => html! {<SocialCreate/>},
-                    AppRoute::RolesCreated => html! {<RolesCreated/>},
-                    AppRoute::UsersManagement => html! {<UsersManagement/>},
-                    AppRoute::EnterpriseHome => html! {<EnterpriseHome/>},
-                    AppRoute::EnterpriseGoogle => html! {<EnterpriseGoogle/>},
-                    AppRoute::EnterpriseGoogleCreate => html! {<EnterpriseGoogleCreate/>},
-                    AppRoute::SettingsHome => html! {<SettingsHome/>},
-                    AppRoute::ViewDetail => html! {<ViewDetail/>},
-                    AppRoute::DatabaseHome => html! {<DatabaseHome/>},
-                    AppRoute::DbCreate => html! {<DbCreate/>},
-                    AppRoute::DatabaseSettings => html! {<DatabaseSettings/>},
-                    _ => {
-                        // ConsoleService::info("SET ROUTE TO MANAGE");
+            match switch {
+                // NOT LOGGED IN ROUTES
+                AppRoute::Home => {
+                    if is_logged_in {
                         route_service.set_route("/manage", ());
                         html! {<GettingStarted/>}
-                    },
-                }
-            } else {
-                match switch {
-                    AppRoute::Home => {
-                        // ConsoleService::info("ROUTE HOMEPAGE");
+                    } else {
                         html! {<HomePage/>}
-                    },
-                    AppRoute::LoginPage => html! {<WithDispatch<LoginPage>/>},
-                    AppRoute::RegisterPage => html!{<RegisterPage/>},
-                    AppRoute::RequestPassPage => html!{<RequestPassPage/>},
-                    _ => {
-                        // ConsoleService::info("SET ROUTE /");
+                    }
+                },
+                AppRoute::LoginPage => {
+                    if is_logged_in {
+                        route_service.set_route("/manage", ());
+                        html! {<GettingStarted/>}
+                    } else {
+                        html! {<WithDispatch<LoginPage>/>}
+                    }
+                },
+                AppRoute::RegisterPage => {
+                    if is_logged_in {
+                        route_service.set_route("/manage", ());
+                        html! {<GettingStarted/>}
+                    } else {
+                        html!{<RegisterPage/>}
+                    }
+                },
+                AppRoute::RequestPassPage => {
+                    if is_logged_in {
+                        route_service.set_route("/manage", ());
+                        html! {<GettingStarted/>}
+                    } else {
+                        html!{<RequestPassPage/>}
+                    }
+                },
+
+
+
+
+
+
+                // LOGGED IN ROUTES
+                AppRoute::Activity => {
+                    if is_logged_in {
+                        html!{<Activity/>}
+                    } else {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
-                    },
-                }
+                    }
+                },
+                AppRoute::GettingStarted => {
+                    if is_logged_in {
+                        html! {<GettingStarted/>}
+                    } else {
+                        route_service.set_route("/", ());
+                        html! {<HomePage/>}
+                    }
+                },
+                AppRoute::ApisHome{ tenant_id } => {
+                    if is_logged_in {
+                        html! {<ApisHome tenant_id=tenant_id />}
+                    } else {
+                        route_service.set_route("/", ());
+                        html! {<HomePage/>}
+                    }
+                },
+                AppRoute::ApisSettings => {
+                    if is_logged_in {
+                        html! {<ApisSettings/>}
+                    } else {
+                        route_service.set_route("/", ());
+                        html! {<HomePage/>}
+                    }
+                },
+                AppRoute::ApplicationHome => {
+                    if is_logged_in {
+                        html! {<ApplicationHome/>}
+                    } else {
+                        route_service.set_route("/", ());
+                        html! {<HomePage/>}
+                    }
+                },
+                AppRoute::AuthPasswordless => {
+                    if is_logged_in {
+                        html! {<AuthPasswordLess/>}
+                    } else {
+                        route_service.set_route("/", ());
+                        html! {<HomePage/>}
+                    }
+                },
+                AppRoute::SsoHome => {
+                    if is_logged_in {
+                        html! {<SsoHome/>}
+                    } else {
+                        route_service.set_route("/", ());
+                        html! {<HomePage/>}
+                    }
+                },
+                AppRoute::CreateSso => {
+                    if is_logged_in {
+                        html! {<CreateSso/>}
+                    } else {
+                        route_service.set_route("/", ());
+                        html! {<HomePage/>}
+                    }
+                },
+                AppRoute::SocialHome => {
+                    if is_logged_in {
+                        html! {<SocialHome/>}
+                    } else {
+                        route_service.set_route("/", ());
+                        html! {<HomePage/>}
+                    }
+                },
+                AppRoute::SocialSettings => {
+                    if is_logged_in {
+                        html! {<SocialSettings/>}
+                    } else {
+                        route_service.set_route("/", ());
+                        html! {<HomePage/>}
+                    }
+                },
+                AppRoute::SocialCreate => {
+                    if is_logged_in {
+                        html! {<SocialCreate/>}
+                    } else {
+                        route_service.set_route("/", ());
+                        html! {<HomePage/>}
+                    }
+                },
+                AppRoute::RolesCreated => {
+                    if is_logged_in {
+                        html! {<RolesCreated/>}
+                    } else {
+                        route_service.set_route("/", ());
+                        html! {<HomePage/>}
+                    }
+                },
+                AppRoute::UsersManagement => {
+                    if is_logged_in {
+                        html! {<UsersManagement/>}
+                    } else {
+                        route_service.set_route("/", ());
+                        html! {<HomePage/>}
+                    }
+                },
+                AppRoute::EnterpriseHome => {
+                    if is_logged_in {
+                        html! {<EnterpriseHome/>}
+                    } else {
+                        route_service.set_route("/", ());
+                        html! {<HomePage/>}
+                    }
+                },
+                AppRoute::EnterpriseGoogle => {
+                    if is_logged_in {
+                        html! {<EnterpriseGoogle/>}
+                    } else {
+                        route_service.set_route("/", ());
+                        html! {<HomePage/>}
+                    }
+                },
+                AppRoute::EnterpriseGoogleCreate => {
+                    if is_logged_in {
+                        html! {<EnterpriseGoogleCreate/>}
+                    } else {
+                        route_service.set_route("/", ());
+                        html! {<HomePage/>}
+                    }
+                },
+                AppRoute::SettingsHome => {
+                    if is_logged_in {
+                        html! {<SettingsHome/>}
+                    } else {
+                        route_service.set_route("/", ());
+                        html! {<HomePage/>}
+                    }
+                },
+                AppRoute::ViewDetail => {
+                    if is_logged_in {
+                        html! {<ViewDetail/>}
+                    } else {
+                        route_service.set_route("/", ());
+                        html! {<HomePage/>}
+                    }
+                },
+                AppRoute::DatabaseHome => {
+                    if is_logged_in {
+                        html! {<DatabaseHome/>}
+                    } else {
+                        route_service.set_route("/", ());
+                        html! {<HomePage/>}
+                    }
+                },
+                AppRoute::DbCreate => {
+                    if is_logged_in {
+                        html! {<DbCreate/>}
+                    } else {
+                        route_service.set_route("/", ());
+                        html! {<HomePage/>}
+                    }
+                },
+                AppRoute::DatabaseSettings => {
+                    if is_logged_in {
+                        html! {<DatabaseSettings/>}
+                    } else {
+                        route_service.set_route("/", ());
+                        html! {<HomePage/>}
+                    }
+                },
+
+
+
+
+
+
+                // OTHER ROUTES
+                _ => {
+                    if is_logged_in {
+                        route_service.set_route("/manage", ());
+                        html! {<GettingStarted/>}
+                    } else {
+                        route_service.set_route("/", ());
+                        html! {<HomePage/>}
+                    }
+                },
             }
+
+            // if is_logged_in {
+            //     match switch {
+            //         AppRoute::Activity => html!{<Activity/>},
+            //         AppRoute::GettingStarted => html! {<GettingStarted/>},
+            //         AppRoute::ApisHome{ tenant_id } => html! {<ApisHome tenant_id=tenant_id />},
+            //         AppRoute::ApisSettings => html! {<ApisSettings/>},
+            //         AppRoute::ApplicationHome => html! {<ApplicationHome/>},
+            //         AppRoute::AuthPasswordless => html! {<AuthPasswordLess/>},
+            //         AppRoute::SsoHome => html! {<SsoHome/>},
+            //         AppRoute::CreateSso => html! {<CreateSso/>},
+            //         AppRoute::SocialHome => html! {<SocialHome/>},
+            //         AppRoute::SocialSettings => html! {<SocialSettings/>},
+            //         AppRoute::SocialCreate => html! {<SocialCreate/>},
+            //         AppRoute::RolesCreated => html! {<RolesCreated/>},
+            //         AppRoute::UsersManagement => html! {<UsersManagement/>},
+            //         AppRoute::EnterpriseHome => html! {<EnterpriseHome/>},
+            //         AppRoute::EnterpriseGoogle => html! {<EnterpriseGoogle/>},
+            //         AppRoute::EnterpriseGoogleCreate => html! {<EnterpriseGoogleCreate/>},
+            //         AppRoute::SettingsHome => html! {<SettingsHome/>},
+            //         AppRoute::ViewDetail => html! {<ViewDetail/>},
+            //         AppRoute::DatabaseHome => html! {<DatabaseHome/>},
+            //         AppRoute::DbCreate => html! {<DbCreate/>},
+            //         AppRoute::DatabaseSettings => html! {<DatabaseSettings/>},
+            //         _ => {
+            //             // ConsoleService::info("SET ROUTE TO MANAGE");
+            //             route_service.set_route("/manage", ());
+            //             html! {<GettingStarted/>}
+            //         },
+            //     }
+            // } else {
+            //     match switch {
+            //         AppRoute::Home => {
+            //             // ConsoleService::info("ROUTE HOMEPAGE");
+            //             html! {<HomePage/>}
+            //         },
+            //         AppRoute::LoginPage => html! {<WithDispatch<LoginPage>/>},
+            //         AppRoute::RegisterPage => html!{<RegisterPage/>},
+            //         AppRoute::RequestPassPage => html!{<RequestPassPage/>},
+            //         _ => {
+            //             // ConsoleService::info("SET ROUTE /");
+            //             route_service.set_route("/", ());
+            //             html! {<HomePage/>}
+            //         },
+            //     }
+            // }
+
+
+
+
             // match switch {
             //     AppRoute::GettingStarted => html! {<GettingStarted/>},
             //     AppRoute::ApisHome if !is_logged_in => {
@@ -307,21 +549,8 @@ impl Component for App {
         });
 
         let account = self.dispatch.state().clone();
-        if account.username == None {
-            html! {
-                <>
-                    <main>
-                        <Router<AppRoute, ()>
-                            render=render
-                            redirect = Router::redirect(|route: Route| {
-                                ConsoleService::info(&route.route);
-                                AppRoute::LoginPage
-                            })
-                        />
-                    </main>
-                </>
-            }
-        } else {
+
+        if is_logged_in && !is_auth {
             html! {
                 <>
                     <WithDispatch<Navtop>/>
@@ -355,6 +584,26 @@ impl Component for App {
                     // <WithDispatch<ReducerGlobal>/>
                     // <WithDispatch<ReducerAccountView>/>
                 </>
+            }
+        } else if !is_auth {
+            html! {
+                <>
+                    <main>
+                        <Router<AppRoute, ()>
+                            render=render
+                            redirect = Router::redirect(|route: Route| {
+                                ConsoleService::info(&route.route);
+                                AppRoute::LoginPage
+                            })
+                        />
+                    </main>
+                </>
+            }
+        } else {
+            html! {
+                <div>
+                    {"LOADING..."}
+                </div>
             }
         }
 
