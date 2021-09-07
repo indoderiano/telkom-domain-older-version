@@ -6,12 +6,14 @@ use crate::types::{
 };
 
 pub enum DataAccountAction {
+    SetIsAuth(bool),
     Update(ResponseLogin),
     Logout
 }
 
 #[derive(Clone, Debug)]
 pub struct DataAccount {
+    pub is_auth: bool,
     pub username: Option<String>,
     pub email: Option<String>,
     pub token: Option<String>,
@@ -23,15 +25,21 @@ impl Reducer for DataAccount {
 
     fn new() -> Self {
         Self { 
+            is_auth: true,
             username: None,
             email: None,
             token: None,
-            tenant_id: Some(String::from("dev-ofzd5p1b"))
+            tenant_id: Some(String::from("dev-ofzd5p1b")),
         }
     }
 
     fn reduce(&mut self, action: Self::Action) -> Changed {
         match action {
+            DataAccountAction::SetIsAuth(state) => {
+                ConsoleService::info("set is auth from reducer");
+                self.is_auth = state;
+                true
+            }
             DataAccountAction::Update(data) => {
                 ConsoleService::info("action reducer");
                 self.username = Some(data.username);
