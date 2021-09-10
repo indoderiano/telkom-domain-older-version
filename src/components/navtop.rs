@@ -65,7 +65,7 @@ impl Component for Navtop {
                 <ul class="nav text-light">
                     <li class="nav-item justify-content-center my-auto">
                         <div class="me-3">
-                            <Logo width=50 />
+                            <Logo width=40 />
                         </div>
                         // <div class="bg-white p-1 pt-0 rounded me-3 navtop-logo">
                         //     <img
