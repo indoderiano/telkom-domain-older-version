@@ -548,7 +548,7 @@ impl Component for App {
             // }
         });
 
-        let account = self.dispatch.state().clone();
+        // let account = self.dispatch.state().clone();
 
         if is_logged_in && !is_auth {
             html! {
@@ -563,7 +563,7 @@ impl Component for App {
                         >
                             <WithDispatch<Sidebar>/>
                             <div 
-                                class="col"
+                                class="col overflow-hidden"
                             >
                                 <Router<AppRoute, ()>
                                     render=render

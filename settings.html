@@ -16,261 +16,694 @@
 
 <body>
     <div>
-        <div
-            class="mb-5"
-        >
-            <h5
-                class="mb-2"
-            >
-                {"Signing Keys"}
-            </h5>
-            <p>{"Securely manage signing keys used by the applications in your tenant. "}</p>
 
-        </div>
-
-        <div
-            class="mb-5"
-        >
-            <div
-                class="mb-4"
+    <div class="d-flex justify-content-between px-4 py-2 bg-dark"
+                style="font-size: 14px;"
             >
-                <h5
-                    class="mb-2"
+                <ul class="nav text-light">
+                    <li class="nav-item justify-content-center my-auto">
+                        <div class="me-3">
+                            <Logo width=40 />
+                        </div>
+                    </li>
+                    <div
+                        class="nav-item justify-content-center my-auto bg-light me-3"
+                        style="width: 1px; height: 24px; opacity: .8;"
+                    >
+                    </div>
+                    <li class="nav-item px-2"
+                        style="min-width: 64px;"
+                    >
+                        <p class="fw-bolder mb-1">{"user-asdfbd"}</p>
+                        <span>{"Development"}</span>
+                    </li>
+                </ul>
+                <ul class="nav justify-content-end"
+                    style="flex: 1 1 0%;"
                 >
-                    {"Rotation Settings"}
-                </h5>
-                <p>{"The actions below allow you to rotate the signing key and certificate used to validate tokens. You can see the next in queue valid signing key in the table below for updating your application’s configuration before the rotation."}</p>
+                    <li class="nav-item my-auto me-3">
+                        <button type="button" class="btn btn-dark navtop-hover">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </li>
+                    <li class="nav-item my-auto me-3">
+                        <button type="button" class="btn btn-outline-light btn-sm">{"Discuss your needs"}</button>
+                    </li>
+                    <li class="nav-item my-auto me-3">
+                        <button type="button" class="btn btn-dark navtop-hover">
+                            <i class="bi bi-book me-2"></i> {"Docs"}
+                        </button>
+                    </li>
+                    <li class="nav-item my-auto me-3">
+                        <button type="button" class="btn btn-dark navtop-hover">
+                            <i class="bi bi-bell"></i>
+                        </button>
+                    </li>
+                    <li class="nav-item justify-content-center my-auto">
+                        <div
+                            style="cursor: pointer;"
+                            class="bg-white rounded-circle p-1 navtop-logo dropdown">
+                            <img
+                                src="https://cdn0.iconfinder.com/data/icons/set-ui-app-android/32/8-512.png"
+                                style="width: 23px;"
+                                id="dropdownMenuButton1"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                            />
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <li
+                                    class="dropdown-item fs-7"
+                                    style="cursor: pointer;"
+                                >
+                                    {"Log out"}
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+
+
+
+
+    <div
+        class="container-fluid"
+    >
+        <div
+            class="row flex-nowrap"
+        >
+            
+
+        <div
+        class="col-auto col-md-3 col-xl-3 px-sm-3 px-0 bg-white fw-bold h-100"
+        style="font-size:14px;"
+        >
+        <div
+          class="d-flex border-end flex-column align-items-center align-items-sm-start py-4 px-3 text-white h-auto overflow-auto"
+        >
+          
+          <ul
+            class="nav flex-column w-100 text-color-primary"
+            id="nav_accordion"
+            style="list-style-type:none; font-weight: bold; "
+        >
+            <li class="nav-item">
+                <Anchor
+                  route=AppRoute::GettingStarted
+                  classes="text-decoration-none"
+                >
+                <a class="nav-link text-color-primary" href="#"> <span
+                    style="padding: 4px 8px;"><i class="bi bi-lightning-charge-fill"></i></span>
+                  {"Getting Started"}
+                </a>
+                </Anchor>
+            </li>
+            
+            <li class="nav-item">
+              <Anchor
+                route=AppRoute::Activity
+                classes="text-decoration-none"
+              >
+              <a class="nav-link text-color-primary" href="#"> <span
+                  style="padding: 4px 8px;"><i class="bi bi-graph-up"></i></span>
+                {"Activity"}
+              </a>
+              </Anchor>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link text-color-primary" data-bs-toggle="collapse" data-bs-target="#menu_item1" href="#"
+                > <span style="padding: 4px 8px;"><i class="bi bi-app-indicator"></i></span>
+                {"Applications"}
+                <i class="bi small bi-caret-down-fill float-end"></i>
+                </a>
+              <ul id="menu_item1" class="submenu collapse" data-bs-parent="#nav_accordion"
+                style="list-style-type:none; font-weight: 400;">
+                <li>
+                  <Anchor
+                    route=AppRoute::ApplicationHome
+                    classes="text-decoration-none"
+                  >
+                    <a class="nav-link" href="#"
+                      style=" padding: 4px 8px; font-size: 15px; color: #65676e;">{"Applications"}
+                    </a>
+                  </Anchor>
+                </li>
+                <li>
+                  <Anchor
+                    route=AppRoute::ApisHome{ tenant_id: tenant_id }
+                    classes="text-decoration-none"
+                  >
+                    <a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">
+                      {"APIs"}
+                    </a>
+                  </Anchor>
+                </li>
+                <li>
+                <Anchor
+                    route=AppRoute::SsoHome
+                    classes="text-decoration-none"
+                  >
+                    <a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"SSO Integrations "}</a>
+                  </Anchor>
+                </li>
+              </ul>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link text-color-primary" data-bs-toggle="collapse" data-bs-target="#menu_item2" href="#"
+                > <span style="padding: 4px 8px;"><i class="bi bi-file-lock2"></i></span>
+                {"Authentication"} <i
+                  class="bi small bi-caret-down-fill  float-end"></i> </a>
+              <ul id="menu_item2" class="submenu collapse" data-bs-parent="#nav_accordion"
+                style="list-style-type:none; font-weight: 400">
+                <li>
+                  <Anchor
+                    route=AppRoute::DatabaseHome
+                    classes="text-decoration-none"
+                  >
+                    <a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Database"}</a>
+                  </Anchor>
+                </li>
+                <li>
+                  <Anchor
+                    route=AppRoute::SocialHome
+                    classes="text-decoration-none"
+                  >
+                    <a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">
+                      {"Social"}
+                    </a>
+                  </Anchor>
+                </li>
+                <li>
+                  <Anchor
+                    route=AppRoute::EnterpriseHome
+                    classes="text-decoration-none"
+                  >
+                    <a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">
+                      {"Enterprise"}
+                    </a>
+                  </Anchor>
+                </li>
+                <li>
+                  <Anchor
+                    route=AppRoute::AuthPasswordless
+                    classes="text-decoration-none"
+                  >
+                  <a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Passwordless"}
+                  </a>
+                  </Anchor>
+                </li>
+                <li><a class="nav-link" href="#"
+                    style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Authentication Profile"} </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-color-primary" href="#"> <span style="padding: 4px 8px;"><i
+                    class="bi bi-building"></i></span> {"Organizations"} </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-color-primary" data-bs-toggle="collapse" data-bs-target="#menu_item3" href="#"
+                > <span style="padding: 4px 8px;"><i class="bi bi-person-check"></i></span> {"User
+                Management"} <i
+                  class="bi small bi-caret-down-fill float-end"></i> </a>
+              <ul id="menu_item3" class="submenu collapse" data-bs-parent="#nav_accordion"
+                style="list-style-type:none; font-weight: 400">
+                <li>
+                  <Anchor
+                    route=AppRoute::UsersManagement
+                    classes="text-decoration-none"
+                  >
+                  <a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Users"} </a>
+                  </Anchor>
+                </li>
+                <li>
+                  <Anchor
+                    route=AppRoute::RolesCreated
+                    classes="text-decoration-none"
+                  >
+                  <a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Roles"} </a>
+                  </Anchor>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-color-primary" data-bs-toggle="collapse" data-bs-target="#menu_item4" href="#"
+                > <span style="padding: 4px 8px;"><i class="bi bi-pie-chart"></i></span> {"Branding"}
+                <i
+                  class="bi small bi-caret-down-fill float-end"></i> </a>
+              <ul id="menu_item4" class="submenu collapse" data-bs-parent="#nav_accordion"
+                style="list-style-type:none; font-weight: 400">
+                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Universal Login"} </a></li>
+                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Custom Domains"} </a></li>
+                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Email Templates"} </a> </li>
+                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Email Provider"} </a> </li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-color-primary" data-bs-toggle="collapse" data-bs-target="#menu_item5" href="#"
+                > <span style="padding: 4px 8px;"><i class="bi bi-shield-check"></i></span>
+                {"Security"}
+                <i
+                  class="bi small bi-caret-down-fill float-end"></i> </a>
+              <ul id="menu_item5" class="submenu collapse" data-bs-parent="#nav_accordion"
+                style="list-style-type:none; font-weight: 400">
+                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Attack Protection"} </a></li>
+                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Multi-factor Auth "}</a></li>
+                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Monitoring"}</a> </li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-color-primary" data-bs-toggle="collapse" data-bs-target="#menu_item6" href="#"
+                > <span style="padding: 4px 8px;"><i class="bi bi-exclude"></i></span> {"Actions"}<i class="bi small bi-caret-down-fill float-end"></i> </a>
+              <ul id="menu_item6" class="submenu collapse" data-bs-parent="#nav_accordion"
+                style="list-style-type:none; font-weight: 400">
+                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Flows"} </a>
+                </li>
+                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Custom"} </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-color-primary" data-bs-toggle="collapse" data-bs-target="#menu_item7" href="#"
+                > <span style="padding: 4px 8px;"><i class="bi bi-arrow-left-right"></i></span>
+                {"Auth Pipeline"} <i
+                  class="bi small bi-caret-down-fill float-end"></i> </a>
+              <ul id="menu_item7" class="submenu collapse" data-bs-parent="#nav_accordion"
+                style="list-style-type:none; font-weight: 400">
+                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Rules"} </a>
+                </li>
+                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Hooks"} </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-color-primary" data-bs-toggle="collapse" data-bs-target="#menu_item8" href="#"
+                > <span style="padding: 4px 8px;"><i class="bi bi-tv"></i></span>
+                {"Monitoring"} <i
+                  class="bi small bi-caret-down-fill float-end"></i> </a>
+              <ul id="menu_item8" class="submenu collapse" data-bs-parent="#nav_accordion"
+                style="list-style-type:none; font-weight: 400">
+                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Log"} </a>
+                </li>
+                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Streams"} </a>
+                </li>
+              </ul>
+            </li>
+
+            <li class="nav-item">
+              <Anchor
+                route=AppRoute::SettingsHome
+                classes="text-decoration-none"
+              >
+                <a class="nav-link text-color-primary" href="#">
+                  <span style="padding: 4px 8px;">
+                    <i class="bi bi-gear"></i>
+                  </span>
+                  {"Settings"}
+                </a>
+              </Anchor>
+            </li>
+            
+          </ul>
+          <hr/>
+        </div>
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <div 
+                class="col"
+                style="overflow: hidden;"
+            >
+                
+            
+
+
+
+
+
+
+
+            <div
+                class="mx-auto pt-5 pb-5 px-4"
+                style="max-width: 1048px;"
+            >
+                <div
+                    class="mb-5"
+                >
+                    <div
+                        class="d-flex flex-row mb-3"
+                    >
+                        <div
+                            class="flex-fill fs-3 fw-bold"
+                        >
+                            {"APIs"}
+                        </div>
+                        <div>
+                            <button
+                                type="button"
+                                class="btn btn-primary d-flex align-items-center"
+                                data-bs-toggle="modal" data-bs-target="#exampleModal"
+                            >
+                                <i class="bi bi-plus me-2" style="margin-left: -5px;"></i>
+                                <span>{"Create API"}</span>
+                            </button>
+                        </div>
+                    </div>
+                    <p>{"Define APIs that you can consume from your authorized applications."}</p>
+                </div>
+
+
+
+                <div>
+                    <div
+                        class="d-flex border-bottom border-1 list-hover"
+                    >
+                        <div
+                            class="p-3 d-flex"
+                            style="width: 40%;"
+                        >
+                            <div
+                                style="flex: 0 0 auto; width: 40px; height: 40px; background-color: #eff0f2;"
+                                class="d-flex justify-content-center align-items-center rounded me-3"
+                            >
+                                <i class="bi bi-gear"></i>
+                            </div>
+
+                            <div
+                                class="d-grid"
+                                style="min-width: 40px;"
+                            >
+                                <p
+                                    class="m-0"
+                                    style="
+                                        white-space: nowrap;
+                                        text-overflow: ellipsis;
+                                        overflow: hidden;
+                                        font-size: 14px;
+                                        text-decoration: none;
+                                    "
+                                >
+                                    <Anchor
+                                        route=AppRoute::ApisSettings
+                                        classes="text-decoration-none fw-bold mb-0"
+                                    >
+                                            {"Auth0 Management API"}
+                                    </Anchor>
+                                </p>
+                                <p
+                                    class="mb-0 text-muted"
+                                    style="
+                                        white-space: nowrap;
+                                        text-overflow: ellipsis;
+                                        overflow: hidden;
+                                        font-size: 14px;
+                                    "
+                                >
+                                    {"System API"}
+                                </p>
+                            </div>
+            
+                        </div>
+
+                        <div
+                            class="p-3 d-flex flex-fill align-items-center text-muted"
+                        >
+                            <span
+                                style="font-size: 14px; margin-right: 8px; white-space: nowrap;"
+                            >
+                                {"API Audience:"} 
+                            </span>
+                            <div
+                                class="rounded"
+                                style="
+                                background-color: #eff0f2;
+                                white-space: nowrap;
+                                text-overflow: ellipsis;
+                                overflow: hidden;
+                                font-size: 14px;
+                                padding: 2px 6px;
+                                font-family: 'Roboto Mono', monospace;
+                            "
+                            >
+                                {"https://dev-r5y8heyf.au.auth0.com/api/v2/"}
+                            </div>
+                            <i class="bi bi-files ms-1"></i>
+                        </div>
+
+                        <div
+                            class="p-3 d-flex align-items-center dropdown"
+                        >
+                            <button
+                                type="button"
+                                style="flex: 0 0 auto; width: 30px; height: 30px;"
+                                class="btn d-flex justify-content-center align-items-center rounded border"
+                                role="button"
+                                id="dropdownMenuButton1"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                            >
+                                <i class="bi bi-three-dots"></i>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <li>
+                                    <Anchor route=AppRoute::ApisSettings classes="dropdown-item fs-7">
+                                        {"Settings"}
+                                    </Anchor>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+
+
+
+
+                <!-- <div
+                    style="overflow-x: auto;"
+                >
+                    <table class="table">
+                        <tbody>
     
-            </div>
+    
+                          <tr>
+    
+                            <td
+                                style="width: 40%;"
+                            >
+                                <div
+                                    class="p-3 d-flex"
+                                >
+    
+                                    <div
+                                        style="flex: 0 0 auto; width: 40px; height: 40px; background-color: #eff0f2;"
+                                        class="d-flex justify-content-center align-items-center rounded me-3"
+                                    >
+                                        <i class="bi bi-gear"></i>
+                                    </div>
+    
+                                    <div
+                                        class="d-grid"
+                                        style="min-width: 40px;"
+                                    >
+                                        <p
+                                            style="
+                                                white-space: nowrap;
+                                                text-overflow: ellipsis;
+                                                overflow: hidden;
+                                                font-size: 14px;
+                                                text-decoration: none;
+                                            "
+                                        >
+                                            <Anchor
+                                                route=AppRoute::ApisSettings
+                                                classes="text-decoration-none fw-bold mb-0"
+                                            >
+                                                    {"Auth0 Management API"}
+                                            </Anchor>
+                                        </p>
+                                        <p
+                                            class="mb-0 text-muted"
+                                            style="
+                                                white-space: nowrap;
+                                                text-overflow: ellipsis;
+                                                overflow: hidden;
+                                                font-size: 14px;
+                                            "
+                                        >
+                                            {"System API"}
+                                        </p>
+                                    </div>
+                                </div>
+                            </td>
+    
+    
+                            <td>
+                                <div
+                                    class="p-3 d-grid flex-fill align-items-center text-muted"
+                                    style="
+                                        grid-template-columns: max-content auto;
+                                    "
+                                >
+                                    <span
+                                        style="font-size: 14px; margin-right: 8px; white-space: nowrap;"
+                                    >
+                                        {"API Audience:"}
+                                    </span>
+                                    <div
+                                        class="d-flex align-items-center"
+                                    >
+                                        <div
+                                            class="rounded"
+                                            style="
+                                                background-color: #eff0f2;
+                                                white-space: nowrap;
+                                                text-overflow: ellipsis;
+                                                overflow: hidden;
+                                                font-size: 14px;
+                                                padding: 2px 6px;
+                                                font-family: 'Roboto Mono', monospace;
+                                            "
+                                        >
+                                            {"https://dev-r5y8heyf.au.auth0.com/api/v2/"}
+                                        </div>
+                                        <i class="bi bi-files ms-1"></i>
+                                    </div>
+                                </div>
+                            </td>
+    
+    
+    
+    
+                            <td>
+                                <div
+                                    class="p-3 d-flex align-items-center dropdown"
+                                >
+                                    <button
+                                        type="button"
+                                        style="flex: 0 0 auto; width: 30px; height: 30px;"
+                                        class="btn d-flex justify-content-center align-items-center rounded border"
+                                        role="button"
+                                        id="dropdownMenuButton1"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false"
+                                    >
+                                        <i class="bi bi-three-dots"></i>
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                        <li>
+                                            <Anchor route=AppRoute::ApisSettings classes="dropdown-item fs-7">
+                                                {"Settings"}
+                                            </Anchor>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+    
+    
+                          </tr>
+                          
+                          <tr>
+                            <td>Jacob</td>
+                            <td>Thornton</td>
+                            <td>@fat</td>
+                          </tr>
+                          <tr>
+                            <td colspan="2">Larry the Bird</td>
+                            <td>@twitter</td>
+                          </tr>
+                        </tbody>
+                    </table>
+                </div> -->
 
-            <div
-                class="border rounded p-4 mb-4"
-            >
+
+
+
+
+
+                // MODAL CREATE APIs
                 <div
-                    class="d-flex border-bottom pb-5"
+                    class="modal fade"
+                    id="exampleModal"
+                    tabindex="-1"
+                    aria-labelledby="exampleModalLabel"
+                    aria-hidden="true"
                 >
-                    <div
-                        class="flex-fill"
-                    >
-                        <div
-                            class="fw-bolder mb-1"
-                            style="font-size: 16px;"
-                        >
-                            {"Rotate Signing Keys"}
-                        </div>
-                        <div>
-                            {"This will only rotate the currently used signing key. All tokens signed with this key will continue to be valid."}
+                    <div class="modal-dialog modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">{"New API"}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body" style="font-size: 14px;">
+                                <div
+                                    class="mb-4"
+                                >
+                                    <label for="basic-url" class="form-label fw-bold">{"Name"}</label>
+                                    <div class="input-group mb-2">
+                                        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3"/>
+                                    </div>
+                                    <label class="form-label text-muted">{"A friendly name for the API"}</label>
+                                </div>
+                                <div
+                                    class="mb-4"
+                                >
+                                    <label for="basic-url" class="form-label fw-bold">{"Identifier"}</label>
+                                    <div class="input-group mb-2">
+                                        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3"/>
+                                    </div>
+                                    <label class="form-label text-muted">{"A logical identifier for this API. We recommend using a URL but note that this doesn’t have to be a publicly available URL, Auth0 will not call your API at all.This field cannot be modified."}</label>
+                                </div>
+                                <div
+                                    class="mb-4"
+                                >
+                                    <label for="basic-url" class="form-label fw-bold">{"Signing Algorithm"}</label>
+                                    <select class="form-select mb-2" aria-label="Default select example">
+                                        <option value="1">{"RS256"}</option>
+                                        <option value="2">{"HS256"}</option>
+                                    </select>
+                                    <label class="form-label text-muted">{"Algorithm to sign the tokens with. When selecting RS256 the token will be signed with Auth0's private key."}</label>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{"Cancel"}</button>
+                                <button type="button" class="btn btn-primary">{"Create"}</button>
+                            </div>
                         </div>
                     </div>
-
-                    <button type="button" class="btn btn-light">{"Rotate Key"}</button>
                 </div>
-
-                <div
-                    class="d-flex pt-5 pb-5"
-                >
-                    <div
-                        class="flex-fill"
-                    >
-                        <div
-                            class="fw-bolder mb-1"
-                            style="font-size: 16px;"
-                        >
-                            {"Rotate & Revoke Signing Key"}
-                        </div>
-                        <div>
-                            {"This will rotate and additionally revoke the currently used signing key and all tokens signed with this key will no longer be valid."}
-                        </div>
-                    </div>
-
-                    <button type="button" class="btn btn-danger">{"Rotate & Revoke Key"}</button>
-                </div>
+                
             </div>
 
+
+
+
+
+
+
+            
+
+
+
+            </div>
         </div>
+        
+    </div>
 
-        <div
-            class="mb-5"
-        >
-            <div
-                class="mb-4"
-            >
-                <h5
-                    class="mb-2"
-                >
-                    {"List of Valid Keys"}
-                </h5>
-                <p>{"This is a list of valid keys for your tenant. They are also available at the "}</p>
-
-            </div>
-
-            <table class="table">
-                <thead>
-                <tr>
-                    <th scope="col" class="p-3">{"Status"}</th>
-                    <th scope="col" class="p-3">{"Key ID"}</th>
-                    <th scope="col"></th>
-                </tr>
-                </thead>
-                <tbody>
-
-                    <tr>
-                        <td
-                            class="p-3"
-                        >
-                            <span
-                                class="badge bg-primary fw-bolder"
-                                style="text-transform: uppercase; letter-spacing: 1px; font-size: 10px;"
-                            >{"next in queue"}</span>
-                        </td>
-                        <td
-                            class="p-3 flex-fill"
-                        >
-                            <span
-                                class="rounded"
-                                style="
-                                background-color: #eff0f2;
-                                white-space: nowrap;
-                                text-overflow: ellipsis;
-                                overflow: hidden;
-                                font-size: 14px;
-                                padding: 2px 6px;
-                                font-family: 'Roboto Mono', monospace;
-                            "
-                            >
-                                {"OlHlmtYtepG9mSCiEwurY"}
-                            </span>
-                        </td>
-                        <td
-                            class="p-3"
-                        >
-                            <div
-                                class="d-flex justify-content-end align-items-center dropdown"
-                            >
-                                <button
-                                    type="button"
-                                    style="flex: 0 0 auto; width: 30px; height: 30px;"
-                                    class="btn d-flex justify-content-center align-items-center rounded border"
-                                    role="button"
-                                    id="dropdownMenuButton1"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false"
-                                >
-                                    <i class="bi bi-three-dots"></i>
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li>
-                                        <Anchor route=AppRoute::ApisSettings classes="dropdown-item fs-7">
-                                            {"Settings"}
-                                        </Anchor>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td
-                            class="p-3"
-                        >
-                            <span
-                                class="badge bg-success fw-bolder"
-                                style="text-transform: uppercase; letter-spacing: 1px; font-size: 10px;"
-                            >{"currently used"}</span>
-                        </td>
-                        <td
-                            class="p-3 flex-fill"
-                        >
-                            <span
-                                class="rounded"
-                                style="
-                                background-color: #eff0f2;
-                                white-space: nowrap;
-                                text-overflow: ellipsis;
-                                overflow: hidden;
-                                font-size: 14px;
-                                padding: 2px 6px;
-                                font-family: 'Roboto Mono', monospace;
-                            "
-                            >
-                                {"4r7Fyp-RVC01VIgO5X6hc"}
-                            </span>
-                        </td>
-                        <td
-                            class="p-3"
-                        >
-                            <div
-                                class="d-flex justify-content-end align-items-center dropdown"
-                            >
-                                <button
-                                    type="button"
-                                    style="flex: 0 0 auto; width: 30px; height: 30px;"
-                                    class="btn d-flex justify-content-center align-items-center rounded border"
-                                    role="button"
-                                    id="dropdownMenuButton1"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false"
-                                >
-                                    <i class="bi bi-three-dots"></i>
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li>
-                                        <Anchor route=AppRoute::ApisSettings classes="dropdown-item fs-7">
-                                            {"Settings"}
-                                        </Anchor>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-
-
-        </div>
-
-        <div
-            class="mb-5"
-        >
-            <div
-                class="mb-4"
-            >
-                <h5
-                    class="mb-2"
-                >
-                    {"List of Revoked Keys"}
-                </h5>
-                <p>{"This is a list of the last 3 revoked keys for your tenant. Further data for revocation is available via tenant logs."}</p>
-
-            </div>
-
-            <table class="table">
-                <thead>
-                <tr>
-                    <th scope="col" class="p-3">{"Revoked on"}</th>
-                    <th scope="col" class="p-3">{"Key ID"}</th>
-                    <th scope="col"></th>
-                </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-            <div
-                class="mt-3 p-3 text-center"
-                style="background-color: #eff0f2;"
-            >
-                {"There are no items to display"}
-            </div>
-
-        </div>
-        <div class="MuiDialogActions-root MuiDialogActions-spacing" data-cosmos-key="dialog.footer"><button
-                class="MuiButtonBase-root MuiButton-root MuiButton-outlined jss46 jss51 MuiButton-outlinedSizeLarge MuiButton-sizeLarge MuiButton-disableElevation"
-                tabindex="0" type="button" data-cosmos-key="button"><span class="MuiButton-label">Cancel
-                </span></button><button
-                class="MuiButtonBase-root MuiButton-root MuiButton-contained jss46 MuiButton-containedPrimary MuiButton-containedSizeLarge MuiButton-sizeLarge MuiButton-disableElevation"
-                tabindex="0" type="button" data-cosmos-key="button"><span class="MuiButton-label">Create
-                </span></button></div>
     </div>
 
 </body>
