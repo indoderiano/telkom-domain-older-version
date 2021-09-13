@@ -25,20 +25,20 @@ impl Component for SettingsGeneral {
             <div>
 
                 <div
-                    class="border rounded p-4 d-flex flex-column mb-5"
+                    class="container border rounded p-4 d-flex flex-column mb-5"
                     style="font-size: 14px;"
                 >
                     <div
-                        class="d-flex flex-row border-bottom"
+                        class="row border-bottom"
                     >
                         <div
-                            class="w-50 text-color-primary fw-bold"
+                            class="col-lg-6 text-color-primary fw-bold mb-4"
                             style="font-size: 16px;"
                         >
                             {"Settings"}
                         </div>
                         <div
-                            class="w-50"
+                            class="col-lg-6"
                         >
                             <div
                                 class="mb-4"
@@ -96,13 +96,13 @@ impl Component for SettingsGeneral {
             
                     
                     <div
-                        class="d-flex flex-row border-bottom mt-5"
+                        class="row border-bottom mt-5"
                     >
                         <div
-                            class="w-50"
+                            class="col-lg-6"
                         >
                             <div
-                                class="text-color-primary fw-bold"
+                                class="text-color-primary fw-bold mb-4"
                                 style="font-size: 16px;"
                             >
                                 {"Environment Tag"}
@@ -120,7 +120,7 @@ impl Component for SettingsGeneral {
                             </p>
                         </div>
                         <div
-                            class="w-50"
+                            class="col-lg-6"
                         >
                             <div
                                 class="mb-4"
@@ -265,15 +265,15 @@ impl Component for SettingsGeneral {
             
             
                     <div
-                        class="d-flex flex-row border-bottom mt-5"
+                        class="row border-bottom mt-5"
                     >
                         <div
-                            class="w-50 text-color-primary fw-bold"
+                            class="col-lg-6 text-color-primary fw-bold mb-4"
                         >
                             {"RBAC Settings"}
                         </div>
                         <div
-                            class="w-50"
+                            class="col-lg-6"
                         >
                             <div
                                 class="mb-4"
@@ -321,20 +321,20 @@ impl Component for SettingsGeneral {
 
 
                     <div
-                        class="d-flex flex-row border-bottom mt-5"
+                        class="row border-bottom mt-5"
                     >
                         <div
-                            class="w-50"
+                            class="col-lg-6"
                         >
                             <div
-                                class="text-color-primary fw-bold"
+                                class="text-color-primary fw-bold mb-4"
                                 style="font-size: 16px;"
                             >
                                 {"Error Pages"}
                             </div>
                         </div>
                         <div
-                            class="w-50"
+                            class="col-lg-6"
                         >
                             <div
                                 class="mb-4"
@@ -426,16 +426,16 @@ impl Component for SettingsGeneral {
                     </div>
 
                     <div
-                        class="d-flex flex-row border-bottom mt-5"
+                        class="row border-bottom mt-5"
                     >
                         <div
-                            class="w-50 text-color-primary fw-bold"
+                            class="col-lg-6 text-color-primary fw-bold mb-4"
                             style="font-size: 16px;"
                         >
                             {"Languages"}
                         </div>
                         <div
-                            class="w-50"
+                            class="col-lg-6"
                         >
                             <div
                                 class="mb-4"

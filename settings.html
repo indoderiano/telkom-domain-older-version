@@ -351,343 +351,321 @@
                 
             
 
+            <!-- Content -->
 
 
 
 
 
 
-            <div
-                class="mx-auto pt-5 pb-5 px-4"
-                style="max-width: 1048px;"
-            >
-                <div
-                    class="mb-5"
-                >
-                    <div
-                        class="d-flex flex-row mb-3"
-                    >
-                        <div
-                            class="flex-fill fs-3 fw-bold"
-                        >
-                            {"APIs"}
-                        </div>
-                        <div>
-                            <button
-                                type="button"
-                                class="btn btn-primary d-flex align-items-center"
-                                data-bs-toggle="modal" data-bs-target="#exampleModal"
-                            >
-                                <i class="bi bi-plus me-2" style="margin-left: -5px;"></i>
-                                <span>{"Create API"}</span>
-                            </button>
-                        </div>
-                    </div>
-                    <p>{"Define APIs that you can consume from your authorized applications."}</p>
-                </div>
 
 
 
-                <div>
-                    <div
-                        class="d-flex border-bottom border-1 list-hover"
-                    >
-                        <div
-                            class="p-3 d-flex"
-                            style="width: 40%;"
-                        >
-                            <div
-                                style="flex: 0 0 auto; width: 40px; height: 40px; background-color: #eff0f2;"
-                                class="d-flex justify-content-center align-items-center rounded me-3"
-                            >
-                                <i class="bi bi-gear"></i>
-                            </div>
 
-                            <div
-                                class="d-grid"
-                                style="min-width: 40px;"
-                            >
-                                <p
-                                    class="m-0"
-                                    style="
-                                        white-space: nowrap;
-                                        text-overflow: ellipsis;
-                                        overflow: hidden;
-                                        font-size: 14px;
-                                        text-decoration: none;
-                                    "
-                                >
-                                    <Anchor
-                                        route=AppRoute::ApisSettings
-                                        classes="text-decoration-none fw-bold mb-0"
-                                    >
-                                            {"Auth0 Management API"}
-                                    </Anchor>
-                                </p>
-                                <p
-                                    class="mb-0 text-muted"
-                                    style="
-                                        white-space: nowrap;
-                                        text-overflow: ellipsis;
-                                        overflow: hidden;
-                                        font-size: 14px;
-                                    "
-                                >
-                                    {"System API"}
-                                </p>
-                            </div>
+
+
+
+
+
+
+            <div>
+
+              <div
+                  class="container border rounded p-4 d-flex flex-column mb-5"
+                  style="font-size: 14px;"
+              >
+                  <div
+                      class="row border-bottom"
+                  >
+                      <div
+                          class="col-lg-6 text-color-primary fw-bold mb-4"
+                      >
+                          {"General Settings"}
+                      </div>
+                      <div
+                          class="col-lg-6"
+                      >
+                          <div
+                              class="mb-4"
+                          >
+                              <p class="mb-2 fw-bold">
+                                  {"ID"}
+                              </p>
+                              <div class="input-group mb-2">
+                                  <input
+                                      type="text"
+                                      class="form-control bg-input-grey"
+                                      aria-label="Dollar amount (with dot and two decimal places)"
+                                      value="60ef247ffab77800401cca56"
+                                  />   
+                              </div>
+                              <p>
+                                  {"The API id on our system. Useful if you prefer to work directly with Auth0's Management API instead."}
+                              </p>
+                          </div>
+          
+                          <div
+                              class="mb-4"
+                          >
+                              <p class="mb-2 fw-bold">
+                                  {"Name*"}
+                              </p>
+                              <div class="input-group mb-2">
+                                  <input
+                                      type="text"
+                                      class="form-control bg-input-grey"
+                                      aria-label="Dollar amount (with dot and two decimal places)"
+                                      value="Testing Name"
+                                  />   
+                              </div>
+                              <p>
+                                  {"A friendly name for the API. The following characters are not allowed "}
+                                  <code
+                                      style="padding: 2px 6px; font-size: 11px;"
+                                      class="bg-input-grey text-color-primary"
+                                  >
+                                      <i class="bi bi-chevron-left"></i>
+                                  </code>
+                                  <code
+                                      style="padding: 2px 6px; font-size: 11px;"
+                                      class="bg-input-grey text-color-primary"
+                                  >
+                                      <i class="bi bi-chevron-right"></i>
+                                  </code>
+                              </p>
+                          </div>
+          
+                          <div
+                              class="mb-5"
+                          >
+                              <p class="mb-2 fw-bold">
+                                  {"Identifier"}
+                              </p>
+                              <div class="input-group mb-2">
+                                  <input
+                                      type="text"
+                                      class="form-control bg-input-grey"
+                                      aria-label="Dollar amount (with dot and two decimal places)"
+                                      value="https://test-api/"
+                                  />
+                              </div>
+                              <p>
+                                  {"Unique identifier for the API. This value will be used as the "}
+                                  <code
+                                      style="padding: 2px 6px; font-size: 14px;"
+                                      class="bg-input-grey text-color-primary"
+                                  >
+                                      {"audience"}
+                                  </code>
+          
+                                  {" parameter on authorization calls."}
+                              </p>
+                          </div>
+          
+                      </div>
+                  </div>
+          
+          
+                  
+                  <div
+                      class="row border-bottom mt-5"
+                  >
+                      <div
+                          class="col-lg-6 text-color-primary fw-bold mb-4"
+                      >
+                          {"Tokens Settings"}
+                      </div>
+                      <div
+                          class="col-lg-6"
+                      >
+                          <div
+                              class="mb-4"
+                          >
+                              <p class="mb-2 fw-bold">
+                                  {"Token Expirations (Seconds)*"}
+                              </p>
+                              <div class="input-group mb-2">
+                                  <input
+                                      type="text"
+                                      class="form-control bg-input-grey"
+                                      aria-label="Dollar amount (with dot and two decimal places)"
+                                      value="86400"
+                                  />
+                              </div>
+                              <p>
+                                  {"Expiration value (in seconds) for "}
+                                  <code
+                                      style="padding: 2px 6px; font-size: 11px;"
+                                      class="bg-input-grey text-color-primary"
+                                  >
+                                      {"access tokens"}
+                                  </code>
+                                  {" issued for this API from the Token Endpoint."}
+                              </p>
+                          </div>
+          
+                          <div
+                              class="mb-4"
+                          >
+                              <p class="mb-2 fw-bold">
+                                  {"Token Expirations For Browser Flows (Seconds)*"}
+                              </p>
+                              <div class="input-group mb-2">
+                                  <input
+                                      type="text"
+                                      class="form-control bg-input-grey"
+                                      aria-label="Dollar amount (with dot and two decimal places)"
+                                      value="7200"
+                                  />
+                              </div>
+                              <p>
+                                  {"Expiration value (in seconds) for "}
+                                  <code
+                                      style="padding: 2px 6px; font-size: 11px;"
+                                      class="bg-input-grey text-color-primary"
+                                  >
+                                      {"access tokens"}
+                                  </code>
+                                  {" issued for this API via Implicit or Hybrid Flows. Cannot be greater than the Token Lifetime value."}
+                              </p>
+                          </div>
+          
+                          <div
+                              class="mb-5"
+                          >
+                              <p class="mb-2 fw-bold">
+                                  {"Signing Algorithm"}
+                              </p>
+                              <div class="input-group mb-2">
+                                  <input
+                                      type="text"
+                                      class="form-control bg-input-grey"
+                                      aria-label="Dollar amount (with dot and two decimal places)"
+                                      value="RS256"
+                                  />
+                              </div>
+                              <p>
+                                  {"Algorithm to be used when signing the "}
+                                  <code
+                                      style="padding: 2px 6px; font-size: 11px;"
+                                      class="bg-input-grey text-color-primary"
+                                  >
+                                      {"access tokens"}
+                                  </code>
+          
+                                  {" for this API. You can find more information"}
+                              </p>
+                          </div>
+          
+                      </div>
+                  </div>
+          
+          
+                  <div
+                      class="row border-bottom mt-5"
+                  >
+                      <div
+                          class="col-lg-6 text-color-primary fw-bold mb-4"
+                      >
+                          {"RBAC Settings"}
+                      </div>
+                      <div
+                          class="col-lg-6"
+                      >
+                          <div
+                              class="mb-4"
+                          >
+                              <p class="mb-2 fw-bold">
+                                  {"Enable RBAC "}
+                              </p>
+                              <div class="form-check form-switch fs-3 mb-4">
+                                  <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"/>
+                              </div>
+                              <p>
+                                  {"If this setting is enabled, this API will skip user consent for applications flagged as First Party."}
+                              </p>
+                          </div>
+          
+                          <div
+                              class="mb-4"
+                          >
+                              <p class="mb-2 fw-bold">
+                                  {"Allow Offline Access"}
+                              </p>
+                              <div class="form-check form-switch fs-3 mb-4">
+                                  <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"/>
+                              </div>
+                              <p>
+                                  {"If this setting is enabled, Auth0 will allow applications to ask for Refresh Tokens for this API."}
+                              </p>
+                          </div>
+          
+                          <button type="button" class="btn btn-primary mb-5 mt-3">{"Save"}</button>
+          
+          
+                      </div>
+                  </div>
+          
+              </div>
+
+              <div
+                  style="font-size: 14px;"
+              >
+                  <p
+                      class="fw-bold"
+                  >
+                      {"Danger Zone"}
+                  </p>
+
+                  <div class="alert alert-danger d-flex flex-row justify-content-between" role="alert">
+                      <div>
+                          <p
+                              class="fw-bold"
+                          >
+                              {"Delete This API"}
+                          </p>
+                          {"Once confirmed, this operation can't be undone!"}
+                      </div>
+                      <div>
+                          <button
+                              type="button"
+                              class="btn btn-danger"
+                          >{"Delete"}</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+
+
+
+
+
             
-                        </div>
-
-                        <div
-                            class="p-3 d-flex flex-fill align-items-center text-muted"
-                        >
-                            <span
-                                style="font-size: 14px; margin-right: 8px; white-space: nowrap;"
-                            >
-                                {"API Audience:"} 
-                            </span>
-                            <div
-                                class="rounded"
-                                style="
-                                background-color: #eff0f2;
-                                white-space: nowrap;
-                                text-overflow: ellipsis;
-                                overflow: hidden;
-                                font-size: 14px;
-                                padding: 2px 6px;
-                                font-family: 'Roboto Mono', monospace;
-                            "
-                            >
-                                {"https://dev-r5y8heyf.au.auth0.com/api/v2/"}
-                            </div>
-                            <i class="bi bi-files ms-1"></i>
-                        </div>
-
-                        <div
-                            class="p-3 d-flex align-items-center dropdown"
-                        >
-                            <button
-                                type="button"
-                                style="flex: 0 0 auto; width: 30px; height: 30px;"
-                                class="btn d-flex justify-content-center align-items-center rounded border"
-                                role="button"
-                                id="dropdownMenuButton1"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false"
-                            >
-                                <i class="bi bi-three-dots"></i>
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                <li>
-                                    <Anchor route=AppRoute::ApisSettings classes="dropdown-item fs-7">
-                                        {"Settings"}
-                                    </Anchor>
-                                </li>
-                            </ul>
-                        </div>
-
-                    </div>
-                </div>
-
-
-
-
-                <!-- <div
-                    style="overflow-x: auto;"
-                >
-                    <table class="table">
-                        <tbody>
-    
-    
-                          <tr>
-    
-                            <td
-                                style="width: 40%;"
-                            >
-                                <div
-                                    class="p-3 d-flex"
-                                >
-    
-                                    <div
-                                        style="flex: 0 0 auto; width: 40px; height: 40px; background-color: #eff0f2;"
-                                        class="d-flex justify-content-center align-items-center rounded me-3"
-                                    >
-                                        <i class="bi bi-gear"></i>
-                                    </div>
-    
-                                    <div
-                                        class="d-grid"
-                                        style="min-width: 40px;"
-                                    >
-                                        <p
-                                            style="
-                                                white-space: nowrap;
-                                                text-overflow: ellipsis;
-                                                overflow: hidden;
-                                                font-size: 14px;
-                                                text-decoration: none;
-                                            "
-                                        >
-                                            <Anchor
-                                                route=AppRoute::ApisSettings
-                                                classes="text-decoration-none fw-bold mb-0"
-                                            >
-                                                    {"Auth0 Management API"}
-                                            </Anchor>
-                                        </p>
-                                        <p
-                                            class="mb-0 text-muted"
-                                            style="
-                                                white-space: nowrap;
-                                                text-overflow: ellipsis;
-                                                overflow: hidden;
-                                                font-size: 14px;
-                                            "
-                                        >
-                                            {"System API"}
-                                        </p>
-                                    </div>
-                                </div>
-                            </td>
-    
-    
-                            <td>
-                                <div
-                                    class="p-3 d-grid flex-fill align-items-center text-muted"
-                                    style="
-                                        grid-template-columns: max-content auto;
-                                    "
-                                >
-                                    <span
-                                        style="font-size: 14px; margin-right: 8px; white-space: nowrap;"
-                                    >
-                                        {"API Audience:"}
-                                    </span>
-                                    <div
-                                        class="d-flex align-items-center"
-                                    >
-                                        <div
-                                            class="rounded"
-                                            style="
-                                                background-color: #eff0f2;
-                                                white-space: nowrap;
-                                                text-overflow: ellipsis;
-                                                overflow: hidden;
-                                                font-size: 14px;
-                                                padding: 2px 6px;
-                                                font-family: 'Roboto Mono', monospace;
-                                            "
-                                        >
-                                            {"https://dev-r5y8heyf.au.auth0.com/api/v2/"}
-                                        </div>
-                                        <i class="bi bi-files ms-1"></i>
-                                    </div>
-                                </div>
-                            </td>
-    
-    
-    
-    
-                            <td>
-                                <div
-                                    class="p-3 d-flex align-items-center dropdown"
-                                >
-                                    <button
-                                        type="button"
-                                        style="flex: 0 0 auto; width: 30px; height: 30px;"
-                                        class="btn d-flex justify-content-center align-items-center rounded border"
-                                        role="button"
-                                        id="dropdownMenuButton1"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false"
-                                    >
-                                        <i class="bi bi-three-dots"></i>
-                                    </button>
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                        <li>
-                                            <Anchor route=AppRoute::ApisSettings classes="dropdown-item fs-7">
-                                                {"Settings"}
-                                            </Anchor>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-    
-    
-                          </tr>
-                          
-                          <tr>
-                            <td>Jacob</td>
-                            <td>Thornton</td>
-                            <td>@fat</td>
-                          </tr>
-                          <tr>
-                            <td colspan="2">Larry the Bird</td>
-                            <td>@twitter</td>
-                          </tr>
-                        </tbody>
-                    </table>
-                </div> -->
 
 
 
 
 
 
-                // MODAL CREATE APIs
-                <div
-                    class="modal fade"
-                    id="exampleModal"
-                    tabindex="-1"
-                    aria-labelledby="exampleModalLabel"
-                    aria-hidden="true"
-                >
-                    <div class="modal-dialog modal-dialog-scrollable">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">{"New API"}</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body" style="font-size: 14px;">
-                                <div
-                                    class="mb-4"
-                                >
-                                    <label for="basic-url" class="form-label fw-bold">{"Name"}</label>
-                                    <div class="input-group mb-2">
-                                        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3"/>
-                                    </div>
-                                    <label class="form-label text-muted">{"A friendly name for the API"}</label>
-                                </div>
-                                <div
-                                    class="mb-4"
-                                >
-                                    <label for="basic-url" class="form-label fw-bold">{"Identifier"}</label>
-                                    <div class="input-group mb-2">
-                                        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3"/>
-                                    </div>
-                                    <label class="form-label text-muted">{"A logical identifier for this API. We recommend using a URL but note that this doesn’t have to be a publicly available URL, Auth0 will not call your API at all.This field cannot be modified."}</label>
-                                </div>
-                                <div
-                                    class="mb-4"
-                                >
-                                    <label for="basic-url" class="form-label fw-bold">{"Signing Algorithm"}</label>
-                                    <select class="form-select mb-2" aria-label="Default select example">
-                                        <option value="1">{"RS256"}</option>
-                                        <option value="2">{"HS256"}</option>
-                                    </select>
-                                    <label class="form-label text-muted">{"Algorithm to sign the tokens with. When selecting RS256 the token will be signed with Auth0's private key."}</label>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{"Cancel"}</button>
-                                <button type="button" class="btn btn-primary">{"Create"}</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

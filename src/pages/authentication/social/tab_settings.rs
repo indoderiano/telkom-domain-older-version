@@ -25,20 +25,20 @@ impl Component for TabSettings {
             <div>
 
                 <div
-                    class="border rounded p-4 d-flex flex-column mb-5"
+                    class="container border rounded p-4 d-flex flex-column mb-5"
                     style="font-size: 14px;"
                 >
                     <div
-                        class="d-flex flex-row border-bottom"
+                        class="row border-bottom"
                     >
                         <div
-                            class="text-color-primary fw-bold"
+                            class="col-lg-5 text-color-primary fw-bold mb-4"
                             style="width: 40%;"
                         >
                             {"General"}
                         </div>
                         <div
-                            style="width: 60%;"
+                            class="col-lg-7"
                         >
                             <div
                                 class="mb-4"
@@ -222,16 +222,16 @@ impl Component for TabSettings {
                     </div>    
             
                     <div
-                        class="d-flex flex-row border-bottom mt-5"
+                        class="row border-bottom mt-5"
                     >
                         <div
-                            class="text-color-primary fw-bold"
+                            class="col-lg-5 text-color-primary fw-bold mb-4"
                             style="width: 40%;"
                         >
                             {"Advanced"}
                         </div>
                         <div
-                            style="width: 60%;"
+                            class="col-lg-7"
                         >
                             <div
                                 class="mb-4"
