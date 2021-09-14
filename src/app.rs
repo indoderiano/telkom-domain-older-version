@@ -563,7 +563,12 @@ impl Component for App {
                         >
                             <WithDispatch<Sidebar>/>
                             <div 
-                                class="col overflow-hidden"
+                                class="col"
+                                style="
+                                    height: calc(100vh - 64px);
+                                    overflow-x: hidden;
+                                    overflow-y: scroll;
+                                "
                             >
                                 <Router<AppRoute, ()>
                                     render=render
