@@ -39,9 +39,9 @@ impl Component for Sidebar {
     let tenant_id = if let Some(id) = acc.tenant_id { id } else { String::from("no_tenant_id") };
     html! {
       <div
-        class="col-auto col-md-3 col-xl-3 px-sm-3 px-0 bg-white fw-bold h-100"
-        style="font-size:14px;"
-        >
+        class="col-auto col-md-3 col-xl-3 px-sm-3 px-0 bg-white fw-bold"
+        style="font-size:14px; height: calc(100vh - 64px); overflow-y: scroll;"
+      >
         <div
           class="d-flex border-end flex-column align-items-center align-items-sm-start py-4 px-3 text-white h-auto overflow-auto"
         >
@@ -50,7 +50,7 @@ impl Component for Sidebar {
             class="nav flex-column w-100 text-color-primary"
             id="nav_accordion"
             style="list-style-type:none; font-weight: bold; "
-        >
+          >
             <li class="nav-item">
                 <Anchor
                   route=AppRoute::GettingStarted
@@ -255,11 +255,6 @@ impl Component for Sidebar {
                 </li>
               </ul>
             </li>
-
-            // <li class="nav-item">
-            //   <a class="nav-link text-color-primary" href="#"> <span style="padding: 4px 8px;"><i
-            //         class="bi bi-gear"></i></span> {"Settings"} </a>
-            // </li>
 
             <li class="nav-item">
               <Anchor

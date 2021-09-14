@@ -61,22 +61,10 @@ impl Component for SocialHome {
                         <div
             
                         >
-                            // <button
-                            //     type="button"
-                            //     class="btn btn-primary d-flex align-items-center"
-                            //     data-bs-toggle="modal" data-bs-target="#exampleModal"
-                            // >
-                            //     <i class="bi bi-plus me-2" style="margin-left: -5px;"></i>
-                            //     <span>{"Create Connection"}</span>
-                            // </button>
                             <Anchor
                                 route=AppRoute::SocialCreate
-                                // classes="text-decoration-none domain-link-dark"
-                                // type="button"
                                 classes="btn btn-primary d-flex align-items-center"
-                                // data-bs-toggle="modal" data-bs-target="#exampleModal"
                             >
-                                // <i class="bi bi-arrow-left me-2"></i>
                                 <i class="bi bi-plus me-2" style="margin-left: -5px;"></i>
                                 <span>{"Create Connection"}</span>
                             </Anchor>
@@ -219,22 +207,23 @@ impl Component for SocialHome {
                                 class="d-grid"
                                 style="min-width: 40px;"
                             >
-                                <Anchor
-                                    route=AppRoute::SocialSettings
-                                    classes="text-decoration-none fw-bold mb-0"
+                                <p
+                                    class="m-0"
+                                    style="
+                                        white-space: nowrap;
+                                        text-overflow: ellipsis;
+                                        overflow: hidden;
+                                        font-size: 14px;
+                                        text-decoration: none;
+                                    "
                                 >
-                                    <span
-                                        style="
-                                            white-space: nowrap;
-                                            text-overflow: ellipsis;
-                                            overflow: hidden;
-                                            font-size: 14px;
-                                            text-decoration: none;
-                                        "
+                                    <Anchor
+                                        route=AppRoute::SocialSettings
+                                        classes="text-decoration-none fw-bold mb-0"
                                     >
                                         {"facebook"}
-                                    </span>
-                                </Anchor>
+                                    </Anchor>
+                                </p>
                                 <p
                                     class="mb-0 text-muted"
                                     style="
@@ -303,22 +292,23 @@ impl Component for SocialHome {
                                 class="d-grid"
                                 style="min-width: 40px;"
                             >
-                                <Anchor
-                                    route=AppRoute::SocialSettings
-                                    classes="text-decoration-none fw-bold mb-0"
+                                <p
+                                    class="m-0"
+                                    style="
+                                        white-space: nowrap;
+                                        text-overflow: ellipsis;
+                                        overflow: hidden;
+                                        font-size: 14px;
+                                        text-decoration: none;
+                                    "
                                 >
-                                    <span
-                                        style="
-                                            white-space: nowrap;
-                                            text-overflow: ellipsis;
-                                            overflow: hidden;
-                                            font-size: 14px;
-                                            text-decoration: none;
-                                        "
+                                    <Anchor
+                                        route=AppRoute::SocialSettings
+                                        classes="text-decoration-none fw-bold mb-0"
                                     >
                                         {"google-oauth2"}
-                                    </span>
-                                </Anchor>
+                                    </Anchor>
+                                </p>
                                 <p
                                     class="mb-0 text-muted"
                                     style="
