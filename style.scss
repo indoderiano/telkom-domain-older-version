@@ -104,6 +104,370 @@
 
 
 /* SIDEBAR */
-.nav-item .bi-caret-down-fill {
+
+.MuiDrawer-docked {
+  flex: 0 0 auto;
+}
+
+.MuiDrawer-paper {
+  top: 0;
+  flex: 1 0 auto;
+  height: 100%;
+  display: flex;
+  outline: 0;
+  z-index: 1200;
+  position: fixed;
+  overflow-y: hidden;
+  flex-direction: column;
+  -webkit-overflow-scrolling: touch;
+}
+
+.MuiDrawer-paperAnchorLeft {
+  left: 0;
+  right: auto;
+}
+
+.MuiDrawer-paperAnchorRight {
+  left: auto;
+  right: 0;
+}
+
+.MuiDrawer-paperAnchorTop {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: auto;
+  height: auto;
+  max-height: 100%;
+}
+
+.MuiDrawer-paperAnchorBottom {
+  top: auto;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: auto;
+  max-height: 100%;
+}
+
+.MuiDrawer-paperAnchorDockedLeft {
+  border-right: 1px solid #e3e4e6;
+}
+
+.MuiDrawer-paperAnchorDockedTop {
+  border-bottom: 1px solid #e3e4e6;
+}
+
+.MuiDrawer-paperAnchorDockedRight {
+  border-left: 1px solid #e3e4e6;
+}
+
+.MuiDrawer-paperAnchorDockedBottom {
+  border-top: 1px solid #e3e4e6;
+}
+
+.jss68 {
+  top: 56px;
+  z-index: 20;
+  transition: margin 195ms cubic-bezier(0.4, 0, 1, 1) 0ms;
+  will-change: margin;
+  margin-right: 68px;
+}
+
+@media (min-width:1280px) {
+  .jss68 {
+    transition: margin 195ms cubic-bezier(0.4, 0, 1, 1) 0ms;
+    margin-right: 265px;
+  }
+}
+
+@media (min-width:1280px) {
+  .jss69 {
+    margin-right: 68px;
+  }
+}
+
+.jss70 {
+  top: 65px;
+  width: 66px;
+  bottom: 0;
+  height: auto;
+  display: flex;
+  padding: 24px 16px;
+  overflow-x: hidden;
+  transition: width 195ms cubic-bezier(0.4, 0, 1, 1) 0ms;
+  will-change: margin, box-shadow;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.jss70:hover {
+  width: 265px;
+  box-shadow: 16px 0px 16px rgba(0, 0, 0, 0.1);
+  transition: width 195ms cubic-bezier(0.4, 0, 1, 1) 0ms, box-shadow 195ms cubic-bezier(0.4, 0, 1, 1) 0ms;
+}
+
+.jss70.jss72 {
+  width: 265px;
+  box-shadow: 16px 0px 16px rgba(0, 0, 0, 0.1);
+  transition: width 195ms cubic-bezier(0.4, 0, 1, 1) 0ms, box-shadow 195ms cubic-bezier(0.4, 0, 1, 1) 0ms;
+}
+
+@media (min-width:1280px) {
+  .jss70 {
+    width: 265px;
+  }
+}
+
+@media (min-width:1280px) {
+  .jss71 {
+    width: 68px;
+  }
+
+  .jss71.jss72 {
+    width: 265px;
+  }
+}
+
+.jss109 {
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.jss110 {
+  padding: 6px 12px;
+}
+
+.jss128 {
+  margin: 8px;
+}
+
+.jss85 {
+  color: #1e212a;
+  display: inline-block;
+  padding: 1px 6px;
+  font-size: 0.6875rem;
+  background: #eff0f2;
+  font-family: Inter, fakt-web, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  font-weight: 600;
+  line-height: 1.64;
+  border-radius: 4px;
+  letter-spacing: 0.07273em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.jss86 {
+  color: #3c3075;
+  background: #e9e8ff;
+}
+
+.jss87 {
+  color: #00407d;
+  background: #ddebfd;
+}
+
+.jss88 {
+  color: #522c09;
+  background: #fcf7e4;
+}
+
+.jss89 {
+  color: #004e4e;
+  background: #def7f1;
+}
+
+.jss90 {
+  color: #5f0f24;
+  background: #ffeeed;
+}
+
+.jss91 {
+  color: #1e212a;
+  box-shadow: inset 0px 0px 0px 1px #96989d;
+  background-color: transparent;
+}
+
+.jss92 {
+  color: #493fa3;
+  box-shadow: inset 0px 0px 0px 1px #493fa3;
+}
+
+.jss93 {
+  color: #1071f2;
+  box-shadow: inset 0px 0px 0px 1px #549af6;
+}
+
+.jss94 {
+  color: #85611b;
+  box-shadow: inset 0px 0px 0px 1px #b8952e;
+}
+
+.jss95 {
+  color: #0d8975;
+  box-shadow: inset 0px 0px 0px 1px #13a688;
+}
+
+.jss96 {
+  color: #d03c38;
+  box-shadow: inset 0px 0px 0px 1px #ff685b;
+}
+
+.jss97 {
+  color: #fff;
+  background-color: #65676e;
+}
+
+.jss98 {
+  background-color: #635dff;
+}
+
+.jss99 {
+  background-color: #1071f2;
+}
+
+.jss100 {
+  background-color: #85611b;
+}
+
+.jss101 {
+  background-color: #066b61;
+}
+
+.jss102 {
+  background-color: #d03c38;
+}
+
+.jss74 .jss79,
+.jss74 .jss82,
+.jss74 .jss83,
+.jss74 .jss84 {
+  opacity: 1;
+  transition: opacity 225ms cubic-bezier(0.4, 0, 1, 1) 113ms;
+  will-change: opacity;
+}
+
+.jss75 .jss79,
+.jss75 .jss82,
+.jss75 .jss83,
+.jss75 .jss84 {
+  opacity: 0;
+  transition: opacity 195ms cubic-bezier(0.4, 0, 1, 1) 0ms;
+}
+
+.jss76 {
+  color: #1e212a;
+  width: 100%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  padding: 8px;
+  font-size: 0.875rem;
+  background: transparent;
+  transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  align-items: center;
+  font-family: Inter, fakt-web, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  font-weight: 500;
+  line-height: 1.25rem;
+  border-radius: 4px;
+  letter-spacing: 0.01071em;
+  text-decoration: none;
+  --identicons-color-base: #9B9D9F;
+  --identicons-color-dark: #65676E;
+  --identicons-color-light: #C4C4C4;
+}
+
+.jss76:hover {
+  color: #635dff;
+  text-decoration: none;
+  --identicons-color-base: #A5A0FF;
+  --identicons-color-dark: #635DFF;
+  --identicons-color-light: #D0CEFF;
+}
+
+.jss76:focus {
+  outline: none;
+  box-shadow: rgba(99, 93, 255, 0.25) 0px 0px 0px 0.25em;
+}
+
+.jss77 {
+  color: #65676e;
+  font-size: 0.8125rem;
+  font-family: Inter, fakt-web, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  font-weight: 400;
+  line-height: 1.4rem;
+  padding-top: 4px;
+  letter-spacing: 0.01154em;
+  padding-bottom: 4px;
+}
+
+.jss77 .jss81 {
+  font-size: 1rem;
+}
+
+.jss78 {
+  color: #635dff;
+  --identicons-color-base: #A5A0FF;
+  --identicons-color-dark: #635DFF;
+  --identicons-color-light: #D0CEFF;
+}
+
+.jss79 {
+  overflow: hidden;
+  min-width: 2rem;
+  margin-left: 22px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.jss80 {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  justify-content: center;
+}
+
+.jss80>svg {
+  width: 1em;
+  height: 1em;
+  transition: fill 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, transform 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.jss81 {
+  width: 1.25rem;
+  font-size: 1.25rem;
+}
+
+.jss82 {
+  margin-left: 8px;
+}
+
+.jss83 {
+  margin-left: 8px;
+}
+
+.jss84 {
   color: #96989d;
+  margin-left: auto;
+}
+
+.jss105 {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.jss106 {
+  transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  margin-left: 8px;
+}
+
+.jss107 {
+  transform: rotate(90deg);
+}
+
+.jss73 {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
