@@ -1,4 +1,5 @@
 use yew::prelude::*;
+use crate::components::logo::Logo;
 use yewdux::dispatch::Dispatcher;
 use crate::store::reducer_account::{
     AppDispatch,
@@ -59,16 +60,19 @@ impl Component for Navtop {
     fn view(&self) -> Html {
         html! {
             <div class="d-flex justify-content-between px-4 py-2 bg-dark"
-                style="font-size: 14px;"
+                style="font-size: 14px; height: 64px;"
             >
                 <ul class="nav text-light">
                     <li class="nav-item justify-content-center my-auto">
-                        <div class="bg-white p-1 pt-0 rounded me-3 navtop-logo">
-                            <img
-                                src="https://i.stack.imgur.com/3Stuq.png"
-                                style="width: 23px;"
-                            />
+                        <div class="me-3">
+                            <Logo width=40 />
                         </div>
+                        // <div class="bg-white p-1 pt-0 rounded me-3 navtop-logo">
+                        //     <img
+                        //         src="https://i.stack.imgur.com/3Stuq.png"
+                        //         style="width: 23px;"
+                        //     />
+                        // </div>
                     </li>
                     <div
                         class="nav-item justify-content-center my-auto bg-light me-3"

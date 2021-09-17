@@ -26,7 +26,7 @@ impl Component for UsersManagement {
         type Anchor = RouterAnchor<AppRoute>;
         html! {
             <div>
-           
+
                 <div class="mx-auto pt-5 pb-5 px-4" style="max-width: 1048px;">
 
                     <div class="row">
@@ -40,13 +40,13 @@ impl Component for UsersManagement {
                             </button>
                         </div>
                     </div>
-    
+
                     <div class="mt-2">
                         <p>{"An easy to use UI to help administrators manage user identities including password resets, creating, and provisioning, blocking, and deleting users."}</p>
                         <span><a href="">{"Learn more"} <span><i class="bi bi-arrow-right-short"></i></span> </a>
                         </span>
                     </div>
-    
+
                     <div class="mt-2">
                         <div class="row">
                             <div class="col">
@@ -79,7 +79,7 @@ impl Component for UsersManagement {
                             </div>
                         </div>
                     </div>
-    
+
                     <div class="mt-2">
                         <table class="table">
                             <thead>
@@ -116,7 +116,7 @@ impl Component for UsersManagement {
                                                 <hr class="dropdown-divider"/>
                                             </li>
                                             <li class="p-1 text-muted">
-                                                        <div class="ms-1" style="font-size:13px;" >
+                                                        <div class="ms-1 d-flex flex-row" style="font-size:13px;" >
                                                             <i class="bi bi-person-check"></i>
                                                             <span data-bs-toggle="modal" data-bs-target="#assignRoles">
                                                             <a class="dropdown-item" href="#">
@@ -126,7 +126,7 @@ impl Component for UsersManagement {
                                                         </div>
                                             </li>
                                             <li class="p-1 text-muted" style="font-size:13px;">
-                                                        <div class="ms-1">
+                                                        <div class="ms-1 d-flex flex-row">
                                                             <i class="bi bi-check2-square"></i>
                                                             <span data-bs-toggle="modal" data-bs-target="#assignPermissions">
                                                                 <a class="dropdown-item" href="#" >
@@ -136,7 +136,7 @@ impl Component for UsersManagement {
                                                         </div>
                                             </li>
                                             <li class="p-1 text-muted" style="font-size:13px;">
-                                                <div class="ms-1">
+                                                <div class="ms-1 d-flex flex-row">
                                                     <i class="bi bi-envelope "></i>
                                                     <span  data-bs-toggle="modal" data-bs-target="#resendConfirmation">
                                                         <a class="dropdown-item" href="#">
@@ -164,7 +164,7 @@ impl Component for UsersManagement {
                                             <li class="p-1" style="font-size:13px;">
                                                 <div class="ms-1 text-muted ">
                                                     <svg xmlns="http://www.w3.org/2000/svg " width="16 " height="16 " viewBox="0 0 24 24 " fill="none " stroke="currentColor " stroke-width="2 " stroke-linecap="round " stroke-linejoin="round"><circle cx="12 " cy="12 " r="10 "></circle><line x1="4.93 " y1="4.93 " x2="19.07 " y2="19.07 "></line></svg>
-                                                    <span>        
+                                                    <span>
                                                         <a class="dropdown-item" href="#">
                                                             {"Block "}
                                                         </a>
@@ -187,11 +187,11 @@ impl Component for UsersManagement {
                             </tbody>
                         </table>
                     </div>
-    
+
                 </div>
 
 
-    
+
         <div class="modal fade" id="createNewUser" tabindex="-1" aria-labelledby="createNewUserLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -219,7 +219,7 @@ impl Component for UsersManagement {
                                     <option selected=true>{"User Database"}</option>
                                   </select>
                             </div>
-    
+
                         </form>
                     </div>
                     <div class="modal-footer">
@@ -229,7 +229,7 @@ impl Component for UsersManagement {
                 </div>
             </div>
         </div>
-    
+
         <div class="modal fade" id="assignRoles" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 640px;">
                 <div class="modal-content">
@@ -241,15 +241,17 @@ impl Component for UsersManagement {
                         <div class="mt-2">
                             <p>{"Select roles to assign to this user. You may assign up to 50 roles per user."}</p>
                         </div>
-    
+
                         <div class="mt-2">
                             <select class="form-select" aria-label="Default select example">
                                 <option selected=true>
-                                    <p>{"Brother Yeska"}</p> 
+                                    <p>{"Brother Yeska"}</p>
+                                    <span>{" - "}</span>
+                                    <p style="color: darkgray">{"Manager"}</p>
                                 </option>
                             </select>
                         </div>
-    
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary">{"Assign"}</button>
@@ -257,7 +259,7 @@ impl Component for UsersManagement {
                 </div>
             </div>
         </div>
-    
+
         <div class="modal fade" id="assignPermissions" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 640px;">
                 <div class="modal-content">
@@ -269,23 +271,25 @@ impl Component for UsersManagement {
                         <div class="mt-2">
                             <p>{"Select permissions from existing APIs."}</p>
                         </div>
-    
+
                         <div class="mt-2">
                             <select class="form-select" aria-label="Default select example">
                                 <option value="">
-                                    <div >
+                                    <div>
                                         <div class="card">
-                                            <div class="card-body">
-                                                <p>
-                                                    {"Brother Yeska"}
-                                                </p>
-                                            </div>
-                                          </div>
+                                        <div class="card-body">
+                                            <p>
+                                                {"Placeholder"}
+                                            </p>
+                                            <span>{" - "}</span>
+                                            <p style="color:darkgrey;">{"https://https://jsonplaceholder.typicode.com/posts"}</p>
+                                        </div>
+                                    </div>
                                     </div>
                                 </option>
                             </select>
                         </div>
-    
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary">{"Assign"}</button>
@@ -293,7 +297,7 @@ impl Component for UsersManagement {
                 </div>
             </div>
         </div>
-    
+
         <div class="modal fade" id="resendConfirmation" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -315,7 +319,7 @@ impl Component for UsersManagement {
                 </div>
             </div>
         </div>
-    
+
         <div class="modal fade" id="changeEmail" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -339,7 +343,7 @@ impl Component for UsersManagement {
                 </div>
             </div>
         </div>
-    
+
         <div class="modal fade" id="changePassword" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -366,7 +370,7 @@ impl Component for UsersManagement {
                 </div>
             </div>
         </div>
-    
+
         <div class="modal fade" id="deleteUsers" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -397,4 +401,3 @@ impl Component for UsersManagement {
         }
     }
 }
-

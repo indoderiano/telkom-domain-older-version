@@ -82,22 +82,23 @@ impl Component for ApisHome {
                                 class="d-grid"
                                 style="min-width: 40px;"
                             >
-                                <Anchor
-                                    route=AppRoute::ApisSettings
-                                    classes="text-decoration-none fw-bold mb-0"
+                                <p
+                                    class="m-0"
+                                    style="
+                                        white-space: nowrap;
+                                        text-overflow: ellipsis;
+                                        overflow: hidden;
+                                        font-size: 14px;
+                                        text-decoration: none;
+                                    "
                                 >
-                                    <span
-                                        style="
-                                            white-space: nowrap;
-                                            text-overflow: ellipsis;
-                                            overflow: hidden;
-                                            font-size: 14px;
-                                            text-decoration: none;
-                                        "
+                                    <Anchor
+                                        route=AppRoute::ApisSettings
+                                        classes="text-decoration-none fw-bold mb-0"
                                     >
-                                        {"Auth0 Management API"}
-                                    </span>
-                                </Anchor>
+                                            {"Auth0 Management API"}
+                                    </Anchor>
+                                </p>
                                 <p
                                     class="mb-0 text-muted"
                                     style="
@@ -163,6 +164,7 @@ impl Component for ApisHome {
 
                     </div>
                 </div>
+
 
 
                 // MODAL CREATE APIs

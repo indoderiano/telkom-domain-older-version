@@ -16,261 +16,672 @@
 
 <body>
     <div>
-        <div
-            class="mb-5"
-        >
-            <h5
-                class="mb-2"
-            >
-                {"Signing Keys"}
-            </h5>
-            <p>{"Securely manage signing keys used by the applications in your tenant. "}</p>
 
-        </div>
-
-        <div
-            class="mb-5"
-        >
-            <div
-                class="mb-4"
+    <div class="d-flex justify-content-between px-4 py-2 bg-dark"
+                style="font-size: 14px;"
             >
-                <h5
-                    class="mb-2"
-                >
-                    {"Rotation Settings"}
-                </h5>
-                <p>{"The actions below allow you to rotate the signing key and certificate used to validate tokens. You can see the next in queue valid signing key in the table below for updating your application’s configuration before the rotation."}</p>
-    
-            </div>
-
-            <div
-                class="border rounded p-4 mb-4"
-            >
-                <div
-                    class="d-flex border-bottom pb-5"
-                >
+                <ul class="nav text-light">
+                    <li class="nav-item justify-content-center my-auto">
+                        <div class="me-3">
+                            <Logo width=40 />
+                        </div>
+                    </li>
                     <div
-                        class="flex-fill"
+                        class="nav-item justify-content-center my-auto bg-light me-3"
+                        style="width: 1px; height: 24px; opacity: .8;"
                     >
-                        <div
-                            class="fw-bolder mb-1"
-                            style="font-size: 16px;"
-                        >
-                            {"Rotate Signing Keys"}
-                        </div>
-                        <div>
-                            {"This will only rotate the currently used signing key. All tokens signed with this key will continue to be valid."}
-                        </div>
                     </div>
-
-                    <button type="button" class="btn btn-light">{"Rotate Key"}</button>
-                </div>
-
-                <div
-                    class="d-flex pt-5 pb-5"
+                    <li class="nav-item px-2"
+                        style="min-width: 64px;"
+                    >
+                        <p class="fw-bolder mb-1">{"user-asdfbd"}</p>
+                        <span>{"Development"}</span>
+                    </li>
+                </ul>
+                <ul class="nav justify-content-end"
+                    style="flex: 1 1 0%;"
                 >
-                    <div
-                        class="flex-fill"
-                    >
+                    <li class="nav-item my-auto me-3">
+                        <button type="button" class="btn btn-dark navtop-hover">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </li>
+                    <li class="nav-item my-auto me-3">
+                        <button type="button" class="btn btn-outline-light btn-sm">{"Discuss your needs"}</button>
+                    </li>
+                    <li class="nav-item my-auto me-3">
+                        <button type="button" class="btn btn-dark navtop-hover">
+                            <i class="bi bi-book me-2"></i> {"Docs"}
+                        </button>
+                    </li>
+                    <li class="nav-item my-auto me-3">
+                        <button type="button" class="btn btn-dark navtop-hover">
+                            <i class="bi bi-bell"></i>
+                        </button>
+                    </li>
+                    <li class="nav-item justify-content-center my-auto">
                         <div
-                            class="fw-bolder mb-1"
-                            style="font-size: 16px;"
-                        >
-                            {"Rotate & Revoke Signing Key"}
+                            style="cursor: pointer;"
+                            class="bg-white rounded-circle p-1 navtop-logo dropdown">
+                            <img
+                                src="https://cdn0.iconfinder.com/data/icons/set-ui-app-android/32/8-512.png"
+                                style="width: 23px;"
+                                id="dropdownMenuButton1"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                            />
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <li
+                                    class="dropdown-item fs-7"
+                                    style="cursor: pointer;"
+                                >
+                                    {"Log out"}
+                                </li>
+                            </ul>
                         </div>
-                        <div>
-                            {"This will rotate and additionally revoke the currently used signing key and all tokens signed with this key will no longer be valid."}
-                        </div>
-                    </div>
-
-                    <button type="button" class="btn btn-danger">{"Rotate & Revoke Key"}</button>
-                </div>
+                    </li>
+                </ul>
             </div>
 
-        </div>
+
+
+
+
+    <div
+        class="container-fluid"
+    >
+        <div
+            class="row flex-nowrap"
+        >
+            
 
         <div
-            class="mb-5"
+        class="col-auto col-md-3 col-xl-3 px-sm-3 px-0 bg-white fw-bold h-100"
+        style="font-size:14px;"
         >
-            <div
-                class="mb-4"
-            >
-                <h5
-                    class="mb-2"
-                >
-                    {"List of Valid Keys"}
-                </h5>
-                <p>{"This is a list of valid keys for your tenant. They are also available at the "}</p>
-
-            </div>
-
-            <table class="table">
-                <thead>
-                <tr>
-                    <th scope="col" class="p-3">{"Status"}</th>
-                    <th scope="col" class="p-3">{"Key ID"}</th>
-                    <th scope="col"></th>
-                </tr>
-                </thead>
-                <tbody>
-
-                    <tr>
-                        <td
-                            class="p-3"
-                        >
-                            <span
-                                class="badge bg-primary fw-bolder"
-                                style="text-transform: uppercase; letter-spacing: 1px; font-size: 10px;"
-                            >{"next in queue"}</span>
-                        </td>
-                        <td
-                            class="p-3 flex-fill"
-                        >
-                            <span
-                                class="rounded"
-                                style="
-                                background-color: #eff0f2;
-                                white-space: nowrap;
-                                text-overflow: ellipsis;
-                                overflow: hidden;
-                                font-size: 14px;
-                                padding: 2px 6px;
-                                font-family: 'Roboto Mono', monospace;
-                            "
-                            >
-                                {"OlHlmtYtepG9mSCiEwurY"}
-                            </span>
-                        </td>
-                        <td
-                            class="p-3"
-                        >
-                            <div
-                                class="d-flex justify-content-end align-items-center dropdown"
-                            >
-                                <button
-                                    type="button"
-                                    style="flex: 0 0 auto; width: 30px; height: 30px;"
-                                    class="btn d-flex justify-content-center align-items-center rounded border"
-                                    role="button"
-                                    id="dropdownMenuButton1"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false"
-                                >
-                                    <i class="bi bi-three-dots"></i>
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li>
-                                        <Anchor route=AppRoute::ApisSettings classes="dropdown-item fs-7">
-                                            {"Settings"}
-                                        </Anchor>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td
-                            class="p-3"
-                        >
-                            <span
-                                class="badge bg-success fw-bolder"
-                                style="text-transform: uppercase; letter-spacing: 1px; font-size: 10px;"
-                            >{"currently used"}</span>
-                        </td>
-                        <td
-                            class="p-3 flex-fill"
-                        >
-                            <span
-                                class="rounded"
-                                style="
-                                background-color: #eff0f2;
-                                white-space: nowrap;
-                                text-overflow: ellipsis;
-                                overflow: hidden;
-                                font-size: 14px;
-                                padding: 2px 6px;
-                                font-family: 'Roboto Mono', monospace;
-                            "
-                            >
-                                {"4r7Fyp-RVC01VIgO5X6hc"}
-                            </span>
-                        </td>
-                        <td
-                            class="p-3"
-                        >
-                            <div
-                                class="d-flex justify-content-end align-items-center dropdown"
-                            >
-                                <button
-                                    type="button"
-                                    style="flex: 0 0 auto; width: 30px; height: 30px;"
-                                    class="btn d-flex justify-content-center align-items-center rounded border"
-                                    role="button"
-                                    id="dropdownMenuButton1"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false"
-                                >
-                                    <i class="bi bi-three-dots"></i>
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li>
-                                        <Anchor route=AppRoute::ApisSettings classes="dropdown-item fs-7">
-                                            {"Settings"}
-                                        </Anchor>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-
-
-        </div>
-
         <div
-            class="mb-5"
+          class="d-flex border-end flex-column align-items-center align-items-sm-start py-4 px-3 text-white h-auto overflow-auto"
         >
-            <div
-                class="mb-4"
-            >
-                <h5
-                    class="mb-2"
+          
+          <ul
+            class="nav flex-column w-100 text-color-primary"
+            id="nav_accordion"
+            style="list-style-type:none; font-weight: bold; "
+        >
+            <li class="nav-item">
+                <Anchor
+                  route=AppRoute::GettingStarted
+                  classes="text-decoration-none"
                 >
-                    {"List of Revoked Keys"}
-                </h5>
-                <p>{"This is a list of the last 3 revoked keys for your tenant. Further data for revocation is available via tenant logs."}</p>
+                <a class="nav-link text-color-primary" href="#"> <span
+                    style="padding: 4px 8px;"><i class="bi bi-lightning-charge-fill"></i></span>
+                  {"Getting Started"}
+                </a>
+                </Anchor>
+            </li>
+            
+            <li class="nav-item">
+              <Anchor
+                route=AppRoute::Activity
+                classes="text-decoration-none"
+              >
+              <a class="nav-link text-color-primary" href="#"> <span
+                  style="padding: 4px 8px;"><i class="bi bi-graph-up"></i></span>
+                {"Activity"}
+              </a>
+              </Anchor>
+            </li>
 
-            </div>
+            <li class="nav-item">
+              <a class="nav-link text-color-primary" data-bs-toggle="collapse" data-bs-target="#menu_item1" href="#"
+                > <span style="padding: 4px 8px;"><i class="bi bi-app-indicator"></i></span>
+                {"Applications"}
+                <i class="bi small bi-caret-down-fill float-end"></i>
+                </a>
+              <ul id="menu_item1" class="submenu collapse" data-bs-parent="#nav_accordion"
+                style="list-style-type:none; font-weight: 400;">
+                <li>
+                  <Anchor
+                    route=AppRoute::ApplicationHome
+                    classes="text-decoration-none"
+                  >
+                    <a class="nav-link" href="#"
+                      style=" padding: 4px 8px; font-size: 15px; color: #65676e;">{"Applications"}
+                    </a>
+                  </Anchor>
+                </li>
+                <li>
+                  <Anchor
+                    route=AppRoute::ApisHome{ tenant_id: tenant_id }
+                    classes="text-decoration-none"
+                  >
+                    <a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">
+                      {"APIs"}
+                    </a>
+                  </Anchor>
+                </li>
+                <li>
+                <Anchor
+                    route=AppRoute::SsoHome
+                    classes="text-decoration-none"
+                  >
+                    <a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"SSO Integrations "}</a>
+                  </Anchor>
+                </li>
+              </ul>
+            </li>
 
-            <table class="table">
-                <thead>
-                <tr>
-                    <th scope="col" class="p-3">{"Revoked on"}</th>
-                    <th scope="col" class="p-3">{"Key ID"}</th>
-                    <th scope="col"></th>
-                </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-            <div
-                class="mt-3 p-3 text-center"
-                style="background-color: #eff0f2;"
-            >
-                {"There are no items to display"}
-            </div>
+            <li class="nav-item">
+              <a class="nav-link text-color-primary" data-bs-toggle="collapse" data-bs-target="#menu_item2" href="#"
+                > <span style="padding: 4px 8px;"><i class="bi bi-file-lock2"></i></span>
+                {"Authentication"} <i
+                  class="bi small bi-caret-down-fill  float-end"></i> </a>
+              <ul id="menu_item2" class="submenu collapse" data-bs-parent="#nav_accordion"
+                style="list-style-type:none; font-weight: 400">
+                <li>
+                  <Anchor
+                    route=AppRoute::DatabaseHome
+                    classes="text-decoration-none"
+                  >
+                    <a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Database"}</a>
+                  </Anchor>
+                </li>
+                <li>
+                  <Anchor
+                    route=AppRoute::SocialHome
+                    classes="text-decoration-none"
+                  >
+                    <a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">
+                      {"Social"}
+                    </a>
+                  </Anchor>
+                </li>
+                <li>
+                  <Anchor
+                    route=AppRoute::EnterpriseHome
+                    classes="text-decoration-none"
+                  >
+                    <a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">
+                      {"Enterprise"}
+                    </a>
+                  </Anchor>
+                </li>
+                <li>
+                  <Anchor
+                    route=AppRoute::AuthPasswordless
+                    classes="text-decoration-none"
+                  >
+                  <a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Passwordless"}
+                  </a>
+                  </Anchor>
+                </li>
+                <li><a class="nav-link" href="#"
+                    style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Authentication Profile"} </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-color-primary" href="#"> <span style="padding: 4px 8px;"><i
+                    class="bi bi-building"></i></span> {"Organizations"} </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-color-primary" data-bs-toggle="collapse" data-bs-target="#menu_item3" href="#"
+                > <span style="padding: 4px 8px;"><i class="bi bi-person-check"></i></span> {"User
+                Management"} <i
+                  class="bi small bi-caret-down-fill float-end"></i> </a>
+              <ul id="menu_item3" class="submenu collapse" data-bs-parent="#nav_accordion"
+                style="list-style-type:none; font-weight: 400">
+                <li>
+                  <Anchor
+                    route=AppRoute::UsersManagement
+                    classes="text-decoration-none"
+                  >
+                  <a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Users"} </a>
+                  </Anchor>
+                </li>
+                <li>
+                  <Anchor
+                    route=AppRoute::RolesCreated
+                    classes="text-decoration-none"
+                  >
+                  <a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Roles"} </a>
+                  </Anchor>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-color-primary" data-bs-toggle="collapse" data-bs-target="#menu_item4" href="#"
+                > <span style="padding: 4px 8px;"><i class="bi bi-pie-chart"></i></span> {"Branding"}
+                <i
+                  class="bi small bi-caret-down-fill float-end"></i> </a>
+              <ul id="menu_item4" class="submenu collapse" data-bs-parent="#nav_accordion"
+                style="list-style-type:none; font-weight: 400">
+                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Universal Login"} </a></li>
+                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Custom Domains"} </a></li>
+                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Email Templates"} </a> </li>
+                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Email Provider"} </a> </li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-color-primary" data-bs-toggle="collapse" data-bs-target="#menu_item5" href="#"
+                > <span style="padding: 4px 8px;"><i class="bi bi-shield-check"></i></span>
+                {"Security"}
+                <i
+                  class="bi small bi-caret-down-fill float-end"></i> </a>
+              <ul id="menu_item5" class="submenu collapse" data-bs-parent="#nav_accordion"
+                style="list-style-type:none; font-weight: 400">
+                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Attack Protection"} </a></li>
+                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Multi-factor Auth "}</a></li>
+                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Monitoring"}</a> </li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-color-primary" data-bs-toggle="collapse" data-bs-target="#menu_item6" href="#"
+                > <span style="padding: 4px 8px;"><i class="bi bi-exclude"></i></span> {"Actions"}<i class="bi small bi-caret-down-fill float-end"></i> </a>
+              <ul id="menu_item6" class="submenu collapse" data-bs-parent="#nav_accordion"
+                style="list-style-type:none; font-weight: 400">
+                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Flows"} </a>
+                </li>
+                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Custom"} </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-color-primary" data-bs-toggle="collapse" data-bs-target="#menu_item7" href="#"
+                > <span style="padding: 4px 8px;"><i class="bi bi-arrow-left-right"></i></span>
+                {"Auth Pipeline"} <i
+                  class="bi small bi-caret-down-fill float-end"></i> </a>
+              <ul id="menu_item7" class="submenu collapse" data-bs-parent="#nav_accordion"
+                style="list-style-type:none; font-weight: 400">
+                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Rules"} </a>
+                </li>
+                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Hooks"} </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-color-primary" data-bs-toggle="collapse" data-bs-target="#menu_item8" href="#"
+                > <span style="padding: 4px 8px;"><i class="bi bi-tv"></i></span>
+                {"Monitoring"} <i
+                  class="bi small bi-caret-down-fill float-end"></i> </a>
+              <ul id="menu_item8" class="submenu collapse" data-bs-parent="#nav_accordion"
+                style="list-style-type:none; font-weight: 400">
+                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Log"} </a>
+                </li>
+                <li><a class="nav-link" href="#" style=" padding: 4px 8px; font-size: 15px; color: #65676e">{"Streams"} </a>
+                </li>
+              </ul>
+            </li>
 
+            <li class="nav-item">
+              <Anchor
+                route=AppRoute::SettingsHome
+                classes="text-decoration-none"
+              >
+                <a class="nav-link text-color-primary" href="#">
+                  <span style="padding: 4px 8px;">
+                    <i class="bi bi-gear"></i>
+                  </span>
+                  {"Settings"}
+                </a>
+              </Anchor>
+            </li>
+            
+          </ul>
+          <hr/>
         </div>
-        <div class="MuiDialogActions-root MuiDialogActions-spacing" data-cosmos-key="dialog.footer"><button
-                class="MuiButtonBase-root MuiButton-root MuiButton-outlined jss46 jss51 MuiButton-outlinedSizeLarge MuiButton-sizeLarge MuiButton-disableElevation"
-                tabindex="0" type="button" data-cosmos-key="button"><span class="MuiButton-label">Cancel
-                </span></button><button
-                class="MuiButtonBase-root MuiButton-root MuiButton-contained jss46 MuiButton-containedPrimary MuiButton-containedSizeLarge MuiButton-sizeLarge MuiButton-disableElevation"
-                tabindex="0" type="button" data-cosmos-key="button"><span class="MuiButton-label">Create
-                </span></button></div>
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <div 
+                class="col"
+                style="overflow: hidden;"
+            >
+                
+            
+
+            <!-- Content -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <div>
+
+              <div
+                  class="container border rounded p-4 d-flex flex-column mb-5"
+                  style="font-size: 14px;"
+              >
+                  <div
+                      class="row border-bottom"
+                  >
+                      <div
+                          class="col-lg-6 text-color-primary fw-bold mb-4"
+                      >
+                          {"General Settings"}
+                      </div>
+                      <div
+                          class="col-lg-6"
+                      >
+                          <div
+                              class="mb-4"
+                          >
+                              <p class="mb-2 fw-bold">
+                                  {"ID"}
+                              </p>
+                              <div class="input-group mb-2">
+                                  <input
+                                      type="text"
+                                      class="form-control bg-input-grey"
+                                      aria-label="Dollar amount (with dot and two decimal places)"
+                                      value="60ef247ffab77800401cca56"
+                                  />   
+                              </div>
+                              <p>
+                                  {"The API id on our system. Useful if you prefer to work directly with Auth0's Management API instead."}
+                              </p>
+                          </div>
+          
+                          <div
+                              class="mb-4"
+                          >
+                              <p class="mb-2 fw-bold">
+                                  {"Name*"}
+                              </p>
+                              <div class="input-group mb-2">
+                                  <input
+                                      type="text"
+                                      class="form-control bg-input-grey"
+                                      aria-label="Dollar amount (with dot and two decimal places)"
+                                      value="Testing Name"
+                                  />   
+                              </div>
+                              <p>
+                                  {"A friendly name for the API. The following characters are not allowed "}
+                                  <code
+                                      style="padding: 2px 6px; font-size: 11px;"
+                                      class="bg-input-grey text-color-primary"
+                                  >
+                                      <i class="bi bi-chevron-left"></i>
+                                  </code>
+                                  <code
+                                      style="padding: 2px 6px; font-size: 11px;"
+                                      class="bg-input-grey text-color-primary"
+                                  >
+                                      <i class="bi bi-chevron-right"></i>
+                                  </code>
+                              </p>
+                          </div>
+          
+                          <div
+                              class="mb-5"
+                          >
+                              <p class="mb-2 fw-bold">
+                                  {"Identifier"}
+                              </p>
+                              <div class="input-group mb-2">
+                                  <input
+                                      type="text"
+                                      class="form-control bg-input-grey"
+                                      aria-label="Dollar amount (with dot and two decimal places)"
+                                      value="https://test-api/"
+                                  />
+                              </div>
+                              <p>
+                                  {"Unique identifier for the API. This value will be used as the "}
+                                  <code
+                                      style="padding: 2px 6px; font-size: 14px;"
+                                      class="bg-input-grey text-color-primary"
+                                  >
+                                      {"audience"}
+                                  </code>
+          
+                                  {" parameter on authorization calls."}
+                              </p>
+                          </div>
+          
+                      </div>
+                  </div>
+          
+          
+                  
+                  <div
+                      class="row border-bottom mt-5"
+                  >
+                      <div
+                          class="col-lg-6 text-color-primary fw-bold mb-4"
+                      >
+                          {"Tokens Settings"}
+                      </div>
+                      <div
+                          class="col-lg-6"
+                      >
+                          <div
+                              class="mb-4"
+                          >
+                              <p class="mb-2 fw-bold">
+                                  {"Token Expirations (Seconds)*"}
+                              </p>
+                              <div class="input-group mb-2">
+                                  <input
+                                      type="text"
+                                      class="form-control bg-input-grey"
+                                      aria-label="Dollar amount (with dot and two decimal places)"
+                                      value="86400"
+                                  />
+                              </div>
+                              <p>
+                                  {"Expiration value (in seconds) for "}
+                                  <code
+                                      style="padding: 2px 6px; font-size: 11px;"
+                                      class="bg-input-grey text-color-primary"
+                                  >
+                                      {"access tokens"}
+                                  </code>
+                                  {" issued for this API from the Token Endpoint."}
+                              </p>
+                          </div>
+          
+                          <div
+                              class="mb-4"
+                          >
+                              <p class="mb-2 fw-bold">
+                                  {"Token Expirations For Browser Flows (Seconds)*"}
+                              </p>
+                              <div class="input-group mb-2">
+                                  <input
+                                      type="text"
+                                      class="form-control bg-input-grey"
+                                      aria-label="Dollar amount (with dot and two decimal places)"
+                                      value="7200"
+                                  />
+                              </div>
+                              <p>
+                                  {"Expiration value (in seconds) for "}
+                                  <code
+                                      style="padding: 2px 6px; font-size: 11px;"
+                                      class="bg-input-grey text-color-primary"
+                                  >
+                                      {"access tokens"}
+                                  </code>
+                                  {" issued for this API via Implicit or Hybrid Flows. Cannot be greater than the Token Lifetime value."}
+                              </p>
+                          </div>
+          
+                          <div
+                              class="mb-5"
+                          >
+                              <p class="mb-2 fw-bold">
+                                  {"Signing Algorithm"}
+                              </p>
+                              <div class="input-group mb-2">
+                                  <input
+                                      type="text"
+                                      class="form-control bg-input-grey"
+                                      aria-label="Dollar amount (with dot and two decimal places)"
+                                      value="RS256"
+                                  />
+                              </div>
+                              <p>
+                                  {"Algorithm to be used when signing the "}
+                                  <code
+                                      style="padding: 2px 6px; font-size: 11px;"
+                                      class="bg-input-grey text-color-primary"
+                                  >
+                                      {"access tokens"}
+                                  </code>
+          
+                                  {" for this API. You can find more information"}
+                              </p>
+                          </div>
+          
+                      </div>
+                  </div>
+          
+          
+                  <div
+                      class="row border-bottom mt-5"
+                  >
+                      <div
+                          class="col-lg-6 text-color-primary fw-bold mb-4"
+                      >
+                          {"RBAC Settings"}
+                      </div>
+                      <div
+                          class="col-lg-6"
+                      >
+                          <div
+                              class="mb-4"
+                          >
+                              <p class="mb-2 fw-bold">
+                                  {"Enable RBAC "}
+                              </p>
+                              <div class="form-check form-switch fs-3 mb-4">
+                                  <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"/>
+                              </div>
+                              <p>
+                                  {"If this setting is enabled, this API will skip user consent for applications flagged as First Party."}
+                              </p>
+                          </div>
+          
+                          <div
+                              class="mb-4"
+                          >
+                              <p class="mb-2 fw-bold">
+                                  {"Allow Offline Access"}
+                              </p>
+                              <div class="form-check form-switch fs-3 mb-4">
+                                  <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"/>
+                              </div>
+                              <p>
+                                  {"If this setting is enabled, Auth0 will allow applications to ask for Refresh Tokens for this API."}
+                              </p>
+                          </div>
+          
+                          <button type="button" class="btn btn-primary mb-5 mt-3">{"Save"}</button>
+          
+          
+                      </div>
+                  </div>
+          
+              </div>
+
+              <div
+                  style="font-size: 14px;"
+              >
+                  <p
+                      class="fw-bold"
+                  >
+                      {"Danger Zone"}
+                  </p>
+
+                  <div class="alert alert-danger d-flex flex-row justify-content-between" role="alert">
+                      <div>
+                          <p
+                              class="fw-bold"
+                          >
+                              {"Delete This API"}
+                          </p>
+                          {"Once confirmed, this operation can't be undone!"}
+                      </div>
+                      <div>
+                          <button
+                              type="button"
+                              class="btn btn-danger"
+                          >{"Delete"}</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+
+
+
+
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+
+
+
+            </div>
+        </div>
+        
+    </div>
+
     </div>
 
 </body>
