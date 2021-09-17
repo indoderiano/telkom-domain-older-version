@@ -1,68 +1,36 @@
-use yew::prelude::*;
+use yew::{
+    format::{ Json, Nothing },
+    prelude::*,
+    services::fetch::{FetchService, FetchTask, Request, Response},
+};
 use yew_router::components::RouterAnchor;
 use yew::services::ConsoleService;
 use crate::app::AppRoute;
+use crate::types::api::ApiTitle;
+
 
 #[derive(Clone, Debug, Eq, PartialEq, Properties)]
-pub struct ApisState {
+pub struct ApisProps {
     pub tenant_id: String,
 }
 
-pub struct ApisHome {}
+pub struct ApisHome {
+    fetch_task: Option<FetchTask>,
+    error: Option<String>,
+    link: ComponentLink<Self>,
+    api_list: Vec<ApiTitle>,
+}
 
-pub enum Msg {}
+pub enum Msg {
+    RequestApiList,
+    GetApiList(Result<Vec<ApiTitle>, anyhow::Error>),
+}
 
-impl Component for ApisHome {
-    type Message = Msg;
-    type Properties = ApisState;
-
-    fn create(props: Self::Properties, _: ComponentLink<Self>) -> Self {
-        ConsoleService::info(&format!("Apis home state, tenant id = {}", props.tenant_id));
-        ApisHome {}
-    }
-
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        true
-    }
-
-    fn change(&mut self, _: Self::Properties) -> ShouldRender {
-        false
-    }
-
-    fn view(&self) -> Html {
+impl ApisHome {
+    fn view_api_list (&self) -> Vec<Html> {
         type Anchor = RouterAnchor<AppRoute>;
-        html! {
-            <div
-                class="mx-auto pt-5 pb-5 px-4"
-                style="max-width: 1048px;"
-            >
-                <div
-                    class="mb-5"
-                >
-                    <div
-                        class="d-flex flex-row mb-3"
-                    >
-                        <div
-                            class="flex-fill fs-3 fw-bold"
-                        >
-                            {"APIs"}
-                        </div>
-                        <div>
-                            <button
-                                type="button"
-                                class="btn btn-primary d-flex align-items-center"
-                                data-bs-toggle="modal" data-bs-target="#exampleModal"
-                            >
-                                <i class="bi bi-plus me-2" style="margin-left: -5px;"></i>
-                                <span>{"Create API"}</span>
-                            </button>
-                        </div>
-                    </div>
-                    <p>{"Define APIs that you can consume from your authorized applications."}</p>
-                </div>
-
-
-
+        self.api_list.iter().map(|api| {
+            html! {
                 <div>
                     <div
                         class="d-flex border-bottom border-1 list-hover"
@@ -96,7 +64,8 @@ impl Component for ApisHome {
                                         route=AppRoute::ApisSettings
                                         classes="text-decoration-none fw-bold mb-0"
                                     >
-                                            {"Auth0 Management API"}
+                                            // {"Auth0 Management API"}
+                                            { &api.name }
                                     </Anchor>
                                 </p>
                                 <p
@@ -108,7 +77,8 @@ impl Component for ApisHome {
                                         font-size: 14px;
                                     "
                                 >
-                                    {"System API"}
+                                    // {"System API"}
+                                    { &api.api_type }
                                 </p>
                             </div>
             
@@ -134,7 +104,8 @@ impl Component for ApisHome {
                                 font-family: 'Roboto Mono', monospace;
                             "
                             >
-                                {"https://dev-r5y8heyf.au.auth0.com/api/v2/"}
+                                // {"https://dev-r5y8heyf.au.auth0.com/api/v2/"}
+                                { &api.identifier }
                             </div>
                             <i class="bi bi-files ms-1"></i>
                         </div>
@@ -164,6 +135,124 @@ impl Component for ApisHome {
 
                     </div>
                 </div>
+            }
+        })
+        .collect()
+    }
+}
+
+impl Component for ApisHome {
+    type Message = Msg;
+    type Properties = ApisProps;  
+
+    fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
+        ConsoleService::info(&format!("Apis home props, tenant id = {}", props.tenant_id));
+
+        ApisHome {
+            fetch_task: None,
+            error: None,
+            link,
+            api_list: Vec::new(),
+        }
+    }
+
+    fn rendered(&mut self, first_render: bool) {
+
+        if first_render {
+            ConsoleService::info("This is first render");
+            
+            self.link.send_message(Msg::RequestApiList);
+        }
+
+    }
+
+    fn update(&mut self, msg: Self::Message) -> ShouldRender {
+        match msg {
+            Msg::RequestApiList => {
+                let request = Request::get("http://localhost:3000/api/tenantid")
+                    // .header("Content-Type", "application/json")
+                    .header("access_token", "tokenidtelkomdomain")
+                    .body(Nothing)
+                    .expect("Could not build request.");
+                let callback = 
+                    self.link.callback(|response: Response<Json<Result<Vec<ApiTitle>, anyhow::Error>>>| {
+                        let Json(data) = response.into_body();
+                        Msg::GetApiList(data)
+                    });
+                let task = FetchService::fetch(request, callback).expect("failed to start request");
+                self.fetch_task = Some(task);
+                true
+            }
+            Msg::GetApiList(response) => {
+                match response {
+                    Ok(data) => {
+                        ConsoleService::info(&format!("{:?}", data));
+                        self.api_list = data;
+
+                    }
+                    Err(error) => {
+                        ConsoleService::info(&error.to_string());
+                    }
+                }
+                self.fetch_task = None;
+                true
+            }
+        }
+    }
+
+    fn change(&mut self, _: Self::Properties) -> ShouldRender {
+        false
+    }
+
+    fn view(&self) -> Html {
+        // type Anchor = RouterAnchor<AppRoute>;
+        // ConsoleService::info(&format!("fetch task: {:?}", &self.fetch_task));
+        html! {
+            <div
+                class="mx-auto pt-5 pb-5 px-4"
+                style="max-width: 1048px;"
+            >
+                <div
+                    class="mb-5"
+                >
+                    <div
+                        class="d-flex flex-row mb-3"
+                    >
+                        <div
+                            class="flex-fill fs-3 fw-bold"
+                        >
+                            {"APIs"}
+                        </div>
+                        <div>
+                            <button
+                                type="button"
+                                class="btn btn-primary d-flex align-items-center"
+                                data-bs-toggle="modal" data-bs-target="#exampleModal"
+                            >
+                                <i class="bi bi-plus me-2" style="margin-left: -5px;"></i>
+                                <span>{"Create API"}</span>
+                            </button>
+                        </div>
+                    </div>
+                    <p>{"Define APIs that you can consume from your authorized applications."}</p>
+                </div>
+
+
+                {
+                    if self.fetch_task.is_some() {
+                        html! {
+                            <div>
+                                {"LOADING"}
+                            </div>
+                        }
+                    } else {
+                        html! {
+                            <>
+                                { self.view_api_list() }
+                            </>
+                        }
+                    }
+                }
 
 
 
