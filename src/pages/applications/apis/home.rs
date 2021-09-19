@@ -7,6 +7,7 @@ use yew_router::components::RouterAnchor;
 use yew::services::ConsoleService;
 use crate::app::AppRoute;
 use crate::types::api::ApiTitle;
+use crate::components::loading::Loading;
 
 
 #[derive(Clone, Debug, Eq, PartialEq, Properties)]
@@ -15,6 +16,7 @@ pub struct ApisProps {
 }
 
 pub struct ApisHome {
+    tenant_id: String,
     fetch_task: Option<FetchTask>,
     error: Option<String>,
     link: ComponentLink<Self>,
@@ -29,6 +31,7 @@ pub enum Msg {
 impl ApisHome {
     fn view_api_list (&self) -> Vec<Html> {
         type Anchor = RouterAnchor<AppRoute>;
+        let tenant_id = &self.tenant_id;
         self.api_list.iter().map(|api| {
             html! {
                 <div>
@@ -61,7 +64,7 @@ impl ApisHome {
                                     "
                                 >
                                     <Anchor
-                                        route=AppRoute::ApisSettings
+                                        route=AppRoute::ApisSettings { tenant_id: tenant_id.clone(), api_id: api.id.clone() }
                                         classes="text-decoration-none fw-bold mb-0"
                                     >
                                             // {"Auth0 Management API"}
@@ -126,7 +129,7 @@ impl ApisHome {
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                 <li>
-                                    <Anchor route=AppRoute::ApisSettings classes="dropdown-item fs-7">
+                                    <Anchor route=AppRoute::ApisSettings { tenant_id: tenant_id.clone(), api_id: api.id.clone() } classes="dropdown-item fs-7">
                                         {"Settings"}
                                     </Anchor>
                                 </li>
@@ -149,6 +152,7 @@ impl Component for ApisHome {
         ConsoleService::info(&format!("Apis home props, tenant id = {}", props.tenant_id));
 
         ApisHome {
+            tenant_id: props.tenant_id,
             fetch_task: None,
             error: None,
             link,
@@ -241,8 +245,13 @@ impl Component for ApisHome {
                 {
                     if self.fetch_task.is_some() {
                         html! {
-                            <div>
-                                {"LOADING"}
+                            <div
+                                style="
+                                    position: relative;
+                                    margin-top: 8rem;
+                                "
+                            >
+                                <Loading width=45 />
                             </div>
                         }
                     } else {
