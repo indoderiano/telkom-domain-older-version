@@ -36,7 +36,10 @@ use crate::pages::{
     activity::Activity,
 
     applications::{
-        applications::home::ApplicationHome,
+        applications::{
+            home::ApplicationHome,
+            settings::ApplicationSettings,
+        },
         apis::{
             home::ApisHome,
             settings::ApisSettings,
@@ -93,6 +96,8 @@ use crate::types::LOCALSTORAGE_KEY;
 #[derive(Switch, Clone)]
 pub enum AppRoute {
     // MEMBER PAGES
+    
+
     #[to = "/apis/settings"]
     ApisSettings,
     #[to = "/getting-started"]
@@ -101,14 +106,16 @@ pub enum AppRoute {
     ApisHome { tenant_id: String },
     #[to = "/activity"]
     Activity,
+    #[to = "/applications/settings"]
+    ApplicationSettings,
     #[to = "/applications"]
-    DatabaseSettings,
-    #[to = "/authentication/database/settings"]
-    DbCreate,
-    #[to = "/authentication/database/create"]
-    DatabaseHome,
-    #[to = "/authentication/database"]
     ApplicationHome,
+    #[to = "/authentication/database/settings"]
+    DatabaseSettings,
+    #[to = "/authentication/database/create"]
+    DbCreate,
+    #[to = "/authentication/database"]
+    DatabaseHome,
     #[to = "/authentication/passwordless"]
     AuthPasswordless,
     #[to = "/sso/create-sso"]
@@ -317,6 +324,14 @@ impl Component for App {
                 AppRoute::ApplicationHome => {
                     if is_logged_in {
                         html! {<ApplicationHome/>}
+                    } else {
+                        route_service.set_route("/", ());
+                        html! {<HomePage/>}
+                    }
+                },
+                AppRoute::ApplicationSettings => {
+                    if is_logged_in {
+                        html! {<ApplicationSettings/>}
                     } else {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}

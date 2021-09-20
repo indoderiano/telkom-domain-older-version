@@ -1,6 +1,6 @@
 use yew::prelude::*;
-// use yew_router::components::RouterAnchor;
-// use crate::app::Route;
+use yew_router::components::RouterAnchor;
+use crate::app::AppRoute;
 
 pub struct ApplicationHome {}
 
@@ -23,7 +23,7 @@ impl Component for ApplicationHome {
     }
 
     fn view(&self) -> Html {
-        // type Anchor = RouterAnchor<Route>;
+        type Anchor = RouterAnchor<AppRoute>;
         html! {
         <>
                     <div 
@@ -91,16 +91,28 @@ impl Component for ApplicationHome {
                                         class="d-grid" 
                                         style="min-width: 40px;"
                                     >
-                                        <a
-                                            class="fw-bold mb-0" 
-                                            style=" white-space: nowrap;
-                                                    text-overflow: ellipsis;
-                                                    overflow: hidden;
-                                                    font-size: 14px;
-                                                    text-decoration: none;" 
-                                            href="#">
-                                            {"API Explorer Application"}
-                                        </a>
+                                        // <a
+                                        //     class="fw-bold mb-0" 
+                                        //     style=" white-space: nowrap;
+                                        //             text-overflow: ellipsis;
+                                        //             overflow: hidden;
+                                        //             font-size: 14px;
+                                        //             text-decoration: none;" 
+                                        //     href="#">
+                                        //     {"API Explorer Application"}
+                                        // </a>
+                                        <Anchor route=AppRoute::ApplicationSettings classes="dropdown-item fs-7">
+                                                <a
+                                                    class="fw-bold mb-0" 
+                                                    style=" white-space: nowrap;
+                                                            text-overflow: ellipsis;
+                                                            overflow: hidden;
+                                                            font-size: 14px;
+                                                            text-decoration: none;" 
+                                                    href="#">
+                                                    {"API Explorer Application"}
+                                                </a>
+                                            </Anchor>
                                         <p 
                                             class="mb-0 text-muted" 
                                             style=" white-space: nowrap;
@@ -168,12 +180,9 @@ impl Component for ApplicationHome {
                                             </a>
                                         </li>
                                         <li>
-                                            <a 
-                                                class="dropdown-item fs-7" 
-                                                href="#"
-                                            >
+                                            <Anchor route=AppRoute::ApplicationSettings classes="dropdown-item fs-7">
                                                 {"Settings"}
-                                            </a>
+                                            </Anchor>
                                         </li>
                                         <li>
                                             <a 
