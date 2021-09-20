@@ -123,6 +123,21 @@ impl Component for ApisSettings {
 
     fn view(&self) -> Html {
         type Anchor = RouterAnchor<AppRoute>;
+        let ApiDetails {
+            id,
+            name,
+            api_id,
+            api_type,
+            identifier,
+            token_exp,
+            token_exp_browser,
+            sign_algorithm,
+            rbac,
+            permission_acc_token,
+            allow_skip_user,
+            allow_off_acc,
+            tenant_id,
+        } = self.api_details.clone();
         html! {
             <div
                 class="py-5 px-4 m-auto"
@@ -149,14 +164,14 @@ impl Component for ApisSettings {
                     <div
                         class="d-flex flex-column"
                     >
-                        <h2>{"Testing Name"}</h2>
+                        <h2>{name}</h2>
                         <div
                             class="text-muted"
                         >
                             <span
                                 class="me-4"
                             >
-                                {"Custom API"}
+                                {api_type}
                             </span>
                             <span>
                                 {"Identifier"}
@@ -173,7 +188,7 @@ impl Component for ApisSettings {
                                     font-family: 'Roboto Mono', monospace;
                                 "
                             >
-                                {"https://test-api/"}
+                                {identifier}
                             </span>
                         </div>
                     </div>
