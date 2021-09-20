@@ -1,15 +1,31 @@
-use yew::prelude::*;
+use yew::{
+    prelude::*,
+    services::ConsoleService,
+};
+use crate::types::api::{ ApiDetails };
 
-pub struct TabSettings {}
+
+#[derive(Clone, Debug, Eq, PartialEq, Properties)]
+pub struct ApisTabSettingsProps {
+    pub api_details: ApiDetails,
+}
+
+pub struct TabSettings {
+    api_details: ApiDetails,
+}
 
 pub enum Msg {}
 
 impl Component for TabSettings {
     type Message = Msg;
-    type Properties = ();
+    type Properties = ApisTabSettingsProps;
 
-    fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
-        TabSettings {}
+    fn create(props: Self::Properties, _: ComponentLink<Self>) -> Self {
+        ConsoleService::info(&format!("Api Tab Settings props, api details = {:?}", props.api_details));
+
+        TabSettings {
+            api_details: props.api_details,
+        }
     }
 
     fn update(&mut self, _msg: Self::Message) -> ShouldRender {
@@ -21,6 +37,21 @@ impl Component for TabSettings {
     }
 
     fn view(&self) -> Html {
+        let ApiDetails {
+            id,
+            name,
+            api_id,
+            api_type,
+            identifier,
+            token_exp,
+            token_exp_browser,
+            sign_algorithm,
+            rbac,
+            permission_acc_token,
+            allow_skip_user,
+            allow_off_acc,
+            tenant_id,
+        } = self.api_details.clone();
         html! {
             <div>
 
@@ -50,7 +81,7 @@ impl Component for TabSettings {
                                       type="text"
                                       class="form-control bg-input-grey"
                                       aria-label="Dollar amount (with dot and two decimal places)"
-                                      value="60ef247ffab77800401cca56"
+                                      value={api_id}
                                   />   
                               </div>
                               <p>
@@ -69,7 +100,7 @@ impl Component for TabSettings {
                                       type="text"
                                       class="form-control bg-input-grey"
                                       aria-label="Dollar amount (with dot and two decimal places)"
-                                      value="Testing Name"
+                                      value={name}
                                   />   
                               </div>
                               <p>
@@ -100,7 +131,7 @@ impl Component for TabSettings {
                                       type="text"
                                       class="form-control bg-input-grey"
                                       aria-label="Dollar amount (with dot and two decimal places)"
-                                      value="https://test-api/"
+                                      value={identifier}
                                   />
                               </div>
                               <p>
@@ -143,7 +174,7 @@ impl Component for TabSettings {
                                       type="text"
                                       class="form-control bg-input-grey"
                                       aria-label="Dollar amount (with dot and two decimal places)"
-                                      value="86400"
+                                      value={token_exp.to_string()}
                                   />
                               </div>
                               <p>
@@ -169,7 +200,7 @@ impl Component for TabSettings {
                                       type="text"
                                       class="form-control bg-input-grey"
                                       aria-label="Dollar amount (with dot and two decimal places)"
-                                      value="7200"
+                                      value={token_exp_browser.to_string()}
                                   />
                               </div>
                               <p>
@@ -195,7 +226,7 @@ impl Component for TabSettings {
                                       type="text"
                                       class="form-control bg-input-grey"
                                       aria-label="Dollar amount (with dot and two decimal places)"
-                                      value="RS256"
+                                      value={sign_algorithm}
                                   />
                               </div>
                               <p>
@@ -233,7 +264,12 @@ impl Component for TabSettings {
                                   {"Enable RBAC "}
                               </p>
                               <div class="form-check form-switch fs-3 mb-4">
-                                  <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"/>
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    id="flexSwitchCheckDefault"
+                                    checked={allow_skip_user}
+                                />
                               </div>
                               <p>
                                   {"If this setting is enabled, this API will skip user consent for applications flagged as First Party."}
@@ -247,7 +283,12 @@ impl Component for TabSettings {
                                   {"Allow Offline Access"}
                               </p>
                               <div class="form-check form-switch fs-3 mb-4">
-                                  <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"/>
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    id="flexSwitchCheckDefault"
+                                    checked={allow_off_acc}    
+                                />
                               </div>
                               <p>
                                   {"If this setting is enabled, Auth0 will allow applications to ask for Refresh Tokens for this API."}

@@ -48,6 +48,7 @@ impl Component for ApisSettings {
         let api_details = ApiDetails {
             id: 1,
             name: String::from("default"),
+            api_id: String::from("default"),
             api_type: String::from("default"),
             identifier: String::from("default"),
             token_exp: 1000,
@@ -230,7 +231,7 @@ impl Component for ApisSettings {
                 {
                     match self.content {
                         Content::Quickstart => html! { <Quickstart/> },
-                        Content::Settings => html! { <TabSettings/> }
+                        Content::Settings => html! { <TabSettings api_details=self.api_details.clone() /> }
                     }
                 }
             </div>

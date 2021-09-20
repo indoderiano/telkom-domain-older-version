@@ -11,10 +11,11 @@ pub struct ApiTitle {
     pub identifier: String,
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct ApiDetails {
     pub id: u8,
     pub name: String,
+    pub api_id: String,
     pub api_type: String,
     pub identifier: String,
     pub token_exp: u32,
