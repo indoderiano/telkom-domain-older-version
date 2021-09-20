@@ -396,7 +396,7 @@
                                       type="text"
                                       class="form-control bg-input-grey"
                                       aria-label="Dollar amount (with dot and two decimal places)"
-                                      value="60ef247ffab77800401cca56"
+                                      value={api_id}
                                   />   
                               </div>
                               <p>
@@ -415,7 +415,7 @@
                                       type="text"
                                       class="form-control bg-input-grey"
                                       aria-label="Dollar amount (with dot and two decimal places)"
-                                      value="Testing Name"
+                                      value={name}
                                   />   
                               </div>
                               <p>
@@ -446,7 +446,7 @@
                                       type="text"
                                       class="form-control bg-input-grey"
                                       aria-label="Dollar amount (with dot and two decimal places)"
-                                      value="https://test-api/"
+                                      value={identifier}
                                   />
                               </div>
                               <p>
@@ -489,7 +489,7 @@
                                       type="text"
                                       class="form-control bg-input-grey"
                                       aria-label="Dollar amount (with dot and two decimal places)"
-                                      value="86400"
+                                      value={token_exp.to_string()}
                                   />
                               </div>
                               <p>
@@ -515,7 +515,7 @@
                                       type="text"
                                       class="form-control bg-input-grey"
                                       aria-label="Dollar amount (with dot and two decimal places)"
-                                      value="7200"
+                                      value={token_exp_browser.to_string()}
                                   />
                               </div>
                               <p>
@@ -541,7 +541,7 @@
                                       type="text"
                                       class="form-control bg-input-grey"
                                       aria-label="Dollar amount (with dot and two decimal places)"
-                                      value="RS256"
+                                      value={sign_algorithm}
                                   />
                               </div>
                               <p>
@@ -579,9 +579,62 @@
                                   {"Enable RBAC "}
                               </p>
                               <div class="form-check form-switch fs-3 mb-4">
-                                  <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"/>
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    checked={rbac}
+                                />
                               </div>
-                              <p>
+                              <p class="text-color-disabled">
+                                  {"If this setting is enabled, RBAC authorization policies will be enforced for this API. Role and permission assignments will be evaluated during the login transaction."}
+                              </p>
+                          </div>
+                          <div
+                              class="mb-4"
+                          >
+                              <p class="mb-2 fw-bold">
+                                  {"Add Permissions in the Access Token"}
+                              </p>
+                              <div class="form-check form-switch fs-3 mb-4">
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    checked={permission_acc_token}
+                                />
+                              </div>
+                              <p class="text-color-disabled">
+                                  {"If this setting is enabled, the Permissions claim will be added to the access token. Only available if RBAC is enabled for this API."}
+                              </p>
+                          </div>
+                      </div>
+                  </div>
+
+
+                  <div
+                      class="row border-bottom mt-5"
+                  >
+                      <div
+                          class="col-lg-6 text-color-primary fw-bold mb-4"
+                      >
+                          {"Access Settings"}
+                      </div>
+                      <div
+                          class="col-lg-6"
+                      >
+                          <div
+                              class="mb-4"
+                          >
+                              <p class="mb-2 fw-bold">
+                                  {"Allow Skipping User Consent"}
+                              </p>
+                              <div class="form-check form-switch fs-3 mb-4">
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    checked={allow_skip_user}
+                                />
+                              </div>
+                              <p class="text-color-disabled">
                                   {"If this setting is enabled, this API will skip user consent for applications flagged as First Party."}
                               </p>
                           </div>
@@ -593,7 +646,12 @@
                                   {"Allow Offline Access"}
                               </p>
                               <div class="form-check form-switch fs-3 mb-4">
-                                  <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"/>
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    id="flexSwitchCheckDefault"
+                                    checked={allow_off_acc}    
+                                />
                               </div>
                               <p>
                                   {"If this setting is enabled, Auth0 will allow applications to ask for Refresh Tokens for this API."}

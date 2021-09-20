@@ -347,7 +347,7 @@ impl Component for SocialHome {
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                 <li>
-                                    <Anchor route=AppRoute::ApisSettings classes="dropdown-item fs-7">
+                                    <Anchor route=AppRoute::SocialSettings classes="dropdown-item fs-7">
                                         {"Settings"}
                                     </Anchor>
                                 </li>

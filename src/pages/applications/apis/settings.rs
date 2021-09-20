@@ -1,8 +1,22 @@
-use yew::prelude::*;
+use yew::{
+    format::{ Json, Nothing },
+    prelude::*,
+    services::fetch::{FetchService, FetchTask, Request, Response},
+};
 use yew_router::components::RouterAnchor;
 use crate::app::AppRoute;
 use super::quickstart::Quickstart;
 use super::tab_settings::TabSettings;
+use yew::services::ConsoleService;
+use crate::types::api::{ ApiTitle, ApiDetails, ResponseApiDetails };
+
+
+#[derive(Clone, Debug, Eq, PartialEq, Properties)]
+pub struct ApisSettingsProps {
+    pub tenant_id: String,
+    pub api_id: String,
+    // api_title: ApiTitle,
+}
 
 pub enum Content {
     Quickstart,
@@ -11,28 +25,93 @@ pub enum Content {
 
 pub struct ApisSettings {
     content: Content,
-    link: ComponentLink<Self>
+    link: ComponentLink<Self>,
+    fetch_task: Option<FetchTask>,
+    error: Option<String>,
+    api_details: ApiDetails,
 }
 
 pub enum Msg {
-    ChangeContent(Content)
+    ChangeContent(Content),
+    RequestApiDetails,
+    GetApiDetails(Result<ResponseApiDetails, anyhow::Error>),
 }
 
 impl Component for ApisSettings {
     type Message = Msg;
-    type Properties = ();
+    type Properties = ApisSettingsProps;
 
-    fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
+    fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
+        ConsoleService::info(&format!("Api Settings props, tenant id = {}", props.tenant_id));
+        ConsoleService::info(&format!("Api Settings props, api id = {}", props.api_id));
+
+        let api_details = ApiDetails {
+            id: 1,
+            name: String::from("default"),
+            api_id: String::from("default"),
+            api_type: String::from("default"),
+            identifier: String::from("default"),
+            token_exp: 1000,
+            token_exp_browser: 1000,
+            sign_algorithm: String::from("default"),
+            rbac: false,
+            permission_acc_token: false,
+            allow_skip_user: false,
+            allow_off_acc: false,
+            tenant_id: String::from("default"),
+        };
+
         ApisSettings {
             content: Content::Quickstart,
-            link
+            link,
+            fetch_task: None,
+            error: None,
+            api_details,
         }
+    }
+
+    fn rendered(&mut self, first_render: bool) {
+
+        if first_render {
+            ConsoleService::info("This is first render");
+            
+            self.link.send_message(Msg::RequestApiDetails);
+        }
+
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
             Msg::ChangeContent(content) => {
                 self.content = content;
+                true
+            }
+            Msg::RequestApiDetails => {
+                let request = Request::get("http://localhost:3000/api/dev-ofzd5p1b/apis/60daccd6dff9a6003e8ef6ef")
+                    // .header("Content-Type", "application/json")
+                    .header("access_token", "tokenidtelkomdomain")
+                    .body(Nothing)
+                    .expect("Could not build request.");
+                let callback = 
+                    self.link.callback(|response: Response<Json<Result<ResponseApiDetails, anyhow::Error>>>| {
+                        let Json(data) = response.into_body();
+                        Msg::GetApiDetails(data)
+                    });
+                let task = FetchService::fetch(request, callback).expect("failed to start request");
+                self.fetch_task = Some(task);
+                true
+            }
+            Msg::GetApiDetails(response) => {
+                match response {
+                    Ok(data) => {
+                        ConsoleService::info(&format!("{:?}", data));
+                        self.api_details = data.data;
+                    }
+                    Err(error) => {
+                        ConsoleService::info(&error.to_string());
+                    }
+                }
+                self.fetch_task = None;
                 true
             }
         }
@@ -44,6 +123,21 @@ impl Component for ApisSettings {
 
     fn view(&self) -> Html {
         type Anchor = RouterAnchor<AppRoute>;
+        let ApiDetails {
+            id,
+            name,
+            api_id,
+            api_type,
+            identifier,
+            token_exp,
+            token_exp_browser,
+            sign_algorithm,
+            rbac,
+            permission_acc_token,
+            allow_skip_user,
+            allow_off_acc,
+            tenant_id,
+        } = self.api_details.clone();
         html! {
             <div
                 class="py-5 px-4 m-auto"
@@ -70,14 +164,14 @@ impl Component for ApisSettings {
                     <div
                         class="d-flex flex-column"
                     >
-                        <h2>{"Testing Name"}</h2>
+                        <h2>{name}</h2>
                         <div
                             class="text-muted"
                         >
                             <span
                                 class="me-4"
                             >
-                                {"Custom API"}
+                                {api_type}
                             </span>
                             <span>
                                 {"Identifier"}
@@ -94,7 +188,7 @@ impl Component for ApisSettings {
                                     font-family: 'Roboto Mono', monospace;
                                 "
                             >
-                                {"https://test-api/"}
+                                {identifier}
                             </span>
                         </div>
                     </div>
@@ -152,7 +246,7 @@ impl Component for ApisSettings {
                 {
                     match self.content {
                         Content::Quickstart => html! { <Quickstart/> },
-                        Content::Settings => html! { <TabSettings/> }
+                        Content::Settings => html! { <TabSettings api_details=self.api_details.clone() /> }
                     }
                 }
             </div>

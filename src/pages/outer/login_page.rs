@@ -1,7 +1,6 @@
 use yew::{
     format::{
         Json,
-        // Nothing
     },
     prelude::*,
     services::fetch::{FetchService, FetchTask, Request, Response},

@@ -242,7 +242,7 @@ impl Component for EnterpriseHome {
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                 <li>
-                                    <Anchor route=AppRoute::SocialSettings classes="dropdown-item fs-7">
+                                    <Anchor route=AppRoute::EnterpriseGoogle classes="dropdown-item fs-7">
                                         {"Settings"}
                                     </Anchor>
                                 </li>
@@ -252,7 +252,7 @@ impl Component for EnterpriseHome {
                     </Anchor>
 
                     <Anchor
-                        route=AppRoute::SocialSettings
+                        route=AppRoute::EnterpriseGoogle
                         classes="d-flex border-bottom border-1 list-hover justify-content-between pe-auto text-decoration-none"
                     >
                         <div
@@ -304,7 +304,7 @@ impl Component for EnterpriseHome {
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                 <li>
-                                    <Anchor route=AppRoute::ApisSettings classes="dropdown-item fs-7">
+                                    <Anchor route=AppRoute::EnterpriseGoogle classes="dropdown-item fs-7">
                                         {"Settings"}
                                     </Anchor>
                                 </li>
