@@ -72,7 +72,8 @@ use crate::pages::{
 
     management::{
         users::{
-            home::UsersManagement
+            home::UsersManagement,
+            user_viewdetail::UserViewDetail,
         },
         roles::{
             // home::RolesManagement,
@@ -125,6 +126,8 @@ pub enum AppRoute {
     ViewDetail,
     #[to = "/user-management/roles"]
     RolesCreated,
+    #[to="/user-management/users/setting"]
+    UserViewDetail,
     #[to = "/user-management/users"]
     UsersManagement,
     #[to = "/enterprise/google-app/create"]
@@ -386,6 +389,14 @@ impl Component for App {
                         html! {<HomePage/>}
                     }
                 },
+                AppRoute::UserViewDetail => {
+                    if is_logged_in {
+                        html! {<UserViewDetail/>}
+                    } else {
+                        route_service.set_route("/", ());
+                        html! {<HomePage/>}
+                    }
+                }
                 AppRoute::EnterpriseHome => {
                     if is_logged_in {
                         html! {<EnterpriseHome/>}
