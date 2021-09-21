@@ -75,7 +75,8 @@ use crate::pages::{
 
     management::{
         users::{
-            home::UsersManagement
+            home::UsersManagement,
+            user_viewdetail::UserViewDetail,
         },
         roles::{
             // home::RolesManagement,
@@ -96,18 +97,14 @@ use crate::types::LOCALSTORAGE_KEY;
 #[derive(Switch, Clone)]
 pub enum AppRoute {
     // MEMBER PAGES
-    
-
-    #[to = "/apis/settings"]
-    ApisSettings,
     #[to = "/getting-started"]
     GettingStarted,
-    #[to = "/{tenant_id}/apis"]
-    ApisHome { tenant_id: String },
     #[to = "/activity"]
     Activity,
-    #[to = "/applications/settings"]
-    ApplicationSettings,
+    #[to = "/{tenant_id}/apis/{api_id}/settings"]
+    ApisSettings { tenant_id: String, api_id: String },
+    #[to = "/{tenant_id}/apis"]
+    ApisHome { tenant_id: String },
     #[to = "/applications"]
     ApplicationHome,
     #[to = "/authentication/database/settings"]
@@ -132,6 +129,8 @@ pub enum AppRoute {
     ViewDetail,
     #[to = "/user-management/roles"]
     RolesCreated,
+    #[to="/user-management/users/setting"]
+    UserViewDetail,
     #[to = "/user-management/users"]
     UsersManagement,
     #[to = "/enterprise/google-app/create"]
@@ -313,9 +312,9 @@ impl Component for App {
                         html! {<HomePage/>}
                     }
                 },
-                AppRoute::ApisSettings => {
+                AppRoute::ApisSettings{ tenant_id, api_id } => {
                     if is_logged_in {
-                        html! {<ApisSettings/>}
+                        html! {<ApisSettings tenant_id=tenant_id api_id=api_id />}
                     } else {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
@@ -401,6 +400,14 @@ impl Component for App {
                         html! {<HomePage/>}
                     }
                 },
+                AppRoute::UserViewDetail => {
+                    if is_logged_in {
+                        html! {<UserViewDetail/>}
+                    } else {
+                        route_service.set_route("/", ());
+                        html! {<HomePage/>}
+                    }
+                }
                 AppRoute::EnterpriseHome => {
                     if is_logged_in {
                         html! {<EnterpriseHome/>}
