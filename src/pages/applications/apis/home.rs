@@ -7,7 +7,10 @@ use yew_router::components::RouterAnchor;
 use yew::services::ConsoleService;
 use crate::app::AppRoute;
 use crate::types::api::ApiTitle;
-use crate::components::loading::Loading;
+use crate::components::{
+    loading::Loading,
+    loading2::Loading2,
+};
 
 
 #[derive(Clone, Debug, Eq, PartialEq, Properties)]
@@ -251,7 +254,7 @@ impl Component for ApisHome {
                                     margin-top: 8rem;
                                 "
                             >
-                                <Loading width=45 />
+                                <Loading2 width=45 />
                             </div>
                         }
                     } else {
