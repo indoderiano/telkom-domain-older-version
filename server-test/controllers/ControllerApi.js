@@ -27,7 +27,7 @@ class ControllerApi {
     static create(req, res, next) {
         console.log(req.params.tenant_id)
         console.log(req.body)
-
+        
     }
 
     static getDetails(req, res, next) {

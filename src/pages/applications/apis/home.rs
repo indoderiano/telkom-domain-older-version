@@ -6,7 +6,7 @@ use yew::{
 use yew_router::components::RouterAnchor;
 use yew::services::ConsoleService;
 use crate::app::AppRoute;
-use crate::types::api::ApiTitle;
+use crate::types::api::{ ApiTitle, ResponseApiList, ApiCreate };
 use crate::components::loading::Loading;
 
 
@@ -15,17 +15,26 @@ pub struct ApisProps {
     pub tenant_id: String,
 }
 
+pub enum DataApiCreate {
+    Name,
+    Identifier,
+    SignAlg,
+}
+
 pub struct ApisHome {
     tenant_id: String,
     fetch_task: Option<FetchTask>,
     error: Option<String>,
     link: ComponentLink<Self>,
     api_list: Vec<ApiTitle>,
+    api_create: ApiCreate,
 }
 
 pub enum Msg {
     RequestApiList,
-    GetApiList(Result<Vec<ApiTitle>, anyhow::Error>),
+    GetApiList(Result<ResponseApiList, anyhow::Error>),
+    Input(String, DataApiCreate),
+    Create,
 }
 
 impl ApisHome {
@@ -151,12 +160,19 @@ impl Component for ApisHome {
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
         ConsoleService::info(&format!("Apis home props, tenant id = {}", props.tenant_id));
 
+        let api_create = ApiCreate {
+            name: String::from(""),
+            identifier: String::from(""),
+            sign_algorithm: String::from(""),
+        };
+
         ApisHome {
             tenant_id: props.tenant_id,
             fetch_task: None,
             error: None,
             link,
             api_list: Vec::new(),
+            api_create,
         }
     }
 
@@ -167,7 +183,6 @@ impl Component for ApisHome {
             
             self.link.send_message(Msg::RequestApiList);
         }
-
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
@@ -179,7 +194,7 @@ impl Component for ApisHome {
                     .body(Nothing)
                     .expect("Could not build request.");
                 let callback = 
-                    self.link.callback(|response: Response<Json<Result<Vec<ApiTitle>, anyhow::Error>>>| {
+                    self.link.callback(|response: Response<Json<Result<ResponseApiList, anyhow::Error>>>| {
                         let Json(data) = response.into_body();
                         Msg::GetApiList(data)
                     });
@@ -191,14 +206,31 @@ impl Component for ApisHome {
                 match response {
                     Ok(data) => {
                         ConsoleService::info(&format!("{:?}", data));
-                        self.api_list = data;
-
+                        self.api_list = data.data;
                     }
                     Err(error) => {
                         ConsoleService::info(&error.to_string());
                     }
                 }
                 self.fetch_task = None;
+                true
+            }
+            Msg::Input(input, data) => {
+                match data {
+                    DataApiCreate::Name => {
+                        self.api_create.name = input;
+                    }
+                    DataApiCreate::Identifier => {
+                        self.api_create.identifier = input;
+                    }
+                    DataApiCreate::SignAlg => {
+                        self.api_create.sign_algorithm = input;
+                    }
+                }
+                true
+            }
+            Msg::Create => {
+                ConsoleService::info(&format!("{:?}", self.api_create));
                 true
             }
         }
@@ -285,7 +317,13 @@ impl Component for ApisHome {
                                 >
                                     <label for="basic-url" class="form-label fw-bold">{"Name"}</label>
                                     <div class="input-group mb-2">
-                                        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3"/>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="basic-url"
+                                            aria-describedby="basic-addon3"
+                                            oninput=self.link.callback(|data: InputData| Msg::Input(data.value, DataApiCreate::Name))
+                                        />
                                     </div>
                                     <label class="form-label text-muted">{"A friendly name for the API"}</label>
                                 </div>
@@ -294,7 +332,13 @@ impl Component for ApisHome {
                                 >
                                     <label for="basic-url" class="form-label fw-bold">{"Identifier"}</label>
                                     <div class="input-group mb-2">
-                                        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3"/>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="basic-url"
+                                            aria-describedby="basic-addon3"
+                                            oninput=self.link.callback(|data: InputData| Msg::Input(data.value, DataApiCreate::Identifier))
+                                        />
                                     </div>
                                     <label class="form-label text-muted">{"A logical identifier for this API. We recommend using a URL but note that this doesn’t have to be a publicly available URL, Auth0 will not call your API at all.This field cannot be modified."}</label>
                                 </div>
@@ -302,7 +346,18 @@ impl Component for ApisHome {
                                     class="mb-4"
                                 >
                                     <label for="basic-url" class="form-label fw-bold">{"Signing Algorithm"}</label>
-                                    <select class="form-select mb-2" aria-label="Default select example">
+                                    <select
+                                        class="form-select mb-2"
+                                        aria-label="Default select example"
+                                        onchange=self.link.callback(|e| {
+                                            if let ChangeData::Select(select) = e {
+                                                let value = select.value();
+                                                Msg::Input(value, DataApiCreate::SignAlg)
+                                            } else {
+                                                Msg::Input(String::from("no value"), DataApiCreate::SignAlg)
+                                            }
+                                        })
+                                    >
                                         <option value="1">{"RS256"}</option>
                                         <option value="2">{"HS256"}</option>
                                     </select>
@@ -311,7 +366,13 @@ impl Component for ApisHome {
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{"Cancel"}</button>
-                                <button type="button" class="btn btn-primary">{"Create"}</button>
+                                <button
+                                    type="button"
+                                    class="btn btn-primary"
+                                    onclick=self.link.callback(|_| Msg::Create)
+                                >
+                                    {"Create"}
+                                </button>
                             </div>
                         </div>
                     </div>

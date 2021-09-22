@@ -12,6 +12,19 @@ pub struct ApiTitle {
 }
 
 #[derive(Deserialize, Debug, Clone)]
+pub struct ResponseApiList {
+    pub message: String,
+    pub data: Vec<ApiTitle>
+}
+
+#[derive(Serialize, Debug, Clone)]
+pub struct ApiCreate {
+    pub name: String,
+    pub identifier: String,
+    pub sign_algorithm: String,
+}
+
+#[derive(Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct ApiDetails {
     pub id: u8,
     pub name: String,
