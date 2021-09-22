@@ -6,19 +6,28 @@ class ControllerApi {
         // res.status(200).json({
         //     test: 'test'
         // })
-        let data = [
-            {
-                id: "60daccd6dff9a6003e8ef6ef",
-                name: "Auth0 Management API",
-                api_type: "System API",
-                identifier: "https://dev-r5y8heyf.au.auth0.com/api/v2/",
-            }
-        ]
+        let data = {
+            message: "Api fetched",
+            data: [
+                {
+                    id: "60daccd6dff9a6003e8ef6ef",
+                    name: "Auth0 Management API",
+                    api_type: "System API",
+                    identifier: "https://dev-r5y8heyf.au.auth0.com/api/v2/",
+                }
+            ]
+        }
 
         setTimeout(() => {
             console.log("return data");
             res.send(data)
         }, 3000)
+    }
+
+    static create(req, res, next) {
+        console.log(req.params.tenant_id)
+        console.log(req.body)
+
     }
 
     static getDetails(req, res, next) {

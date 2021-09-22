@@ -11,7 +11,7 @@ pub struct ApiTitle {
     pub identifier: String,
 }
 
-#[derive(Deserialize, Debug, Clone, Eq, PartialEq)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct ApiDetails {
     pub id: u8,
     pub name: String,
@@ -33,18 +33,4 @@ pub struct ResponseApiDetails {
     pub message: String,
     pub data: ApiDetails
 }
-
-// #[derive(Deserialize, Serialize, Debug, Clone)]
-// pub struct LocalStorage {
-//     pub username: Option<String>,
-//     pub email: Option<String>,
-//     pub token: Option<String>,
-// }
-
-// #[derive(Deserialize, Debug, Clone)]
-// pub struct ResponseLogin {
-//     pub email: String,
-//     pub username: String,
-//     pub token: String,
-// }
 
