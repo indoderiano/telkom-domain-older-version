@@ -1,28 +1,207 @@
-use yew::prelude::*;
+use yew::{
+    format::{ Json, Nothing },
+    prelude::*,
+    services::fetch::{FetchService, FetchTask, Request, Response},
+};
 use yew_router::components::RouterAnchor;
 use yew::services::ConsoleService;
 use crate::app::AppRoute;
+use crate::types::api::ApiTitle;
+use crate::components::loading::Loading;
+
 
 #[derive(Clone, Debug, Eq, PartialEq, Properties)]
-pub struct ApisState {
+pub struct ApisProps {
     pub tenant_id: String,
 }
 
-pub struct ApisHome {}
+pub struct ApisHome {
+    tenant_id: String,
+    fetch_task: Option<FetchTask>,
+    error: Option<String>,
+    link: ComponentLink<Self>,
+    api_list: Vec<ApiTitle>,
+}
 
-pub enum Msg {}
+pub enum Msg {
+    RequestApiList,
+    GetApiList(Result<Vec<ApiTitle>, anyhow::Error>),
+}
+
+impl ApisHome {
+    fn view_api_list (&self) -> Vec<Html> {
+        type Anchor = RouterAnchor<AppRoute>;
+        let tenant_id = &self.tenant_id;
+        self.api_list.iter().map(|api| {
+            html! {
+                <div>
+                    <div
+                        class="d-flex border-bottom border-1 list-hover"
+                    >
+                        <div
+                            class="p-3 d-flex"
+                            style="width: 40%;"
+                        >
+                            <div
+                                style="flex: 0 0 auto; width: 40px; height: 40px; background-color: #eff0f2;"
+                                class="d-flex justify-content-center align-items-center rounded me-3"
+                            >
+                                <i class="bi bi-gear"></i>
+                            </div>
+
+                            <div
+                                class="d-grid"
+                                style="min-width: 40px;"
+                            >
+                                <p
+                                    class="m-0"
+                                    style="
+                                        white-space: nowrap;
+                                        text-overflow: ellipsis;
+                                        overflow: hidden;
+                                        font-size: 14px;
+                                        text-decoration: none;
+                                    "
+                                >
+                                    <Anchor
+                                        route=AppRoute::ApisSettings { tenant_id: tenant_id.clone(), api_id: api.id.clone() }
+                                        classes="text-decoration-none fw-bold mb-0"
+                                    >
+                                            // {"Auth0 Management API"}
+                                            { &api.name }
+                                    </Anchor>
+                                </p>
+                                <p
+                                    class="mb-0 text-muted"
+                                    style="
+                                        white-space: nowrap;
+                                        text-overflow: ellipsis;
+                                        overflow: hidden;
+                                        font-size: 14px;
+                                    "
+                                >
+                                    // {"System API"}
+                                    { &api.api_type }
+                                </p>
+                            </div>
+            
+                        </div>
+
+                        <div
+                            class="p-3 d-flex flex-fill align-items-center text-muted"
+                        >
+                            <span
+                                style="font-size: 14px; margin-right: 8px; white-space: nowrap;"
+                            >
+                                {"API Audience:"} 
+                            </span>
+                            <div
+                                class="rounded"
+                                style="
+                                background-color: #eff0f2;
+                                white-space: nowrap;
+                                text-overflow: ellipsis;
+                                overflow: hidden;
+                                font-size: 14px;
+                                padding: 2px 6px;
+                                font-family: 'Roboto Mono', monospace;
+                            "
+                            >
+                                // {"https://dev-r5y8heyf.au.auth0.com/api/v2/"}
+                                { &api.identifier }
+                            </div>
+                            <i class="bi bi-files ms-1"></i>
+                        </div>
+
+                        <div
+                            class="p-3 d-flex align-items-center dropdown"
+                        >
+                            <button
+                                type="button"
+                                style="flex: 0 0 auto; width: 30px; height: 30px;"
+                                class="btn d-flex justify-content-center align-items-center rounded border"
+                                role="button"
+                                id="dropdownMenuButton1"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                            >
+                                <i class="bi bi-three-dots"></i>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <li>
+                                    <Anchor route=AppRoute::ApisSettings { tenant_id: tenant_id.clone(), api_id: api.id.clone() } classes="dropdown-item fs-7">
+                                        {"Settings"}
+                                    </Anchor>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            }
+        })
+        .collect()
+    }
+}
 
 impl Component for ApisHome {
     type Message = Msg;
-    type Properties = ApisState;
+    type Properties = ApisProps;  
 
-    fn create(props: Self::Properties, _: ComponentLink<Self>) -> Self {
-        ConsoleService::info(&format!("Apis home state, tenant id = {}", props.tenant_id));
-        ApisHome {}
+    fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
+        ConsoleService::info(&format!("Apis home props, tenant id = {}", props.tenant_id));
+
+        ApisHome {
+            tenant_id: props.tenant_id,
+            fetch_task: None,
+            error: None,
+            link,
+            api_list: Vec::new(),
+        }
     }
 
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        true
+    fn rendered(&mut self, first_render: bool) {
+
+        if first_render {
+            ConsoleService::info("This is first render");
+            
+            self.link.send_message(Msg::RequestApiList);
+        }
+
+    }
+
+    fn update(&mut self, msg: Self::Message) -> ShouldRender {
+        match msg {
+            Msg::RequestApiList => {
+                let request = Request::get("http://localhost:3000/api/tenantid")
+                    // .header("Content-Type", "application/json")
+                    .header("access_token", "tokenidtelkomdomain")
+                    .body(Nothing)
+                    .expect("Could not build request.");
+                let callback = 
+                    self.link.callback(|response: Response<Json<Result<Vec<ApiTitle>, anyhow::Error>>>| {
+                        let Json(data) = response.into_body();
+                        Msg::GetApiList(data)
+                    });
+                let task = FetchService::fetch(request, callback).expect("failed to start request");
+                self.fetch_task = Some(task);
+                true
+            }
+            Msg::GetApiList(response) => {
+                match response {
+                    Ok(data) => {
+                        ConsoleService::info(&format!("{:?}", data));
+                        self.api_list = data;
+
+                    }
+                    Err(error) => {
+                        ConsoleService::info(&error.to_string());
+                    }
+                }
+                self.fetch_task = None;
+                true
+            }
+        }
     }
 
     fn change(&mut self, _: Self::Properties) -> ShouldRender {
@@ -30,7 +209,8 @@ impl Component for ApisHome {
     }
 
     fn view(&self) -> Html {
-        type Anchor = RouterAnchor<AppRoute>;
+        // type Anchor = RouterAnchor<AppRoute>;
+        // ConsoleService::info(&format!("fetch task: {:?}", &self.fetch_task));
         html! {
             <div
                 class="mx-auto pt-5 pb-5 px-4"
@@ -62,108 +242,26 @@ impl Component for ApisHome {
                 </div>
 
 
-
-                <div>
-                    <div
-                        class="d-flex border-bottom border-1 list-hover"
-                    >
-                        <div
-                            class="p-3 d-flex"
-                            style="width: 40%;"
-                        >
+                {
+                    if self.fetch_task.is_some() {
+                        html! {
                             <div
-                                style="flex: 0 0 auto; width: 40px; height: 40px; background-color: #eff0f2;"
-                                class="d-flex justify-content-center align-items-center rounded me-3"
-                            >
-                                <i class="bi bi-gear"></i>
-                            </div>
-
-                            <div
-                                class="d-grid"
-                                style="min-width: 40px;"
-                            >
-                                <p
-                                    class="m-0"
-                                    style="
-                                        white-space: nowrap;
-                                        text-overflow: ellipsis;
-                                        overflow: hidden;
-                                        font-size: 14px;
-                                        text-decoration: none;
-                                    "
-                                >
-                                    <Anchor
-                                        route=AppRoute::ApisSettings
-                                        classes="text-decoration-none fw-bold mb-0"
-                                    >
-                                            {"Auth0 Management API"}
-                                    </Anchor>
-                                </p>
-                                <p
-                                    class="mb-0 text-muted"
-                                    style="
-                                        white-space: nowrap;
-                                        text-overflow: ellipsis;
-                                        overflow: hidden;
-                                        font-size: 14px;
-                                    "
-                                >
-                                    {"System API"}
-                                </p>
-                            </div>
-            
-                        </div>
-
-                        <div
-                            class="p-3 d-flex flex-fill align-items-center text-muted"
-                        >
-                            <span
-                                style="font-size: 14px; margin-right: 8px; white-space: nowrap;"
-                            >
-                                {"API Audience:"} 
-                            </span>
-                            <div
-                                class="rounded"
                                 style="
-                                background-color: #eff0f2;
-                                white-space: nowrap;
-                                text-overflow: ellipsis;
-                                overflow: hidden;
-                                font-size: 14px;
-                                padding: 2px 6px;
-                                font-family: 'Roboto Mono', monospace;
-                            "
+                                    position: relative;
+                                    margin-top: 8rem;
+                                "
                             >
-                                {"https://dev-r5y8heyf.au.auth0.com/api/v2/"}
+                                <Loading width=45 />
                             </div>
-                            <i class="bi bi-files ms-1"></i>
-                        </div>
-
-                        <div
-                            class="p-3 d-flex align-items-center dropdown"
-                        >
-                            <button
-                                type="button"
-                                style="flex: 0 0 auto; width: 30px; height: 30px;"
-                                class="btn d-flex justify-content-center align-items-center rounded border"
-                                role="button"
-                                id="dropdownMenuButton1"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false"
-                            >
-                                <i class="bi bi-three-dots"></i>
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                <li>
-                                    <Anchor route=AppRoute::ApisSettings classes="dropdown-item fs-7">
-                                        {"Settings"}
-                                    </Anchor>
-                                </li>
-                            </ul>
-                        </div>
-
-                    </div>
-                </div>
+                        }
+                    } else {
+                        html! {
+                            <>
+                                { self.view_api_list() }
+                            </>
+                        }
+                    }
+                }
 
 
 

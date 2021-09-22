@@ -1,19 +1,75 @@
-use yew::prelude::*;
+use yew::{
+    prelude::*,
+    services::ConsoleService,
+};
+use crate::types::api::{ ApiDetails };
 
-pub struct TabSettings {}
 
-pub enum Msg {}
+#[derive(Clone, Debug, Eq, PartialEq, Properties)]
+pub struct ApisTabSettingsProps {
+    pub api_details: ApiDetails,
+}
+
+enum Data {
+    ApiId,
+    Name,
+    Identifier,
+    TokenExp,
+    TokenExpBrowser,
+    SignAlg,
+    Rbac,
+    PermissionAccToken,
+    AllowSkipUser,
+    AllowOffAcc,
+}
+
+pub struct TabSettings {
+    api_details: ApiDetails,
+    link: ComponentLink<Self>,
+}
+
+pub enum Msg {
+    InputText(String, Data),
+    Save,
+}
 
 impl Component for TabSettings {
     type Message = Msg;
-    type Properties = ();
+    type Properties = ApisTabSettingsProps;
 
-    fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
-        TabSettings {}
+    fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
+        ConsoleService::info(&format!("Api Tab Settings props, api details = {:?}", props.api_details));
+
+        TabSettings {
+            api_details: props.api_details,
+            link,
+        }
     }
 
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        true
+    fn update(&mut self, msg: Self::Message) -> ShouldRender {
+        match msg {
+            Msg::InputText(input, data) => {
+              match data {
+                Data::ApiId => {
+                  self.api_details.api_id = input;
+                }
+                Data::Name => {
+                  self.api_details.name = input;
+                }
+                Data::Identifier => {
+                  self.api_details.identifier = input;
+                }
+                _ => {
+                  ()
+                }
+              }
+              true
+            }
+            Msg::Save => {
+              ConsoleService::info(&format!("{:?}", self.api_details));
+              true
+            }
+        }
     }
 
     fn change(&mut self, _: Self::Properties) -> ShouldRender {
@@ -21,6 +77,21 @@ impl Component for TabSettings {
     }
 
     fn view(&self) -> Html {
+        let ApiDetails {
+            id: _,
+            name,
+            api_id,
+            api_type: _,
+            identifier,
+            token_exp,
+            token_exp_browser,
+            sign_algorithm,
+            rbac,
+            permission_acc_token,
+            allow_skip_user,
+            allow_off_acc,
+            tenant_id: _,
+        } = self.api_details.clone();
         html! {
             <div>
 
@@ -50,7 +121,8 @@ impl Component for TabSettings {
                                       type="text"
                                       class="form-control bg-input-grey"
                                       aria-label="Dollar amount (with dot and two decimal places)"
-                                      value="60ef247ffab77800401cca56"
+                                      value={api_id}
+                                      oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::ApiId))
                                   />   
                               </div>
                               <p>
@@ -69,7 +141,8 @@ impl Component for TabSettings {
                                       type="text"
                                       class="form-control bg-input-grey"
                                       aria-label="Dollar amount (with dot and two decimal places)"
-                                      value="Testing Name"
+                                      value={name}
+                                      oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::Name))
                                   />   
                               </div>
                               <p>
@@ -100,7 +173,8 @@ impl Component for TabSettings {
                                       type="text"
                                       class="form-control bg-input-grey"
                                       aria-label="Dollar amount (with dot and two decimal places)"
-                                      value="https://test-api/"
+                                      value={identifier}
+                                      oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::Identifier))
                                   />
                               </div>
                               <p>
@@ -143,7 +217,7 @@ impl Component for TabSettings {
                                       type="text"
                                       class="form-control bg-input-grey"
                                       aria-label="Dollar amount (with dot and two decimal places)"
-                                      value="86400"
+                                      value={token_exp.to_string()}
                                   />
                               </div>
                               <p>
@@ -169,7 +243,7 @@ impl Component for TabSettings {
                                       type="text"
                                       class="form-control bg-input-grey"
                                       aria-label="Dollar amount (with dot and two decimal places)"
-                                      value="7200"
+                                      value={token_exp_browser.to_string()}
                                   />
                               </div>
                               <p>
@@ -195,7 +269,7 @@ impl Component for TabSettings {
                                       type="text"
                                       class="form-control bg-input-grey"
                                       aria-label="Dollar amount (with dot and two decimal places)"
-                                      value="RS256"
+                                      value={sign_algorithm}
                                   />
                               </div>
                               <p>
@@ -233,9 +307,62 @@ impl Component for TabSettings {
                                   {"Enable RBAC "}
                               </p>
                               <div class="form-check form-switch fs-3 mb-4">
-                                  <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"/>
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    checked={rbac}
+                                />
                               </div>
-                              <p>
+                              <p class="text-color-disabled">
+                                  {"If this setting is enabled, RBAC authorization policies will be enforced for this API. Role and permission assignments will be evaluated during the login transaction."}
+                              </p>
+                          </div>
+                          <div
+                              class="mb-4"
+                          >
+                              <p class="mb-2 fw-bold">
+                                  {"Add Permissions in the Access Token"}
+                              </p>
+                              <div class="form-check form-switch fs-3 mb-4">
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    checked={permission_acc_token}
+                                />
+                              </div>
+                              <p class="text-color-disabled">
+                                  {"If this setting is enabled, the Permissions claim will be added to the access token. Only available if RBAC is enabled for this API."}
+                              </p>
+                          </div>
+                      </div>
+                  </div>
+
+
+                  <div
+                      class="row border-bottom mt-5"
+                  >
+                      <div
+                          class="col-lg-6 text-color-primary fw-bold mb-4"
+                      >
+                          {"Access Settings"}
+                      </div>
+                      <div
+                          class="col-lg-6"
+                      >
+                          <div
+                              class="mb-4"
+                          >
+                              <p class="mb-2 fw-bold">
+                                  {"Allow Skipping User Consent"}
+                              </p>
+                              <div class="form-check form-switch fs-3 mb-4">
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    checked={allow_skip_user}
+                                />
+                              </div>
+                              <p class="text-color-disabled">
                                   {"If this setting is enabled, this API will skip user consent for applications flagged as First Party."}
                               </p>
                           </div>
@@ -247,14 +374,25 @@ impl Component for TabSettings {
                                   {"Allow Offline Access"}
                               </p>
                               <div class="form-check form-switch fs-3 mb-4">
-                                  <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"/>
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    id="flexSwitchCheckDefault"
+                                    checked={allow_off_acc}    
+                                />
                               </div>
                               <p>
                                   {"If this setting is enabled, Auth0 will allow applications to ask for Refresh Tokens for this API."}
                               </p>
                           </div>
           
-                          <button type="button" class="btn btn-primary mb-5 mt-3">{"Save"}</button>
+                          <button
+                            type="button"
+                            class="btn btn-primary mb-5 mt-3"
+                            onclick=self.link.callback(|_| Msg::Save)
+                          >
+                            {"Save"}
+                          </button>
           
           
                       </div>
