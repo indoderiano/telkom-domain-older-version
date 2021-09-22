@@ -1,6 +1,9 @@
 use yew::{
     prelude::*,
-    services::ConsoleService,
+    services::{
+        ConsoleService,
+        fetch::{FetchService, FetchTask, Request, Response},
+    }
 };
 use crate::types::api::{ ApiDetails };
 
@@ -10,7 +13,7 @@ pub struct ApisTabSettingsProps {
     pub api_details: ApiDetails,
 }
 
-enum Data {
+pub enum Data {
     ApiId,
     Name,
     Identifier,
@@ -26,6 +29,7 @@ enum Data {
 pub struct TabSettings {
     api_details: ApiDetails,
     link: ComponentLink<Self>,
+    // fetch_task: Option<FetchTask>,
 }
 
 pub enum Msg {
@@ -51,13 +55,42 @@ impl Component for TabSettings {
             Msg::InputText(input, data) => {
               match data {
                 Data::ApiId => {
-                  self.api_details.api_id = input;
+                    self.api_details.api_id = input;
                 }
                 Data::Name => {
-                  self.api_details.name = input;
+                    self.api_details.name = input;
                 }
                 Data::Identifier => {
-                  self.api_details.identifier = input;
+                    self.api_details.identifier = input;
+                }
+                Data::TokenExp => {
+                    if input.is_empty() {
+                        self.api_details.token_exp = 0;
+                    } else {
+                        self.api_details.token_exp = input.parse::<u32>().unwrap();
+                    }
+                }
+                Data::TokenExpBrowser => {
+                    if input.is_empty() {
+                        self.api_details.token_exp_browser = 0;
+                    } else {
+                        self.api_details.token_exp_browser = input.parse::<u32>().unwrap();
+                    }
+                }
+                Data::SignAlg => {
+                    self.api_details.sign_algorithm = input;
+                }
+                Data::Rbac => {
+                    self.api_details.rbac = !self.api_details.rbac;
+                }
+                Data::PermissionAccToken => {
+                    self.api_details.permission_acc_token = !self.api_details.permission_acc_token;
+                }
+                Data::AllowSkipUser => {
+                    self.api_details.allow_skip_user = !self.api_details.allow_skip_user;
+                }
+                Data::AllowOffAcc => {
+                    self.api_details.allow_off_acc = !self.api_details.allow_off_acc;
                 }
                 _ => {
                   ()
@@ -214,10 +247,11 @@ impl Component for TabSettings {
                               </p>
                               <div class="input-group mb-2">
                                   <input
-                                      type="text"
+                                      type="number"
                                       class="form-control bg-input-grey"
                                       aria-label="Dollar amount (with dot and two decimal places)"
                                       value={token_exp.to_string()}
+                                      oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::TokenExp))
                                   />
                               </div>
                               <p>
@@ -244,6 +278,7 @@ impl Component for TabSettings {
                                       class="form-control bg-input-grey"
                                       aria-label="Dollar amount (with dot and two decimal places)"
                                       value={token_exp_browser.to_string()}
+                                      oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::TokenExpBrowser))
                                   />
                               </div>
                               <p>
@@ -270,6 +305,7 @@ impl Component for TabSettings {
                                       class="form-control bg-input-grey"
                                       aria-label="Dollar amount (with dot and two decimal places)"
                                       value={sign_algorithm}
+                                      oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::SignAlg))
                                   />
                               </div>
                               <p>
@@ -311,6 +347,7 @@ impl Component for TabSettings {
                                     class="form-check-input"
                                     type="checkbox"
                                     checked={rbac}
+                                    onclick=self.link.callback(|_| Msg::InputText(String::from("none"), Data::Rbac))
                                 />
                               </div>
                               <p class="text-color-disabled">
@@ -328,6 +365,7 @@ impl Component for TabSettings {
                                     class="form-check-input"
                                     type="checkbox"
                                     checked={permission_acc_token}
+                                    onclick=self.link.callback(|_| Msg::InputText(String::from("none"), Data::PermissionAccToken))
                                 />
                               </div>
                               <p class="text-color-disabled">
@@ -360,6 +398,7 @@ impl Component for TabSettings {
                                     class="form-check-input"
                                     type="checkbox"
                                     checked={allow_skip_user}
+                                    onclick=self.link.callback(|_| Msg::InputText(String::from("none"), Data::AllowSkipUser))
                                 />
                               </div>
                               <p class="text-color-disabled">
@@ -378,7 +417,8 @@ impl Component for TabSettings {
                                     class="form-check-input"
                                     type="checkbox"
                                     id="flexSwitchCheckDefault"
-                                    checked={allow_off_acc}    
+                                    checked={allow_off_acc}
+                                    onclick=self.link.callback(|_| Msg::InputText(String::from("none"), Data::AllowOffAcc))
                                 />
                               </div>
                               <p>

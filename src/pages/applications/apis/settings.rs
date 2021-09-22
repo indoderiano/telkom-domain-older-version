@@ -8,7 +8,8 @@ use crate::app::AppRoute;
 use super::quickstart::Quickstart;
 use super::tab_settings::TabSettings;
 use yew::services::ConsoleService;
-use crate::types::api::{ ApiTitle, ApiDetails, ResponseApiDetails };
+use crate::types::api::{ ApiDetails, ResponseApiDetails };
+use crate::components::loading2::Loading2;
 
 
 #[derive(Clone, Debug, Eq, PartialEq, Properties)]
@@ -123,34 +124,66 @@ impl Component for ApisSettings {
 
     fn view(&self) -> Html {
         type Anchor = RouterAnchor<AppRoute>;
-        let ApiDetails {
-            id,
-            name,
-            api_id,
-            api_type,
-            identifier,
-            token_exp,
-            token_exp_browser,
-            sign_algorithm,
-            rbac,
-            permission_acc_token,
-            allow_skip_user,
-            allow_off_acc,
-            tenant_id,
-        } = self.api_details.clone();
+        let tenant_id = self.api_details.tenant_id.clone();
         html! {
             <div
                 class="py-5 px-4 m-auto"
                 style="max-width: 1048px; font-size:14px;"
             >
                 <Anchor
-                    route=AppRoute::ApisHome{ tenant_id: String::from("testing_id") }
+                    route=AppRoute::ApisHome{ tenant_id }
                     classes="text-decoration-none domain-link-dark"
                 >
                     <i class="bi bi-arrow-left me-2"></i>
                     {"Back to Apis"}
                 </Anchor>
 
+                {
+                    if self.fetch_task.is_some() {
+                        html! {
+                            <div
+                                style="
+                                    position: relative;
+                                    margin-top: 8rem;
+                                "
+                            >
+                                <Loading2 width=45 />
+                            </div>
+                        }
+                    } else {
+                        html! {
+                            { self.view_content() }
+                        }
+                    }
+                }
+
+                
+            </div>
+        }
+    }
+}
+
+
+impl ApisSettings {
+    fn view_content (&self) -> Html {
+        let ApiDetails {
+            id: _,
+            name,
+            api_id: _,
+            api_type,
+            identifier,
+            token_exp: _,
+            token_exp_browser: _,
+            sign_algorithm: _,
+            rbac: _,
+            permission_acc_token: _,
+            allow_skip_user: _,
+            allow_off_acc: _,
+            tenant_id: _,
+        } = self.api_details.clone();
+
+        html! {
+            <>
                 <div
                     class="d-flex mb-5 mt-3"
                 >
@@ -240,16 +273,14 @@ impl Component for ApisSettings {
                     </ul>
                 </div>
 
-                // <Quickstart/>
-                // <TabSettings/>
-
                 {
                     match self.content {
                         Content::Quickstart => html! { <Quickstart/> },
                         Content::Settings => html! { <TabSettings api_details=self.api_details.clone() /> }
                     }
                 }
-            </div>
+
+            </>
         }
     }
 }
