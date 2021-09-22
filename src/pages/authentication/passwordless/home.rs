@@ -62,29 +62,28 @@ impl Component for AuthPasswordLess {
 
     fn view(&self) -> Html {
         html! {
-            <>
-                <div class="flex-fill fs-3 fw-bold mt-3"> {"Passwordless Connections"}</div>
-                <p class="text-muted">{"Configure Passwordless Connections like SMS Login, Email Login and others so that you can let your users login without having to choose yet another password. "} <a href="">{"Learn more "} <i class="bi bi-arrow-right-short"></i></a></p>
-                <div class="container" style="padding: 0px;">
+            <div class="container mx-auto pt-5 pb-5 px-4" style="max-width: 1048px">
+                <div class="flex-fill fs-3 fw-bold"> {"Passwordless Connections"}</div>
+                <div class="mt-4 mb-4">
+                    <p class="text-muted">{"Configure Passwordless Connections like SMS Login, Email Login and others so that you can let your users login without having to choose yet another password. "} <a href="">{"Learn more "} <i class="bi bi-arrow-right-short"></i></a></p>
+                </div>
+                <div>
                     <div class="row">
-                        <div class="col">
-                            <div class="card">
-                                <div class="card-body" data-bs-toggle="modal" data-bs-target="#smsModal">
-                                    <div class="container">
-                                        <div class="row">
-                                            <div class="col-2 pt-2">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-chat-left" viewBox="0 0 16 16">
-                                                    <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
-                                                </svg>
-                                            </div>
-                                            <div class="col-8 text-start">
-                                                <p style="font-size: 28px;">{"SMS"}</p>
-                                            </div>
-                                            <div class="col-2 pt-2">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-toggle2-off" viewBox="0 0 16 16">
-                                                    <path d="M9 11c.628-.836 1-1.874 1-3a4.978 4.978 0 0 0-1-3h4a3 3 0 1 1 0 6H9z"/>
-                                                    <path d="M5 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 5 3a5 5 0 0 0 0 10z"/>
-                                                </svg>
+                        <div class="col-5 col-md-5 col-lg-5">
+                            <div class="card d-flex flex-row">
+                                <div class="card-body" data-bs-toggle="modal" data-bs-target="#smsModal" style="height: 80px;">
+                                    <div class="row d-inline-block-md d-flex align-items-center text-center">
+                                        <div class="col-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-chat-left" viewBox="0 0 16 16">
+                                                                <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                                                            </svg>
+                                        </div>
+                                        <div class="col-8 text-start">
+                                            <p style="font-size: 23px; margin:0px;">{"SMS"}</p>
+                                        </div>
+                                        <div class="col-2 d-flex align-items-start ps-0">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"/>
                                             </div>
                                         </div>
                                     </div>
@@ -92,29 +91,29 @@ impl Component for AuthPasswordLess {
                             </div>
                         </div>
 
-                        <div class="col">
-                            <div class="card">
-                                <div class="card-body" data-bs-toggle="modal" data-bs-target="#emailModal">
-                                    <div class="container">
-                                        <div class="row">
-                                            <div class="col-2 pt-2">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-chat-left" viewBox="0 0 16 16">
-                                                    <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
-                                                </svg>
-                                            </div>
-                                            <div class="col-8 text-start">
-                                                <p style="font-size: 28px;">{"Email"}</p>
-                                            </div>
-                                            <div class="col-2 pt-2">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-toggle2-off" viewBox="0 0 16 16">
-                                                    <path d="M9 11c.628-.836 1-1.874 1-3a4.978 4.978 0 0 0-1-3h4a3 3 0 1 1 0 6H9z"/>
-                                                    <path d="M5 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 5 3a5 5 0 0 0 0 10z"/>
-                                                </svg>
+                        <div class="col-5 col-md-5 col-lg-5">
+                            <div class="card d-flex d-row">
+                                <div class="card-body" data-bs-toggle="modal" data-bs-target="#emailModal" style="height:80px;">
+                                    <div class="row d-inline-block-md d-flex align-items-center text-center">
+                                        <div class="col-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-chat-left" viewBox="0 0 16 16">
+                                                                <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                                                            </svg>
+                                        </div>
+                                        <div class="col-8 text-start">
+                                            <p style="font-size: 23px; margin:0px;">{"Email"}</p>
+                                        </div>
+                                        <div class="col-2 d-flex align-items-start ps-0">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"/>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="col-auto col-md-auto col-lg-auto">
                         </div>
                     </div>
                 </div>
@@ -305,7 +304,7 @@ impl Component for AuthPasswordLess {
                 </div>
 
 
-            </>    
+            </div>    
         }
     }
 }
