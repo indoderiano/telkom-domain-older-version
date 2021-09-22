@@ -358,8 +358,8 @@ impl Component for ApisHome {
                                             }
                                         })
                                     >
-                                        <option value="1">{"RS256"}</option>
-                                        <option value="2">{"HS256"}</option>
+                                        <option value="RS256">{"RS256"}</option>
+                                        <option value="HS256">{"HS256"}</option>
                                     </select>
                                     <label class="form-label text-muted">{"Algorithm to sign the tokens with. When selecting RS256 the token will be signed with Auth0's private key."}</label>
                                 </div>
