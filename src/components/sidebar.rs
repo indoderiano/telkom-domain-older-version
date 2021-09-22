@@ -40,14 +40,16 @@ impl Component for Sidebar {
     html! {
       <div
         class="col-auto col-md-3 col-xl-3 px-sm-3 px-0 bg-white fw-bold h-100"
-        >
+    >
           <div
           class="d-flex flex-column align-items-center align-items-sm-start py-4 px-3"
           >
                 <div class="MuiDrawer-root MuiDrawer-docked jss68">
                   <nav
                       class="MuiPaper-root MuiDrawer-paper MuiDrawer-paperAnchorLeft jss70 MuiDrawer-paperAnchorDockedLeft MuiPaper-elevation0"
-                      aria-label="primary navigation">
+                      style="overflow-y: scroll;"
+                      aria-label="primary navigation"
+                    >
                       <ul class="jss73" id="nav_accordion">
                           <li class="jss74 nav-item">
                               <Anchor route=AppRoute::GettingStarted >

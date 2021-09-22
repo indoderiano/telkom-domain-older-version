@@ -1,5 +1,8 @@
 use yew::prelude::*;
-use crate::components::logo::Logo;
+use crate::components::{
+    logo::Logo,
+    logo2::Logo2,
+};
 use yewdux::dispatch::Dispatcher;
 use crate::store::reducer_account::{
     AppDispatch,
@@ -65,7 +68,7 @@ impl Component for Navtop {
                 <ul class="nav text-light">
                     <li class="nav-item justify-content-center my-auto">
                         <div class="me-3">
-                            <Logo width=40 />
+                            <Logo2 width=40 />
                         </div>
                         // <div class="bg-white p-1 pt-0 rounded me-3 navtop-logo">
                         //     <img
