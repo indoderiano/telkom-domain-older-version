@@ -9,7 +9,7 @@ use super::quickstart::Quickstart;
 use super::tab_settings::TabSettings;
 use yew::services::ConsoleService;
 use crate::types::api::{ ApiDetails, ResponseApiDetails };
-use crate::components::loading::Loading;
+use crate::components::loading2::Loading2;
 
 
 #[derive(Clone, Debug, Eq, PartialEq, Properties)]
@@ -147,7 +147,7 @@ impl Component for ApisSettings {
                                     margin-top: 8rem;
                                 "
                             >
-                                <Loading width=45 />
+                                <Loading2 width=45 />
                             </div>
                         }
                     } else {
