@@ -126,7 +126,7 @@ pub enum AppRoute {
     ViewDetail,
     #[to = "/user-management/roles"]
     RolesCreated,
-    #[to="/user-management/users/setting"]
+    #[to="/user-management/users/settings"]
     UserViewDetail,
     #[to = "/user-management/users"]
     UsersManagement,
@@ -466,7 +466,7 @@ impl Component for App {
 
 
 
-
+                
                 // OTHER ROUTES
                 _ => {
                     if is_logged_in {

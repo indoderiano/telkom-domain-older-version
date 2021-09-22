@@ -2,20 +2,38 @@ use crate::app::AppRoute;
 use yew::prelude::*;
 use yew_router::components::RouterAnchor;
 
-pub struct UsersManagement {}
+pub struct UsersManagement {
+    learn_more: bool,
+    link: ComponentLink<Self>,
+}
 
-pub enum Msg {}
+pub enum Msg {
+    LearnMore,
+    HideDetails
+}
 
 impl Component for UsersManagement {
     type Message = Msg;
     type Properties = ();
 
-    fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
-        UsersManagement {}
+    fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
+        UsersManagement { 
+            learn_more: false, 
+            link,
+        }
     }
 
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        true
+    fn update(&mut self, msg: Self::Message) -> ShouldRender {
+        match msg {
+            Msg::LearnMore => {
+                self.learn_more = true;
+                true
+            }
+            Msg::HideDetails => {
+                self.learn_more = false;
+                true
+            }
+        }
     }
 
     fn change(&mut self, _: Self::Properties) -> ShouldRender {
@@ -27,9 +45,9 @@ impl Component for UsersManagement {
         html! {
             <div>
 
-                <div class="mx-auto pt-5 pb-5 px-4" style="max-width: 1048px;">
+                <div class="container mx-auto pt-5 pb-5 px-4" style="max-width: 1048px;">
 
-                    <div class="row">
+                    <div class=" d-flex row align-center">
                         <div class="col">
                             <p class="fs-2 fw-bold">{"Users"}</p>
                         </div>
@@ -41,21 +59,131 @@ impl Component for UsersManagement {
                         </div>
                     </div>
 
-                    <div class="mt-2">
-                        <p>{"An easy to use UI to help administrators manage user identities including password resets, creating, and provisioning, blocking, and deleting users."}</p>
-                        <span><a href="">{"Learn more"} <span><i class="bi bi-arrow-right-short"></i></span> </a>
-                        </span>
+                    <div class="mt-3">
+                        <p>
+                            {"An easy to use UI to help administrators manage user identities including password resets, creating, and provisioning, blocking, and deleting users. "}
+                            {
+                                if self.learn_more == true {
+                                    html!{
+                                        <a 
+                                            href="javascript: void(0);" 
+                                            class="text-decoration-none" 
+                                            onclick=self.link.callback(|_| Msg::HideDetails)
+                                        >
+                                            <span
+                                                style="
+                                                    white-space: nowrap;
+                                                    text-overflow: ellipsis;
+                                                    overflow: hidden;
+                                                    font-size: 14px;
+                                                    text-decoration: none;
+                                                "
+                                            >
+                                                {"Hide details"}
+                                                <i
+                                                class="bi bi-arrow-right-short fs-5"
+                                                style="vertical-align: -3px; margin-left: -2px;"></i>
+                                            </span>
+                                        </a>
+                                    }
+                                } else {
+                                    html! {
+                                        <a
+                                            href="javascript: void(0)"
+                                            class="text-decoration-none"
+                                            onclick=self.link.callback(|_| Msg::LearnMore)
+                                        >
+                                            <span
+                                                style="
+                                                    white-space: nowrap;
+                                                    text-overflow: ellipsis;
+                                                    overflow: hidden;
+                                                    font-size: 14px;
+                                                    text-decoration: none;
+                                                "
+                                            >
+                                                {"Learn more"}
+                                                <i
+                                                    class="bi bi-arrow-right-short fs-5"
+                                                    style="vertical-align: -3px; margin-left: -2px;"></i>
+                                            </span>
+                                        </a>
+                                    }
+                                }
+                            }
+                        </p>
+                        {
+                            if self.learn_more == true {
+                                html! {
+                                    <div
+                                        class="alert alert-secondary"
+                                        role="alert"
+                                        style="font-size: 13px;"
+                                    >
+                                        <div
+                                            class="fw-bold mb-3 pb-2"
+                                            style="
+                                                font-size: 13px;
+                                                text-transform: uppercase;
+                                                letter-spacing: 1px;
+                                                border-bottom: 1px solid rgb(200, 200, 200);
+                                            "
+                                        >
+                                            {"With users you can"}
+                                        </div>
+                                        <div
+                                            class="d-inline-flex flex-row w-50"
+                                        >
+                                            <i class="bi bi-info-circle-fill me-4"></i>
+                                            <p
+                                                class="pe-5"
+                                            >
+                                                {"Manage user identities including password resets, creating and provisioning, blocking and deleting users."}
+                                            </p>
+                                        </div>
+                                        <div
+                                            class="d-inline-flex flex-row"
+                                            style="width: 49%;"
+                                        >
+                                            <i class="bi bi-info-circle-fill me-4"></i>
+                                            <p
+                                                class="pe-5"
+                                            >
+                                                {"Store arbitrary JSON objects attached to an Auth0 user."}
+                                            </p>
+                                        </div>
+                                        <div
+                                            class="d-inline-flex flex-row w-50"
+                                        >
+                                            <i class="bi bi-info-circle-fill me-4"></i>
+                                            <p
+                                                class="pe-5"
+                                            >
+                                                {"Associate user accounts with multiple connections such as database, enterprise or social with the same user on Auth0, allowing that user to authenticate with any of them."}
+                                            </p>
+                                        </div>
+                                        <div
+                                            class="d-inline-flex flex-row"
+                                            style="width: 49%;"
+                                        >
+                                        </div>
+                                    </div>
+                                }
+                            } else {
+                                html! {}
+                            }
+                        }
                     </div>
 
-                    <div class="mt-2">
+                    <div class="mt-5">
                         <div class="row">
-                            <div class="col">
+                            <div class="col-md col-lg">
                                 <div class="input-group flex-nowrap">
                                     <span class="input-group-text" id="addon-wrapping"><i class="bi bi-search"></i></span>
                                     <input type="text" class="form-control" placeholder="Search for users" aria-label="Username" aria-describedby="addon-wrapping" />
                                 </div>
                             </div>
-                            <div class="col-auto">
+                            <div class="col-md-auto col-lg-auto">
                                 <div class="input-group mb-3">
                                     <label class="input-group-text" for="inputGroupSelect01">{"Search by"}</label>
                                     <select class="form-select" id="inputGroupSelect01">
@@ -71,7 +199,7 @@ impl Component for UsersManagement {
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-auto">
+                            <div class="col-md-auto col-lg-auto">
                                 <button type="button" class="btn btn-outline-secondary">
                                     <i class="bi bi-x"></i>
                                     <span>{"Reset"}</span>
@@ -80,7 +208,7 @@ impl Component for UsersManagement {
                         </div>
                     </div>
 
-                    <div class="mt-2">
+                    <div class="mt-2 table-responsive-md table-responsive-lg">
                         <table class="table">
                             <thead>
                                 <tr>
@@ -95,7 +223,7 @@ impl Component for UsersManagement {
                                 <tr>
                                     <th scope="row">
                                         <div>
-                                            <a href="">{"yeskahaganta3838@gmail.com"}</a>
+                                            <a href="" class="text-decoration-none">{"yeskahaganta3838@gmail.com"}</a>
                                             <p class="text-muted overflow-hidden">{"yeskahaganta3838@gmail.com"}</p>
                                         </div>
                                     </th>
@@ -108,7 +236,7 @@ impl Component for UsersManagement {
                                         </button>
                                         <ul class="dropdown-menu pt-1" aria-labelledby="dropdownMenuButton1">
                                             <li class="p-1 text-muted" style="font-size:13px;">
-                                                <Anchor route=AppRoute::ViewDetail classes="dropdown-item">
+                                                <Anchor route=AppRoute::UserViewDetail classes="dropdown-item">
                                                     {"View Details"}
                                                 </Anchor>
                                             </li>
@@ -116,7 +244,7 @@ impl Component for UsersManagement {
                                                 <hr class="dropdown-divider"/>
                                             </li>
                                             <li class="p-1 text-muted">
-                                                        <div class="ms-1 d-flex flex-row" style="font-size:13px;" >
+                                                        <div class="ms-1 d-flex flex-row inline-block align-items-center" style="font-size:13px;" >
                                                             <i class="bi bi-person-check"></i>
                                                             <span data-bs-toggle="modal" data-bs-target="#assignRoles">
                                                             <a class="dropdown-item" href="#">
@@ -126,7 +254,7 @@ impl Component for UsersManagement {
                                                         </div>
                                             </li>
                                             <li class="p-1 text-muted" style="font-size:13px;">
-                                                        <div class="ms-1 d-flex flex-row">
+                                                        <div class="ms-1 d-flex flex-row inline-block align-items-center">
                                                             <i class="bi bi-check2-square"></i>
                                                             <span data-bs-toggle="modal" data-bs-target="#assignPermissions">
                                                                 <a class="dropdown-item" href="#" >
@@ -136,7 +264,7 @@ impl Component for UsersManagement {
                                                         </div>
                                             </li>
                                             <li class="p-1 text-muted" style="font-size:13px;">
-                                                <div class="ms-1 d-flex flex-row">
+                                                <div class="ms-1 d-flex flex-row inline-block align-items-center">
                                                     <i class="bi bi-envelope "></i>
                                                     <span  data-bs-toggle="modal" data-bs-target="#resendConfirmation">
                                                         <a class="dropdown-item" href="#">
@@ -162,8 +290,8 @@ impl Component for UsersManagement {
                                                 <hr class="dropdown-divider" />
                                             </li>
                                             <li class="p-1" style="font-size:13px;">
-                                                <div class="ms-1 text-muted ">
-                                                    <svg xmlns="http://www.w3.org/2000/svg " width="16 " height="16 " viewBox="0 0 24 24 " fill="none " stroke="currentColor " stroke-width="2 " stroke-linecap="round " stroke-linejoin="round"><circle cx="12 " cy="12 " r="10 "></circle><line x1="4.93 " y1="4.93 " x2="19.07 " y2="19.07 "></line></svg>
+                                                <div class="ms-1 d-flex flex-row text-muted inline-block align-items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg " width="13" height="13" viewBox="0 0 24 24 " fill="none " stroke="currentColor " stroke-width="2 " stroke-linecap="round " stroke-linejoin="round"><circle cx="12 " cy="12 " r="10 "></circle><line x1="4.93 " y1="4.93 " x2="19.07 " y2="19.07 "></line></svg>
                                                     <span>
                                                         <a class="dropdown-item" href="#">
                                                             {"Block "}
@@ -172,7 +300,7 @@ impl Component for UsersManagement {
                                                 </div>
                                             </li>
                                             <li class="p-1 text-danger " style="font-size:13px;">
-                                                <div class="ms-1 ">
+                                                <div class="ms-1 d-flex flex-row">
                                                     <i class="bi bi-trash "></i>
                                                     <span data-bs-toggle="modal" data-bs-target="#deleteUsers">
                                                         <a class="dropdown-item fs-7" href="#">
