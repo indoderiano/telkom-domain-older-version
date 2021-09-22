@@ -6,8 +6,16 @@ use yew::{
 use yew_router::components::RouterAnchor;
 use yew::services::ConsoleService;
 use crate::app::AppRoute;
+<<<<<<< HEAD
 use crate::types::api::{ ApiTitle, ResponseApiList, ApiCreate };
 use crate::components::loading::Loading;
+=======
+use crate::types::api::ApiTitle;
+use crate::components::{
+    loading::Loading,
+    loading2::Loading2,
+};
+>>>>>>> 8e7c514651531a1365ac6c75138f54f7b580bddf
 
 
 #[derive(Clone, Debug, Eq, PartialEq, Properties)]
@@ -283,7 +291,7 @@ impl Component for ApisHome {
                                     margin-top: 8rem;
                                 "
                             >
-                                <Loading width=45 />
+                                <Loading2 width=45 />
                             </div>
                         }
                     } else {
