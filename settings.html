@@ -368,331 +368,54 @@
 
 
 
-            <div>
-
-              <div
-                  class="container border rounded p-4 d-flex flex-column mb-5"
-                  style="font-size: 14px;"
-              >
-                  <div
-                      class="row border-bottom"
-                  >
-                      <div
-                          class="col-lg-6 text-color-primary fw-bold mb-4"
-                      >
-                          {"General Settings"}
-                      </div>
-                      <div
-                          class="col-lg-6"
-                      >
-                          <div
-                              class="mb-4"
-                          >
-                              <p class="mb-2 fw-bold">
-                                  {"ID"}
-                              </p>
-                              <div class="input-group mb-2">
-                                  <input
-                                      type="text"
-                                      class="form-control bg-input-grey"
-                                      aria-label="Dollar amount (with dot and two decimal places)"
-                                      value={api_id}
-                                  />   
-                              </div>
-                              <p>
-                                  {"The API id on our system. Useful if you prefer to work directly with Auth0's Management API instead."}
-                              </p>
-                          </div>
-          
-                          <div
-                              class="mb-4"
-                          >
-                              <p class="mb-2 fw-bold">
-                                  {"Name*"}
-                              </p>
-                              <div class="input-group mb-2">
-                                  <input
-                                      type="text"
-                                      class="form-control bg-input-grey"
-                                      aria-label="Dollar amount (with dot and two decimal places)"
-                                      value={name}
-                                  />   
-                              </div>
-                              <p>
-                                  {"A friendly name for the API. The following characters are not allowed "}
-                                  <code
-                                      style="padding: 2px 6px; font-size: 11px;"
-                                      class="bg-input-grey text-color-primary"
-                                  >
-                                      <i class="bi bi-chevron-left"></i>
-                                  </code>
-                                  <code
-                                      style="padding: 2px 6px; font-size: 11px;"
-                                      class="bg-input-grey text-color-primary"
-                                  >
-                                      <i class="bi bi-chevron-right"></i>
-                                  </code>
-                              </p>
-                          </div>
-          
-                          <div
-                              class="mb-5"
-                          >
-                              <p class="mb-2 fw-bold">
-                                  {"Identifier"}
-                              </p>
-                              <div class="input-group mb-2">
-                                  <input
-                                      type="text"
-                                      class="form-control bg-input-grey"
-                                      aria-label="Dollar amount (with dot and two decimal places)"
-                                      value={identifier}
-                                  />
-                              </div>
-                              <p>
-                                  {"Unique identifier for the API. This value will be used as the "}
-                                  <code
-                                      style="padding: 2px 6px; font-size: 14px;"
-                                      class="bg-input-grey text-color-primary"
-                                  >
-                                      {"audience"}
-                                  </code>
-          
-                                  {" parameter on authorization calls."}
-                              </p>
-                          </div>
-          
-                      </div>
-                  </div>
-          
-          
-                  
-                  <div
-                      class="row border-bottom mt-5"
-                  >
-                      <div
-                          class="col-lg-6 text-color-primary fw-bold mb-4"
-                      >
-                          {"Tokens Settings"}
-                      </div>
-                      <div
-                          class="col-lg-6"
-                      >
-                          <div
-                              class="mb-4"
-                          >
-                              <p class="mb-2 fw-bold">
-                                  {"Token Expirations (Seconds)*"}
-                              </p>
-                              <div class="input-group mb-2">
-                                  <input
-                                      type="text"
-                                      class="form-control bg-input-grey"
-                                      aria-label="Dollar amount (with dot and two decimal places)"
-                                      value={token_exp.to_string()}
-                                  />
-                              </div>
-                              <p>
-                                  {"Expiration value (in seconds) for "}
-                                  <code
-                                      style="padding: 2px 6px; font-size: 11px;"
-                                      class="bg-input-grey text-color-primary"
-                                  >
-                                      {"access tokens"}
-                                  </code>
-                                  {" issued for this API from the Token Endpoint."}
-                              </p>
-                          </div>
-          
-                          <div
-                              class="mb-4"
-                          >
-                              <p class="mb-2 fw-bold">
-                                  {"Token Expirations For Browser Flows (Seconds)*"}
-                              </p>
-                              <div class="input-group mb-2">
-                                  <input
-                                      type="text"
-                                      class="form-control bg-input-grey"
-                                      aria-label="Dollar amount (with dot and two decimal places)"
-                                      value={token_exp_browser.to_string()}
-                                  />
-                              </div>
-                              <p>
-                                  {"Expiration value (in seconds) for "}
-                                  <code
-                                      style="padding: 2px 6px; font-size: 11px;"
-                                      class="bg-input-grey text-color-primary"
-                                  >
-                                      {"access tokens"}
-                                  </code>
-                                  {" issued for this API via Implicit or Hybrid Flows. Cannot be greater than the Token Lifetime value."}
-                              </p>
-                          </div>
-          
-                          <div
-                              class="mb-5"
-                          >
-                              <p class="mb-2 fw-bold">
-                                  {"Signing Algorithm"}
-                              </p>
-                              <div class="input-group mb-2">
-                                  <input
-                                      type="text"
-                                      class="form-control bg-input-grey"
-                                      aria-label="Dollar amount (with dot and two decimal places)"
-                                      value={sign_algorithm}
-                                  />
-                              </div>
-                              <p>
-                                  {"Algorithm to be used when signing the "}
-                                  <code
-                                      style="padding: 2px 6px; font-size: 11px;"
-                                      class="bg-input-grey text-color-primary"
-                                  >
-                                      {"access tokens"}
-                                  </code>
-          
-                                  {" for this API. You can find more information"}
-                              </p>
-                          </div>
-          
-                      </div>
-                  </div>
-          
-          
-                  <div
-                      class="row border-bottom mt-5"
-                  >
-                      <div
-                          class="col-lg-6 text-color-primary fw-bold mb-4"
-                      >
-                          {"RBAC Settings"}
-                      </div>
-                      <div
-                          class="col-lg-6"
-                      >
-                          <div
-                              class="mb-4"
-                          >
-                              <p class="mb-2 fw-bold">
-                                  {"Enable RBAC "}
-                              </p>
-                              <div class="form-check form-switch fs-3 mb-4">
-                                  <input
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    checked={rbac}
-                                />
-                              </div>
-                              <p class="text-color-disabled">
-                                  {"If this setting is enabled, RBAC authorization policies will be enforced for this API. Role and permission assignments will be evaluated during the login transaction."}
-                              </p>
-                          </div>
-                          <div
-                              class="mb-4"
-                          >
-                              <p class="mb-2 fw-bold">
-                                  {"Add Permissions in the Access Token"}
-                              </p>
-                              <div class="form-check form-switch fs-3 mb-4">
-                                  <input
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    checked={permission_acc_token}
-                                />
-                              </div>
-                              <p class="text-color-disabled">
-                                  {"If this setting is enabled, the Permissions claim will be added to the access token. Only available if RBAC is enabled for this API."}
-                              </p>
-                          </div>
-                      </div>
-                  </div>
-
-
-                  <div
-                      class="row border-bottom mt-5"
-                  >
-                      <div
-                          class="col-lg-6 text-color-primary fw-bold mb-4"
-                      >
-                          {"Access Settings"}
-                      </div>
-                      <div
-                          class="col-lg-6"
-                      >
-                          <div
-                              class="mb-4"
-                          >
-                              <p class="mb-2 fw-bold">
-                                  {"Allow Skipping User Consent"}
-                              </p>
-                              <div class="form-check form-switch fs-3 mb-4">
-                                  <input
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    checked={allow_skip_user}
-                                />
-                              </div>
-                              <p class="text-color-disabled">
-                                  {"If this setting is enabled, this API will skip user consent for applications flagged as First Party."}
-                              </p>
-                          </div>
-          
-                          <div
-                              class="mb-4"
-                          >
-                              <p class="mb-2 fw-bold">
-                                  {"Allow Offline Access"}
-                              </p>
-                              <div class="form-check form-switch fs-3 mb-4">
-                                  <input
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    id="flexSwitchCheckDefault"
-                                    checked={allow_off_acc}    
-                                />
-                              </div>
-                              <p>
-                                  {"If this setting is enabled, Auth0 will allow applications to ask for Refresh Tokens for this API."}
-                              </p>
-                          </div>
-          
-                          <button type="button" class="btn btn-primary mb-5 mt-3">{"Save"}</button>
-          
-          
-                      </div>
-                  </div>
-          
-              </div>
-
-              <div
-                  style="font-size: 14px;"
-              >
-                  <p
-                      class="fw-bold"
-                  >
-                      {"Danger Zone"}
-                  </p>
-
-                  <div class="alert alert-danger d-flex flex-row justify-content-between" role="alert">
-                      <div>
-                          <p
-                              class="fw-bold"
-                          >
-                              {"Delete This API"}
-                          </p>
-                          {"Once confirmed, this operation can't be undone!"}
-                      </div>
-                      <div>
-                          <button
-                              type="button"
-                              class="btn btn-danger"
-                          >{"Delete"}</button>
-                      </div>
-                  </div>
-              </div>
-          </div>
+            <div class="col py-3">
+                <div>
+                    <div class="mx-auto pt-5 pb-5 px-4" style="max-width: 1048px;">
+                        <div class="mb-5">
+                            <div class="d-flex flex-row mb-3">
+                            <div class="flex-fill fs-3 fw-bold">
+                                {"Single Sign On"}
+                            </div>
+                        </div>
+        
+                        <div style=" display: flex;
+                                    text-align: center;
+                                    align-items: center;
+                                    flex-direction: column;
+                                    margin-top: 60px;
+                                    padding: 40px;
+                                    border-radius: 6px;
+                                    border: 1px solid #e3e4e6;">
+            
+                            <img width="150" height=""
+                                src="https://assets-global.website-files.com/60058af53d79fbd8e14841ea/602e971e34a1e12c00b8c9ab_sso.svg"
+                            />
+                            
+                            <h4 
+                                style="padding-top: 20px;"
+                                > 
+                                {"You don't have any SSO integrations yet."}
+                            </h4>
+                            <div>
+                                <p>{"SSO enables users to authenticate at Auth0 with one set of credentials to
+                                access
+                                any number of service provider applications."}</p>
+                            </div>
+                            <button
+                                type="button"
+                                class="btn btn-primary d-flex align-items-center"
+                                data-bs-toggle="modal" data-bs-target="#exampleModal"
+                            >
+                                <i class="bi bi-plus me-2" style="margin-left: -5px;"></i>
+                                <span>{"Create API"}</span>
+                            </button>
+                            <a href="https://auth0.com/docs/sso/single-sign-on" target="_blank">{"Learn More"}</a>
+                        </div>
+                    </div>
+                </div>
+                
+                </div>
+                </div>
 
 
 

@@ -6,9 +6,11 @@ use yew::{
 use yew_router::components::RouterAnchor;
 use yew::services::ConsoleService;
 use crate::app::AppRoute;
-use crate::types::api::{ ApiTitle, ResponseApiList, ApiCreate };
+use crate::types::{
+    api::{ ApiTitle, ResponseApiList, ApiCreate },
+    ResponseMessage,
+};
 use crate::components::{
-    loading::Loading,
     loading2::Loading2,
 };
 
@@ -154,6 +156,40 @@ impl ApisHome {
         })
         .collect()
     }
+
+    fn view_api_list_empty (&self) -> Html {
+        html! {
+            <div style="
+                display: flex;
+                text-align: center;
+                align-items: center;
+                flex-direction: column;
+                margin-top: 60px;
+                padding: 40px;
+                border-radius: 6px;
+                border: 1px solid #e3e4e6;"
+            >
+
+                <img width="150" height=""
+                    src="https://assets-global.website-files.com/60058af53d79fbd8e14841ea/602e971e34a1e12c00b8c9ab_sso.svg"
+                />
+                
+                <h4 
+                    style="padding-top: 20px;"
+                >
+                    {"You don't have any SSO integrations yet."}
+                </h4>
+                <button
+                    type="button"
+                    class="btn btn-primary mt-3 d-flex align-items-center"
+                    data-bs-toggle="modal" data-bs-target="#exampleModal"
+                >
+                    <i class="bi bi-plus me-2" style="margin-left: -5px;"></i>
+                    <span>{"Create API"}</span>
+                </button>
+            </div>
+        }
+    }
 }
 
 impl Component for ApisHome {
@@ -234,6 +270,26 @@ impl Component for ApisHome {
             }
             Msg::Create => {
                 ConsoleService::info(&format!("{:?}", self.api_create));
+                let request = Request::post("http://localhost:3000/api/tenantid")
+                    .header("Content-Type", "application/json")
+                    .header("access_token", "tokenidtelkomdomain")
+                    .body(Json(&self.api_create))
+                    .expect("Could not build request.");
+                let callback = 
+                    self.link.callback(|response: Response<Json<Result<ResponseMessage, anyhow::Error>>>| {
+                        let Json(data) = response.into_body();
+                        match data {
+                            Ok(response) => {
+                                ConsoleService::info(&format!("{:?}", response));
+                            }
+                            Err(error) => {
+                                ConsoleService::info(&error.to_string());
+                            }
+                        }
+                        Msg::RequestApiList
+                    });
+                let task = FetchService::fetch(request, callback).expect("failed to start request");
+                self.fetch_task = Some(task);
                 true
             }
         }
@@ -288,6 +344,12 @@ impl Component for ApisHome {
                             >
                                 <Loading2 width=45 />
                             </div>
+                        }
+                    } else if self.api_list.len() == 0 {
+                        html! {
+                            <>
+                                { self.view_api_list_empty() }
+                            </>
                         }
                     } else {
                         html! {
