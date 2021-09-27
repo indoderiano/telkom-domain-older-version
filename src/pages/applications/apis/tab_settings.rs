@@ -1,11 +1,15 @@
 use yew::{
     prelude::*,
+    format::{ Json, Nothing },
     services::{
         ConsoleService,
         fetch::{FetchService, FetchTask, Request, Response},
     }
 };
-use crate::types::api::{ ApiDetails };
+use crate::types::{
+	api::{ ApiDetails, ResponseApiDetails },
+	ResponseMessage,
+};
 
 
 #[derive(Clone, Debug, Eq, PartialEq, Properties)]
@@ -29,12 +33,15 @@ pub enum Data {
 pub struct TabSettings {
     api_details: ApiDetails,
     link: ComponentLink<Self>,
-    // fetch_task: Option<FetchTask>,
+    fetch_task: Option<FetchTask>,
+		error_update: Option<String>,
 }
 
 pub enum Msg {
     InputText(String, Data),
     Save,
+		GetApiDetails(ApiDetails),
+		ResponseError(String),
 }
 
 impl Component for TabSettings {
@@ -47,6 +54,8 @@ impl Component for TabSettings {
         TabSettings {
             api_details: props.api_details,
             link,
+            fetch_task: None,
+						error_update: None,
         }
     }
 
@@ -100,8 +109,36 @@ impl Component for TabSettings {
             }
             Msg::Save => {
               ConsoleService::info(&format!("{:?}", self.api_details));
+              let request = Request::put("http://localhost:3000/api/dev-ofzd5p1b/apis/60daccd6dff9a6003e8ef6ef")
+                .header("Content-Type", "application/json")
+                .header("access_token", "tokenidtelkomdomain")
+                .body(Json(&self.api_details))
+                .expect("Could not build request.");
+            	let callback = self.link.callback(|response: Response<Json<Result<ResponseApiDetails, anyhow::Error>>>| {
+								let Json(data) = response.into_body();
+								match data {
+									Ok(dataok) => {
+										ConsoleService::info(&format!("{:?}", dataok));
+										Msg::GetApiDetails(dataok.data)
+									}
+									Err(error) => {
+											ConsoleService::info(&error.to_string());
+											Msg::ResponseError(error.to_string())
+									}
+								}
+							});
               true
             }
+						Msg::GetApiDetails(data) => {
+							self.fetch_task = None;
+							self.api_details = data;
+							true
+						}
+						Msg::ResponseError(message) => {
+							self.fetch_task = None;
+							self.error_update = Some(message);
+							true
+						}
         }
     }
 

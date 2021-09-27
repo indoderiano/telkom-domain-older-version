@@ -67,7 +67,7 @@ impl Component for Logo2 {
                     style=format!("
                         width: {}px;
                         position: absolute;
-                        top: 53%;
+                        top: 55%;
                         left: 50%;
                         transform: translate(-50%,-50%);
                         filter: grayscale(100%);
