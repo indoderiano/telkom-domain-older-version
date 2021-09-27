@@ -66,6 +66,13 @@
   .text-color-disabled {
     color: #65676e;
   }
+
+  .telkom-center {
+    position: absolute;
+    top: 50%;
+    left:50%;
+    transform: translate(-50%, -50%);
+  }
   
   .bg-domain-primary {
     background-color: rgb(233, 232, 255);
@@ -84,6 +91,35 @@
   .card-hover:hover {
     box-shadow: 0px 2px 4px rgb(0 0 0 / 12%);
   }
+
+  .modal.fade {
+    visibility: hidden;
+    transition: visibility 0s linear .15s, opacity .15s linear;
+  }
+  .modal.fade.show {
+    visibility: visible;
+    transition: visibility 0s linear 0s, opacity .15s linear;
+  }
+  .modal-backdrop.fade {
+    visibility: hidden;
+    transition: visibility 0s linear .15s, opacity .15s linear;
+  }
+  .modal-backdrop.fade.show {
+    visibility: visible;
+    transition: visibility 0s linear 0s, opacity .15s linear;
+  }
+
+  .btn .telkom-spinner {
+    display: none;
+  }
+  .btn.loading .telkom-label {
+    opacity: 0;
+  }
+  .btn.loading .telkom-spinner {
+    display: block;
+  }
+
+
   
   @media (min-width: 1280px) {
     .sidebar {
