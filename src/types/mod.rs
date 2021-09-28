@@ -20,6 +20,10 @@ pub struct ResponseLogin {
 pub const LOCALSTORAGE_KEY: &str = "telkom-domain";
 
 
+#[derive(Deserialize, Debug, Clone)]
+pub struct ResponseMessage {
+    pub message: String,
+}
 
 
 

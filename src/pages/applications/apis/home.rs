@@ -6,8 +6,13 @@ use yew::{
 use yew_router::components::RouterAnchor;
 use yew::services::ConsoleService;
 use crate::app::AppRoute;
-use crate::types::api::ApiTitle;
-use crate::components::loading::Loading;
+use crate::types::{
+    api::{ ApiTitle, ResponseApiList, ApiCreate },
+    ResponseMessage,
+};
+use crate::components::{
+    loading2::Loading2,
+};
 
 
 #[derive(Clone, Debug, Eq, PartialEq, Properties)]
@@ -15,17 +20,38 @@ pub struct ApisProps {
     pub tenant_id: String,
 }
 
+pub enum StateError {
+    ApiList,
+    ApiCreate,
+}
+
+pub enum DataApiCreate {
+    Name,
+    Identifier,
+    SignAlg,
+}
+
 pub struct ApisHome {
     tenant_id: String,
     fetch_task: Option<FetchTask>,
-    error: Option<String>,
     link: ComponentLink<Self>,
+    loading_get_api: bool,
     api_list: Vec<ApiTitle>,
+    error_api_list: Option<String>,
+    show_modal_create: bool,
+    loading_create_api: bool,
+    api_create: ApiCreate,
+    error_api_create: Option<String>,
 }
 
 pub enum Msg {
+    DefaultState,
     RequestApiList,
-    GetApiList(Result<Vec<ApiTitle>, anyhow::Error>),
+    GetApiList(Vec<ApiTitle>),
+    Input(String, DataApiCreate),
+    ShowModalCreate(bool),
+    Create,
+    ResponseError(String, StateError),
 }
 
 impl ApisHome {
@@ -142,6 +168,42 @@ impl ApisHome {
         })
         .collect()
     }
+
+    fn view_api_list_empty (&self) -> Html {
+        html! {
+            <div style="
+                display: flex;
+                text-align: center;
+                align-items: center;
+                flex-direction: column;
+                margin-top: 60px;
+                padding: 40px;
+                border-radius: 6px;
+                border: 1px solid #e3e4e6;"
+            >
+
+                <img width="150" height=""
+                    src="https://assets-global.website-files.com/60058af53d79fbd8e14841ea/602e971e34a1e12c00b8c9ab_sso.svg"
+                />
+                
+                <h4 
+                    style="padding-top: 20px;"
+                >
+                    {"You don't have any SSO integrations yet."}
+                </h4>
+                <button
+                    type="button"
+                    class="btn btn-primary mt-3 d-flex align-items-center"
+                    // data-bs-toggle="modal"
+                    // data-bs-target="#exampleModal"
+                    onclick=self.link.callback(|_| {Msg::ShowModalCreate(true)})
+                >
+                    <i class="bi bi-plus me-2" style="margin-left: -5px;"></i>
+                    <span>{"Create API"}</span>
+                </button>
+            </div>
+        }
+    }
 }
 
 impl Component for ApisHome {
@@ -151,12 +213,23 @@ impl Component for ApisHome {
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
         ConsoleService::info(&format!("Apis home props, tenant id = {}", props.tenant_id));
 
+        let api_create = ApiCreate {
+            name: String::from(""),
+            identifier: String::from(""),
+            sign_algorithm: String::from("RS256"),
+        };
+
         ApisHome {
             tenant_id: props.tenant_id,
             fetch_task: None,
-            error: None,
             link,
+            loading_get_api: false,
             api_list: Vec::new(),
+            error_api_list: None,
+            show_modal_create: false,
+            loading_create_api: false,
+            api_create,
+            error_api_create: None,
         }
     }
 
@@ -167,11 +240,21 @@ impl Component for ApisHome {
             
             self.link.send_message(Msg::RequestApiList);
         }
-
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
+            Msg::DefaultState => {
+                self.show_modal_create = false;
+                self.loading_get_api = false;
+                // self.error_api_list: None,
+                self.loading_create_api = false;
+                // self.error_api_create: None,
+                self.api_create.name = String::from("");
+                self.api_create.identifier = String::from("");
+                self.api_create.sign_algorithm = String::from("");
+                true
+            }
             Msg::RequestApiList => {
                 let request = Request::get("http://localhost:3000/api/tenantid")
                     // .header("Content-Type", "application/json")
@@ -179,26 +262,92 @@ impl Component for ApisHome {
                     .body(Nothing)
                     .expect("Could not build request.");
                 let callback = 
-                    self.link.callback(|response: Response<Json<Result<Vec<ApiTitle>, anyhow::Error>>>| {
+                    self.link.callback(|response: Response<Json<Result<ResponseApiList, anyhow::Error>>>| {
                         let Json(data) = response.into_body();
-                        Msg::GetApiList(data)
+                        match data {
+                            Ok(dataok) => {
+                                Msg::GetApiList(dataok.data)
+                            }
+                            Err(error) => {
+                                Msg::ResponseError(error.to_string(), StateError::ApiList)
+                            }
+                        }
                     });
                 let task = FetchService::fetch(request, callback).expect("failed to start request");
                 self.fetch_task = Some(task);
+                self.error_api_list = None;
+                self.loading_get_api = true;
                 true
             }
-            Msg::GetApiList(response) => {
-                match response {
-                    Ok(data) => {
-                        ConsoleService::info(&format!("{:?}", data));
-                        self.api_list = data;
-
+            Msg::GetApiList(data) => {
+                self.api_list = data;
+                // match response {
+                //     Ok(data) => {
+                //         ConsoleService::info(&format!("{:?}", data));
+                //     }
+                //     Err(error) => {
+                //         ConsoleService::info(&error.to_string());
+                //     }
+                // }
+                self.loading_get_api = false;
+                self.fetch_task = None;
+                true
+            }
+            Msg::Input(input, data) => {
+                match data {
+                    DataApiCreate::Name => {
+                        self.api_create.name = input;
                     }
-                    Err(error) => {
-                        ConsoleService::info(&error.to_string());
+                    DataApiCreate::Identifier => {
+                        self.api_create.identifier = input;
+                    }
+                    DataApiCreate::SignAlg => {
+                        self.api_create.sign_algorithm = input;
                     }
                 }
-                self.fetch_task = None;
+                true
+            }
+            Msg::ShowModalCreate(state) => {
+                self.show_modal_create = state;
+                true
+            }
+            Msg::Create => {
+                ConsoleService::info(&format!("{:?}", self.api_create));
+                let request = Request::post("http://localhost:3000/api/tenantid")
+                    .header("Content-Type", "application/json")
+                    .header("access_token", "tokenidtelkomdomain")
+                    .body(Json(&self.api_create))
+                    .expect("Could not build request.");
+                let callback = 
+                    self.link.batch_callback(|response: Response<Json<Result<ResponseMessage, anyhow::Error>>>| {
+                        let Json(data) = response.into_body();
+                        match data {
+                            Ok(response) => {
+                                ConsoleService::info(&format!("{:?}", response));
+                                vec![Msg::DefaultState, Msg::RequestApiList]
+                            }
+                            Err(error) => {
+                                ConsoleService::info(&error.to_string());
+                                vec![Msg::ResponseError(error.to_string(), StateError::ApiCreate)]
+                            }
+                        }
+                    });
+                let task = FetchService::fetch(request, callback).expect("failed to start request");
+                self.loading_create_api = true;
+                self.fetch_task = Some(task);
+                true
+            }
+            Msg::ResponseError(message, state) => {
+                match state {
+                    StateError::ApiList => {
+                        self.loading_get_api = false;
+                        self.error_api_list = Some(message);
+                    }
+                    StateError::ApiCreate => {
+                        self.loading_create_api = false;
+                        self.error_api_create = Some(message);
+                    }
+                }
                 true
             }
         }
@@ -231,7 +380,9 @@ impl Component for ApisHome {
                             <button
                                 type="button"
                                 class="btn btn-primary d-flex align-items-center"
-                                data-bs-toggle="modal" data-bs-target="#exampleModal"
+                                // data-bs-toggle="modal"
+                                // data-bs-target="#exampleModal"
+                                onclick=self.link.callback(|_| {Msg::ShowModalCreate(true)})
                             >
                                 <i class="bi bi-plus me-2" style="margin-left: -5px;"></i>
                                 <span>{"Create API"}</span>
@@ -243,7 +394,7 @@ impl Component for ApisHome {
 
 
                 {
-                    if self.fetch_task.is_some() {
+                    if self.loading_get_api {
                         html! {
                             <div
                                 style="
@@ -251,8 +402,21 @@ impl Component for ApisHome {
                                     margin-top: 8rem;
                                 "
                             >
-                                <Loading width=45 />
+                                <Loading2 width=45 />
                             </div>
+                        }
+                    } else if self.error_api_list.is_some() {
+                        html! {
+                            <div class="alert alert-warning mb-5" role="alert">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                { self.error_api_list.unwrap() }
+                            </div>
+                        }
+                    } else if self.api_list.len() == 0 {
+                        html! {
+                            <>
+                                { self.view_api_list_empty() }
+                            </>
                         }
                     } else {
                         html! {
@@ -267,17 +431,31 @@ impl Component for ApisHome {
 
                 // MODAL CREATE APIs
                 <div
-                    class="modal fade"
-                    id="exampleModal"
+                    class=format!("modal fade {}", if self.show_modal_create {"show"} else {""})
+                    // id="exampleModal"
                     tabindex="-1"
-                    aria-labelledby="exampleModalLabel"
-                    aria-hidden="true"
+                    // aria-labelledby="exampleModalLabel"
+                    // aria-hidden="true"
+                    // style=format!("display: {};", if self.show_modal_create {"block; transition: display .15s linear .15s"} else {"none; transition: display .15s linear .15s"})
+                    style="display: block;"
+                    aria-modal={ if self.show_modal_create {"true"} else {"false"} }
+                    role={ if self.show_modal_create {"dialog"} else {""} }
+                    aria-hidden={ if self.show_modal_create {"false"} else {"true"} }
+                    // onclick=self.link.callback(|_| {Msg::ShowModalCreate(false)})   
                 >
-                    <div class="modal-dialog modal-dialog-scrollable">
+                    <div
+                        class="modal-dialog modal-dialog-scrollable" 
+                    >
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="exampleModalLabel">{"New API"}</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <button
+                                    type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="modal"
+                                    aria-label="Close"
+                                    onclick=self.link.callback(|_| {Msg::ShowModalCreate(false)})
+                                ></button>
                             </div>
                             <div class="modal-body" style="font-size: 14px;">
                                 <div
@@ -285,7 +463,13 @@ impl Component for ApisHome {
                                 >
                                     <label for="basic-url" class="form-label fw-bold">{"Name"}</label>
                                     <div class="input-group mb-2">
-                                        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3"/>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="basic-url"
+                                            aria-describedby="basic-addon3"
+                                            oninput=self.link.callback(|data: InputData| Msg::Input(data.value, DataApiCreate::Name))
+                                        />
                                     </div>
                                     <label class="form-label text-muted">{"A friendly name for the API"}</label>
                                 </div>
@@ -294,7 +478,13 @@ impl Component for ApisHome {
                                 >
                                     <label for="basic-url" class="form-label fw-bold">{"Identifier"}</label>
                                     <div class="input-group mb-2">
-                                        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3"/>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="basic-url"
+                                            aria-describedby="basic-addon3"
+                                            oninput=self.link.callback(|data: InputData| Msg::Input(data.value, DataApiCreate::Identifier))
+                                        />
                                     </div>
                                     <label class="form-label text-muted">{"A logical identifier for this API. We recommend using a URL but note that this doesn’t have to be a publicly available URL, Auth0 will not call your API at all.This field cannot be modified."}</label>
                                 </div>
@@ -302,22 +492,78 @@ impl Component for ApisHome {
                                     class="mb-4"
                                 >
                                     <label for="basic-url" class="form-label fw-bold">{"Signing Algorithm"}</label>
-                                    <select class="form-select mb-2" aria-label="Default select example">
-                                        <option value="1">{"RS256"}</option>
-                                        <option value="2">{"HS256"}</option>
+                                    <select
+                                        class="form-select mb-2"
+                                        aria-label="Default select example"
+                                        onchange=self.link.callback(|e| {
+                                            if let ChangeData::Select(select) = e {
+                                                let value = select.value();
+                                                Msg::Input(value, DataApiCreate::SignAlg)
+                                            } else {
+                                                Msg::Input(String::from("no value"), DataApiCreate::SignAlg)
+                                            }
+                                        })
+                                    >
+                                        <option value="RS256">{"RS256"}</option>
+                                        <option value="HS256">{"HS256"}</option>
                                     </select>
                                     <label class="form-label text-muted">{"Algorithm to sign the tokens with. When selecting RS256 the token will be signed with Auth0's private key."}</label>
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{"Cancel"}</button>
-                                <button type="button" class="btn btn-primary">{"Create"}</button>
+                                <button
+                                    type="button"
+                                    class="btn btn-secondary"
+                                    data-bs-dismiss="modal"
+                                    onclick=self.link.callback(|_| {Msg::ShowModalCreate(false)})
+                                >{"Cancel"}</button>
+                                <button
+                                    type="button"
+                                    class=format!("btn {} btn-primary position-relative", if self.loading_create_api {"loading"} else {""} )
+                                    onclick=self.link.callback(|_| Msg::Create)
+                                    disabled={ if self.loading_create_api {true} else {false} }
+                                >
+                                    <div class="telkom-label">
+                                      {"Create"}
+                                    </div>
+                                    <div class="telkom-spinner telkom-center">
+                                      <div class="spinner-border spinner-border-sm" role="status"/>
+                                    </div>
+                                </button>
+                                {
+                                    if self.error_api_create.is_some() {
+                                        html! {
+                                            <div class="alert alert-warning mb-5" role="alert">
+                                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                                { self.error_api_create.unwrap() }
+                                            </div>
+                                        }
+                                    } else {
+                                        html! {}
+                                    }
+                                }
                             </div>
                         </div>
                     </div>
                 </div>
                 
+                <div
+                    class=format!("modal-backdrop fade {}", if self.show_modal_create {"show"} else {""})
+                />
+                // {
+                //     if self.show_modal_create {
+                //         html!{
+                //             <div
+                //                 class="modal-backdrop fade show"
+                //             />
+                //         }
+                //     } else {
+                //         html!{}
+                //     }
+                // }
+
             </div>
+                
         }
     }
 }

@@ -1,4 +1,6 @@
+use crate::app::AppRoute;
 use yew::prelude::*;
+use yew_router::components::RouterAnchor;
 
 pub struct UserViewDetail {}
 
@@ -21,13 +23,14 @@ impl Component for UserViewDetail {
     }
 
     fn view(&self) -> Html {
+        type Anchor = RouterAnchor<AppRoute>;
         html! {
             <>
-                <div class="mx-auto pt-5 pb-5 px-4" style="max-width: 1048px">
+                <div class="container mx-auto pt-5 pb-5 px-4" style="max-width: 1048px">
                     <div>
                         <a href="" class="text-muted">
                             <i class="bi bi-arrow-left me-2"></i>
-                            <span>{"Back to users"}</span>
+                            <span><Anchor route=AppRoute::UsersManagement>{"Back to users"}</Anchor></span>
                         </a>
                     </div>
             
@@ -39,11 +42,7 @@ impl Component for UserViewDetail {
                                 </p>
                                 <p class="text-muted">
                                     {"user_id : "}
-                                    <span>
-                            <code style="background-color: beige; color: black"
-                            >{"auth0|6137122101cefa0073474fbb"}</code
-                            >
-                        </span>
+                                    <span> <code style="background-color: beige; color: black">{"auth0|6137122101cefa0073474fbb"}</code></span>
                                 </p>
                             </div>
                             <div class="col-auto">
@@ -117,44 +116,44 @@ impl Component for UserViewDetail {
                                         <div class="card-body">
                                             <div class="container">
                                                 <div class="row">
-                                                    <div class="col">
+                                                    <div class="col-4 col-md-4 col-lg-4">
                                                         <p class="text-muted mb-1">{"Name"}</p>
                                                         <p class="mb-1">{"yeskahaganta3838@gmail.com"}</p>
                                                         <a href="">{"Edit"}</a>
                                                     </div>
-                                                    <div class="col">
+                                                    <div class="col-4 col-md-4 col-lg-4">
                                                         <p class="text-muted mb-1 ">{"Email"}</p>
                                                         <p class="mb-1">{"yeskahaganta3838@gmail.com"}</p>
                                                         <p class="text-muted mb-1">{"(verified)"}</p>
                                                         <a href="">{"Edit"}</a>
                                                     </div>
-                                                    <div class="col">
+                                                    <div class="col-4 col-md-4 col-lg-4">
                                                         <p class="text-muted mb-1">{"Signed Up"}</p>
                                                         <p class="mb-1">{"September 7th 2021, 2:17:53 PM"}</p>
                                                     </div>
                                                 </div>
                                                 <div class="row mt-3">
-                                                    <div class="col">
+                                                    <div class="col-4 col-md-4 col-lg-4">
                                                         <p class="text-muted mb-1">{"Primary Identity Provider"}</p>
                                                         <p class="mb-1">{"Database"}</p>
                                                     </div>
-                                                    <div class="col mb-1">
+                                                    <div class="col-4 col-md-4 col-lg-4 mb-1">
                                                         <p class="text-muted mb-1">{"Latest Login"}</p>
                                                         <p class="mb-1">{"Never"}</p>
                                                     </div>
-                                                    <div class="col">
+                                                    <div class="col-4 col-md-4 col-lg-4">
                                                         <p class="text-muted mb-1">{"Accounts Associated"}</p>
                                                         <p>{"None"}</p>
                                                     </div>
                                                 </div>
                                                 <div class="row mt-3">
-                                                    <div class="col">
+                                                    <div class="col-4 col-md-4 col-lg-4">
                                                         <p class="text-muted mb-1">{"Browser"}</p>
                                                         <p class="mb-1">{"Chrome 91.0.4472/ Linux 0.0.0"}</p>
                                                     </div>
-                                                    <div class="col">
+                                                    <div class="col-4 col-md-4 col-lg-4">
                                                     </div>
-                                                    <div class="col">
+                                                    <div class="col-4 col-md-4 col-lg-4">
                                                     </div>
                                                 </div>
             
@@ -181,7 +180,7 @@ impl Component for UserViewDetail {
                                 <div class="mt-4">
                                     <p>{"These are the devices being used by this particular user. If you click on Unlink, the refresh token will be revoked, forcing the user to re-login on the application."}</p>
                                 </div>
-                                <div class="mt-4">
+                                <div class="mt-4 table-responsive">
                                     <table class="table">
                                         <thead>
                                             <tr>
@@ -202,7 +201,7 @@ impl Component for UserViewDetail {
                                         {"Max. Log Storage: 2 days"}
                                     </p>
                                 </div>
-                                <div class="mt-4">
+                                <div class="mt-4 table-responsive">
                                     <table class="table">
                                         <thead>
                                             <tr>
@@ -263,7 +262,7 @@ impl Component for UserViewDetail {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="mt-4">
+                                <div class="mt-4 table-responsive">
                                     <table class="table">
                                         <thead>
                                             <tr>
@@ -292,7 +291,7 @@ impl Component for UserViewDetail {
                                             <button type="button" class="btn btn-primary">{"Assign Roles"}</button>
                                         </div>
                                     </div>
-                                    <div class="mt-4">
+                                    <div class="mt-4 table-responsive">
                                         <table class="table">
                                             <thead>
                                                 <tr>

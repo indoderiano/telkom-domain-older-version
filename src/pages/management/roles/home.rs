@@ -28,7 +28,8 @@ impl Component for RolesManagement {
                     style="max-width: 1048px;"
                 >
                     
-                    <h1 class="fw-bold">{"Roles"}</h1>
+                <p class="fs-2 fw-bold">{"Roles"}</p>
+    
 
                     <div class="mt-3">
                         <div class="card">
