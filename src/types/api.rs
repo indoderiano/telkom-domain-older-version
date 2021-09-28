@@ -24,7 +24,7 @@ pub struct ApiCreate {
     pub sign_algorithm: String,
 }
 
-#[derive(Deserialize, Debug, Clone, Eq, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, Clone, Eq, PartialEq)]
 pub struct ApiDetails {
     pub id: u8,
     pub name: String,

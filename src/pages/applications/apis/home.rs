@@ -409,7 +409,7 @@ impl Component for ApisHome {
                         html! {
                             <div class="alert alert-warning mb-5" role="alert">
                                 <i class="bi bi-exclamation-triangle me-2"></i>
-                                { self.error_api_list.unwrap() }
+                                { self.error_api_list.clone().unwrap() }
                             </div>
                         }
                     } else if self.api_list.len() == 0 {
@@ -530,19 +530,21 @@ impl Component for ApisHome {
                                       <div class="spinner-border spinner-border-sm" role="status"/>
                                     </div>
                                 </button>
-                                {
-                                    if self.error_api_create.is_some() {
-                                        html! {
-                                            <div class="alert alert-warning mb-5" role="alert">
-                                                <i class="bi bi-exclamation-triangle me-2"></i>
-                                                { self.error_api_create.unwrap() }
-                                            </div>
-                                        }
-                                    } else {
-                                        html! {}
-                                    }
-                                }
                             </div>
+                            {
+                                if self.error_api_create.is_some() {
+                                    html! {
+                                        <div class="modal-footer">
+                                            <div class="alert alert-warning" role="alert">
+                                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                                { self.error_api_create.clone().unwrap() }
+                                            </div>
+                                        </div>
+                                    }
+                                } else {
+                                    html! {}
+                                }
+                            }
                         </div>
                     </div>
                 </div>
@@ -550,17 +552,6 @@ impl Component for ApisHome {
                 <div
                     class=format!("modal-backdrop fade {}", if self.show_modal_create {"show"} else {""})
                 />
-                // {
-                //     if self.show_modal_create {
-                //         html!{
-                //             <div
-                //                 class="modal-backdrop fade show"
-                //             />
-                //         }
-                //     } else {
-                //         html!{}
-                //     }
-                // }
 
             </div>
                 

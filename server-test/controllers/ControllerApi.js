@@ -101,6 +101,19 @@ class ControllerApi {
             res.send(data)
         }, 3000)
     }
+
+    static deleteDetails(req, res, next) {
+
+        console.log(req.params)
+
+        setTimeout(() => {
+            console.log("return status");
+            res.send({
+                message: "Api deleted",
+                data: "",
+            })
+        }, 3000)
+    }
     
 }
 
