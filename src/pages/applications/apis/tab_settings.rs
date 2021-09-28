@@ -6,6 +6,7 @@ use yew::{
         fetch::{FetchService, FetchTask, Request, Response},
     }
 };
+use yew_router::service::RouteService;
 use crate::types::{
 	api::{ ApiDetails, ResponseApiDetails },
 	ResponseMessage,
@@ -15,6 +16,11 @@ use crate::types::{
 #[derive(Clone, Debug, Eq, PartialEq, Properties)]
 pub struct ApisTabSettingsProps {
     pub api_details: ApiDetails,
+}
+
+pub enum StateError {
+    Update,
+    Delete,
 }
 
 pub enum Data {
@@ -34,14 +40,20 @@ pub struct TabSettings {
     api_details: ApiDetails,
     link: ComponentLink<Self>,
     fetch_task: Option<FetchTask>,
-		error_update: Option<String>,
+    loading_update_api: bool,
+	error_update_api: Option<String>,
+    loading_delete_api: bool,
+    error_delete_api: Option<String>,
+    route_service: RouteService,
 }
 
 pub enum Msg {
     InputText(String, Data),
     Save,
-		GetApiDetails(ApiDetails),
-		ResponseError(String),
+    GetApiDetails(ApiDetails),
+    ResponseError(String, StateError),
+    Delete,
+    RedirectToApi,
 }
 
 impl Component for TabSettings {
@@ -55,7 +67,11 @@ impl Component for TabSettings {
             api_details: props.api_details,
             link,
             fetch_task: None,
-						error_update: None,
+            loading_update_api: false,
+		    error_update_api: None,
+            loading_delete_api: false,
+            error_delete_api: None,
+            route_service: RouteService::new(),
         }
     }
 
@@ -108,37 +124,81 @@ impl Component for TabSettings {
               true
             }
             Msg::Save => {
-              ConsoleService::info(&format!("{:?}", self.api_details));
-              let request = Request::put("http://localhost:3000/api/dev-ofzd5p1b/apis/60daccd6dff9a6003e8ef6ef")
-                .header("Content-Type", "application/json")
-                .header("access_token", "tokenidtelkomdomain")
-                .body(Json(&self.api_details))
-                .expect("Could not build request.");
-            	let callback = self.link.callback(|response: Response<Json<Result<ResponseApiDetails, anyhow::Error>>>| {
-								let Json(data) = response.into_body();
-								match data {
-									Ok(dataok) => {
-										ConsoleService::info(&format!("{:?}", dataok));
-										Msg::GetApiDetails(dataok.data)
-									}
-									Err(error) => {
-											ConsoleService::info(&error.to_string());
-											Msg::ResponseError(error.to_string())
-									}
-								}
-							});
-              true
+                ConsoleService::info(&format!("{:?}", self.api_details));
+                let request = Request::put("http://localhost:3000/api/dev-ofzd5p1b/apis/60daccd6dff9a6003e8ef6ef")
+                    .header("Content-Type", "application/json")
+                    .header("access_token", "tokenidtelkomdomain")
+                    .body(Json(&self.api_details))
+                    .expect("Could not build request.");
+                let callback = self.link.callback(|response: Response<Json<Result<ResponseApiDetails, anyhow::Error>>>| {
+                let Json(data) = response.into_body();
+                match data {
+                    Ok(dataok) => {
+                        ConsoleService::info(&format!("{:?}", dataok));
+                        Msg::GetApiDetails(dataok.data)
+                    }
+                    Err(error) => {
+                        ConsoleService::info(&error.to_string());
+                        Msg::ResponseError(error.to_string(), StateError::Update)
+                    }
+                }
+                });
+                let task = FetchService::fetch(request, callback).expect("failed to start request");
+                self.loading_update_api = true;
+                self.fetch_task = Some(task);
+                true
             }
-						Msg::GetApiDetails(data) => {
-							self.fetch_task = None;
-							self.api_details = data;
-							true
-						}
-						Msg::ResponseError(message) => {
-							self.fetch_task = None;
-							self.error_update = Some(message);
-							true
-						}
+            Msg::GetApiDetails(data) => {
+                self.fetch_task = None;
+                self.loading_update_api = false;
+                self.api_details = data;
+                true
+            }
+            Msg::ResponseError(message, state) => {
+                match state {
+                    StateError::Update => {
+                        self.fetch_task = None;
+                        self.loading_update_api = false;
+                        self.error_update_api = Some(message);
+                    }
+                    StateError::Delete => {
+                        self.fetch_task = None;
+                        self.loading_delete_api = false;
+                        self.error_delete_api = Some(message);
+                    }
+                }
+                true
+            }
+            Msg::Delete => {
+                let request = Request::delete("http://localhost:3000/api/dev-ofzd5p1b/apis/60daccd6dff9a6003e8ef6ef")
+                    // .header("Content-Type", "application/json")
+                    .header("access_token", "tokenidtelkomdomain")
+                    .body(Nothing)
+                    .expect("Could not build request.");
+                let callback = self.link.callback(|response: Response<Json<Result<ResponseMessage, anyhow::Error>>>| {
+                let Json(data) = response.into_body();
+                match data {
+                    Ok(dataok) => {
+                        ConsoleService::info(&format!("{:?}", dataok));
+                        Msg::RedirectToApi
+                    }
+                    Err(error) => {
+                        ConsoleService::info(&error.to_string());
+                        Msg::ResponseError(error.to_string(), StateError::Delete)
+                    }
+                }
+                });
+                let task = FetchService::fetch(request, callback).expect("failed to start request");
+                self.loading_delete_api = true;
+                self.fetch_task = Some(task);
+                true
+            }
+            Msg::RedirectToApi => {
+                self.loading_delete_api = false;
+                self.fetch_task = None;
+                self.route_service.set_route(&format!("/{}/apis", self.api_details.tenant_id), ());
+                true
+            }
         }
     }
 
@@ -462,16 +522,38 @@ impl Component for TabSettings {
                                   {"If this setting is enabled, Auth0 will allow applications to ask for Refresh Tokens for this API."}
                               </p>
                           </div>
-          
-                          <button
-                            type="button"
-                            class="btn btn-primary mb-5 mt-3"
-                            onclick=self.link.callback(|_| Msg::Save)
+
+                          <div
+                            class="mb-5 mt-3"
                           >
-                            {"Save"}
-                          </button>
-          
-          
+                            <button
+                              type="button"
+                              class=format!("btn {} btn-primary position-relative", if self.loading_update_api {"loading"} else {""} )
+                              onclick=self.link.callback(|_| Msg::Save)
+                              disabled={ if self.loading_update_api {true} else {false} }
+                            >
+                              <div class="telkom-label">
+                                {"Save"}
+                              </div>
+                              <div class="telkom-spinner telkom-center">
+                                <div class="spinner-border spinner-border-sm" role="status"/>
+                              </div>
+                            </button>
+
+                            {
+                              if self.error_update_api.is_some() {
+                                html! {
+                                  <div class="alert alert-warning" role="alert">
+                                      <i class="bi bi-exclamation-triangle me-2"></i>
+                                      { self.error_update_api.clone().unwrap() }
+                                  </div>
+                                }
+                              } else {
+                                  html! {}
+                              }
+                            }
+
+                          </div>
                       </div>
                   </div>
           
@@ -496,10 +578,36 @@ impl Component for TabSettings {
                           {"Once confirmed, this operation can't be undone!"}
                       </div>
                       <div>
-                          <button
-                              type="button"
-                              class="btn btn-danger"
-                          >{"Delete"}</button>
+                        //   <button
+                        //       type="button"
+                        //       class="btn btn-danger"
+                        //   >{"Delete"}</button>
+
+                        <button
+                            type="button"
+                            class=format!("btn {} btn-danger position-relative", if self.loading_delete_api {"loading"} else {""} )
+                            onclick=self.link.callback(|_| Msg::Delete)
+                            disabled={ if self.loading_delete_api {true} else {false} }
+                        >
+                            <div class="telkom-label">
+                                {"Delete"}
+                            </div>
+                            <div class="telkom-spinner telkom-center">
+                                <div class="spinner-border spinner-border-sm" role="status"/>
+                            </div>
+                        </button>
+                            {
+                                if self.error_delete_api.is_some() {
+                                    html! {
+                                        <div class="alert alert-warning" role="alert">
+                                            <i class="bi bi-exclamation-triangle me-2"></i>
+                                            { self.error_delete_api.clone().unwrap() }
+                                        </div>
+                                    }
+                                } else {
+                                    html! {}
+                                }
+                            }
                       </div>
                   </div>
               </div>
