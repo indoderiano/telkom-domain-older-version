@@ -54,7 +54,7 @@ impl Component for ApplicationSettings {
                     classes="text-decoration-none domain-link-dark"
                 >
                     <i class="bi bi-arrow-left me-2"></i>
-                    {"Back to Database Connection"}
+                    {"Back to Applications"}
                 </Anchor>
 
                 <div

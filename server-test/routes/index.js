@@ -1,5 +1,6 @@
 const express = require('express')
 const { RouterApi } = require('./RouterApi')
+const { RouterApp } = require('./RouterApp')
 // const {RouterUser} = require('./RouterUser')
 // const {RouterProduct} = require('./RouterProduct')
 // const {RouterBanner} = require('./RouterBanner')
@@ -9,7 +10,7 @@ const { RouterApi } = require('./RouterApi')
 const router = express.Router()
 
 router.use('/api', RouterApi)
-
+router.use('/applications', RouterApp)
 // router.use('/user', RouterUser)
 // router.use('/product', RouterProduct)
 // router.use('/banner', RouterBanner)

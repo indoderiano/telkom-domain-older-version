@@ -101,7 +101,7 @@ impl Component for ApplicationHome {
                                         //     href="#">
                                         //     {"API Explorer Application"}
                                         // </a>
-                                        <Anchor route=AppRoute::ApplicationSettings classes="dropdown-item fs-7">
+                                        <Anchor route=AppRoute::ApplicationSettings>
                                                 <a
                                                     class="fw-bold mb-0" 
                                                     style=" white-space: nowrap;
