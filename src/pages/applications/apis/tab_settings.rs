@@ -11,6 +11,7 @@ use crate::types::{
 	api::{ ApiDetails, ResponseApiDetails },
 	ResponseMessage,
 };
+use crate::configs::server::API_URL;
 
 
 #[derive(Clone, Debug, Eq, PartialEq, Properties)]
@@ -24,16 +25,25 @@ pub enum StateError {
 }
 
 pub enum Data {
-    ApiId,
+    // ApiId,
+    // Name,
+    // Identifier,
+    // TokenExp,
+    // TokenExpBrowser,
+    // SignAlg,
+    // Rbac,
+    // PermissionAccToken,
+    // AllowSkipUser,
+    // AllowOffAcc,
+    Id,
     Name,
     Identifier,
-    TokenExp,
-    TokenExpBrowser,
-    SignAlg,
-    Rbac,
-    PermissionAccToken,
-    AllowSkipUser,
-    AllowOffAcc,
+    TokenLifetime,
+    TokenLifetimeForWeb,
+    SigningAlg,
+    EnforcePolicies,
+    SkipConsent,
+    AllowOfflineAccess,
 }
 
 pub struct TabSettings {
@@ -79,8 +89,8 @@ impl Component for TabSettings {
         match msg {
             Msg::InputText(input, data) => {
               match data {
-                Data::ApiId => {
-                    self.api_details.api_id = input;
+                Data::Id => {
+                    self.api_details.id = input;
                 }
                 Data::Name => {
                     self.api_details.name = input;
@@ -88,44 +98,38 @@ impl Component for TabSettings {
                 Data::Identifier => {
                     self.api_details.identifier = input;
                 }
-                Data::TokenExp => {
+                Data::TokenLifetime => {
                     if input.is_empty() {
-                        self.api_details.token_exp = 0;
+                        self.api_details.token_lifetime = 0;
                     } else {
-                        self.api_details.token_exp = input.parse::<u32>().unwrap();
+                        self.api_details.token_lifetime = input.parse::<u64>().unwrap();
                     }
                 }
-                Data::TokenExpBrowser => {
+                Data::TokenLifetimeForWeb => {
                     if input.is_empty() {
-                        self.api_details.token_exp_browser = 0;
+                        self.api_details.token_lifetime_for_web = 0;
                     } else {
-                        self.api_details.token_exp_browser = input.parse::<u32>().unwrap();
+                        self.api_details.token_lifetime_for_web = input.parse::<u64>().unwrap();
                     }
                 }
-                Data::SignAlg => {
-                    self.api_details.sign_algorithm = input;
+                Data::SigningAlg => {
+                    self.api_details.signing_alg = input;
                 }
-                Data::Rbac => {
-                    self.api_details.rbac = !self.api_details.rbac;
+                Data::EnforcePolicies => {
+                    self.api_details.enforce_policies = !self.api_details.enforce_policies;
                 }
-                Data::PermissionAccToken => {
-                    self.api_details.permission_acc_token = !self.api_details.permission_acc_token;
+                Data::SkipConsent => {
+                    self.api_details.skip_consent_for_verifiable_first_party_clients = !self.api_details.skip_consent_for_verifiable_first_party_clients;
                 }
-                Data::AllowSkipUser => {
-                    self.api_details.allow_skip_user = !self.api_details.allow_skip_user;
-                }
-                Data::AllowOffAcc => {
-                    self.api_details.allow_off_acc = !self.api_details.allow_off_acc;
-                }
-                _ => {
-                  ()
+                Data::AllowOfflineAccess => {
+                    self.api_details.allow_offline_access = !self.api_details.allow_offline_access;
                 }
               }
               true
             }
             Msg::Save => {
                 ConsoleService::info(&format!("{:?}", self.api_details));
-                let request = Request::put("http://localhost:3000/api/dev-ofzd5p1b/apis/60daccd6dff9a6003e8ef6ef")
+                let request = Request::patch(format!("{}/api/v2/dev-ofzd5p1b/resource-servers/60daccd6dff9a6003e8ef6ef", API_URL))
                     .header("Content-Type", "application/json")
                     .header("access_token", "tokenidtelkomdomain")
                     .body(Json(&self.api_details))
@@ -170,7 +174,7 @@ impl Component for TabSettings {
                 true
             }
             Msg::Delete => {
-                let request = Request::delete("http://localhost:3000/api/dev-ofzd5p1b/apis/60daccd6dff9a6003e8ef6ef")
+                let request = Request::delete(format!("{}/api/v2/dev-ofzd5p1b/resource-servers/60daccd6dff9a6003e8ef6ef", API_URL))
                     // .header("Content-Type", "application/json")
                     .header("access_token", "tokenidtelkomdomain")
                     .body(Nothing)
@@ -196,7 +200,7 @@ impl Component for TabSettings {
             Msg::RedirectToApi => {
                 self.loading_delete_api = false;
                 self.fetch_task = None;
-                self.route_service.set_route(&format!("/{}/apis", self.api_details.tenant_id), ());
+                self.route_service.set_route(&format!("/{}/apis", "tenant_id_not_from_reducer"), ());
                 true
             }
         }
@@ -208,19 +212,20 @@ impl Component for TabSettings {
 
     fn view(&self) -> Html {
         let ApiDetails {
-            id: _,
+            id,
             name,
-            api_id,
-            api_type: _,
+            is_system,
             identifier,
-            token_exp,
-            token_exp_browser,
-            sign_algorithm,
-            rbac,
-            permission_acc_token,
-            allow_skip_user,
-            allow_off_acc,
-            tenant_id: _,
+            scopes: _,
+            signing_alg,
+            signing_secret,
+            allow_offline_access,
+            skip_consent_for_verifiable_first_party_clients,
+            token_lifetime,
+            token_lifetime_for_web,
+            enforce_policies,
+            token_dialect,
+            client: _,
         } = self.api_details.clone();
         html! {
             <div>
@@ -251,8 +256,8 @@ impl Component for TabSettings {
                                       type="text"
                                       class="form-control bg-input-grey"
                                       aria-label="Dollar amount (with dot and two decimal places)"
-                                      value={api_id}
-                                      oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::ApiId))
+                                      value={id}
+                                      oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::Id))
                                   />   
                               </div>
                               <p>
@@ -347,8 +352,8 @@ impl Component for TabSettings {
                                       type="number"
                                       class="form-control bg-input-grey"
                                       aria-label="Dollar amount (with dot and two decimal places)"
-                                      value={token_exp.to_string()}
-                                      oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::TokenExp))
+                                      value={token_lifetime.to_string()}
+                                      oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::TokenLifetime))
                                   />
                               </div>
                               <p>
@@ -374,8 +379,8 @@ impl Component for TabSettings {
                                       type="text"
                                       class="form-control bg-input-grey"
                                       aria-label="Dollar amount (with dot and two decimal places)"
-                                      value={token_exp_browser.to_string()}
-                                      oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::TokenExpBrowser))
+                                      value={token_lifetime_for_web.to_string()}
+                                      oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::TokenLifetimeForWeb))
                                   />
                               </div>
                               <p>
@@ -401,8 +406,8 @@ impl Component for TabSettings {
                                       type="text"
                                       class="form-control bg-input-grey"
                                       aria-label="Dollar amount (with dot and two decimal places)"
-                                      value={sign_algorithm}
-                                      oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::SignAlg))
+                                      value={signing_alg}
+                                      oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::SigningAlg))
                                   />
                               </div>
                               <p>
@@ -443,8 +448,8 @@ impl Component for TabSettings {
                                   <input
                                     class="form-check-input"
                                     type="checkbox"
-                                    checked={rbac}
-                                    onclick=self.link.callback(|_| Msg::InputText(String::from("none"), Data::Rbac))
+                                    checked={enforce_policies}
+                                    onclick=self.link.callback(|_| Msg::InputText(String::from("none"), Data::EnforcePolicies))
                                 />
                               </div>
                               <p class="text-color-disabled">
@@ -461,8 +466,8 @@ impl Component for TabSettings {
                                   <input
                                     class="form-check-input"
                                     type="checkbox"
-                                    checked={permission_acc_token}
-                                    onclick=self.link.callback(|_| Msg::InputText(String::from("none"), Data::PermissionAccToken))
+                                    checked=false
+                                    // onclick=self.link.callback(|_| Msg::InputText(String::from("none"), Data::PermissionAccToken))
                                 />
                               </div>
                               <p class="text-color-disabled">
@@ -494,8 +499,8 @@ impl Component for TabSettings {
                                   <input
                                     class="form-check-input"
                                     type="checkbox"
-                                    checked={allow_skip_user}
-                                    onclick=self.link.callback(|_| Msg::InputText(String::from("none"), Data::AllowSkipUser))
+                                    checked={skip_consent_for_verifiable_first_party_clients}
+                                    onclick=self.link.callback(|_| Msg::InputText(String::from("none"), Data::SkipConsent))
                                 />
                               </div>
                               <p class="text-color-disabled">
@@ -514,8 +519,8 @@ impl Component for TabSettings {
                                     class="form-check-input"
                                     type="checkbox"
                                     id="flexSwitchCheckDefault"
-                                    checked={allow_off_acc}
-                                    onclick=self.link.callback(|_| Msg::InputText(String::from("none"), Data::AllowOffAcc))
+                                    checked={allow_offline_access}
+                                    onclick=self.link.callback(|_| Msg::InputText(String::from("none"), Data::AllowOfflineAccess))
                                 />
                               </div>
                               <p>
@@ -543,7 +548,7 @@ impl Component for TabSettings {
                             {
                               if self.error_update_api.is_some() {
                                 html! {
-                                  <div class="alert alert-warning" role="alert">
+                                  <div class="alert alert-warning mt-3" role="alert">
                                       <i class="bi bi-exclamation-triangle me-2"></i>
                                       { self.error_update_api.clone().unwrap() }
                                   </div>
