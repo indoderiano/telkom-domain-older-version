@@ -9,6 +9,7 @@ use super::quickstart::Quickstart;
 use super::tab_settings::TabSettings;
 use yew::services::ConsoleService;
 use crate::types::api::{ ApiDetails, ResponseApiDetails };
+use crate::configs::server::API_URL;
 use crate::components::loading2::Loading2;
 
 
@@ -46,21 +47,7 @@ impl Component for ApisSettings {
         ConsoleService::info(&format!("Api Settings props, tenant id = {}", props.tenant_id));
         ConsoleService::info(&format!("Api Settings props, api id = {}", props.api_id));
 
-        let api_details = ApiDetails {
-            id: 1,
-            name: String::from("default"),
-            api_id: String::from("default"),
-            api_type: String::from("default"),
-            identifier: String::from("default"),
-            token_exp: 1000,
-            token_exp_browser: 1000,
-            sign_algorithm: String::from("default"),
-            rbac: false,
-            permission_acc_token: false,
-            allow_skip_user: false,
-            allow_off_acc: false,
-            tenant_id: String::from("default"),
-        };
+        let api_details = ApiDetails::new();
 
         ApisSettings {
             content: Content::Quickstart,
@@ -88,7 +75,7 @@ impl Component for ApisSettings {
                 true
             }
             Msg::RequestApiDetails => {
-                let request = Request::get("http://localhost:3000/api/dev-ofzd5p1b/apis/60daccd6dff9a6003e8ef6ef")
+                let request = Request::get(format!("{}/api/v2/dev-ofzd5p1b/resource-servers/60daccd6dff9a6003e8ef6ef", API_URL))
                     // .header("Content-Type", "application/json")
                     .header("access_token", "tokenidtelkomdomain")
                     .body(Nothing)
@@ -124,7 +111,8 @@ impl Component for ApisSettings {
 
     fn view(&self) -> Html {
         type Anchor = RouterAnchor<AppRoute>;
-        let tenant_id = self.api_details.tenant_id.clone();
+        // let tenant_id = self.api_details.tenant_id.clone();
+        let tenant_id = String::from("tenant_id_not_from_reducer");
         html! {
             <div
                 class="py-5 px-4 m-auto"
@@ -167,19 +155,34 @@ impl Component for ApisSettings {
 impl ApisSettings {
     fn view_content (&self) -> Html {
         let ApiDetails {
+            // id: _,
+            // name,
+            // api_id: _,
+            // api_type,
+            // identifier,
+            // token_exp: _,
+            // token_exp_browser: _,
+            // sign_algorithm: _,
+            // rbac: _,
+            // permission_acc_token: _,
+            // allow_skip_user: _,
+            // allow_off_acc: _,
+            // tenant_id: _,
+
             id: _,
             name,
-            api_id: _,
-            api_type,
+            is_system,
             identifier,
-            token_exp: _,
-            token_exp_browser: _,
-            sign_algorithm: _,
-            rbac: _,
-            permission_acc_token: _,
-            allow_skip_user: _,
-            allow_off_acc: _,
-            tenant_id: _,
+            scopes: _,
+            signing_alg: _,
+            signing_secret: _,
+            allow_offline_access: _,
+            skip_consent_for_verifiable_first_party_clients: _,
+            token_lifetime: _,
+            token_lifetime_for_web: _,
+            enforce_policies: _,
+            token_dialect: _,
+            client: _,
         } = self.api_details.clone();
 
         html! {
@@ -204,7 +207,7 @@ impl ApisSettings {
                             <span
                                 class="me-4"
                             >
-                                {api_type}
+                                { if is_system {"System API"} else {"Custom API"} }
                             </span>
                             <span>
                                 {"Identifier"}
@@ -221,7 +224,7 @@ impl ApisSettings {
                                     font-family: 'Roboto Mono', monospace;
                                 "
                             >
-                                {identifier}
+                                { identifier }
                             </span>
                         </div>
                     </div>
