@@ -1,8 +1,17 @@
-use yew::prelude::*;
+use yew::{
+    format::{ Json, Nothing },
+    prelude::*,
+    services::{
+        fetch::{ FetchService, FetchTask, Request, Response },
+        ConsoleService,
+    },
+};
 use super::general::SettingsGeneral;
 use super::tenant_members::SettingsTenantMembers;
 use super::custom_domain::SettingsCustomDomain;
 use super::signing_keys::SettingsSigningKeys;
+use crate::types::settings::TenantSettings;
+use crate::configs::server::API_URL;
 
 pub enum Content {
     General,
@@ -12,13 +21,24 @@ pub enum Content {
     Advanced,
 }
 
+pub enum StateError {
+    GetSettings,
+    UpdateSettings,
+}
+
 pub struct SettingsHome {
     content: Content,
-    link: ComponentLink<Self>
+    link: ComponentLink<Self>,
+    setting_details: Option<TenantSettings>,
+    error_request_settings: Option<String>,
+    fetch_task: Option<FetchTask>,
 }
 
 pub enum Msg {
-    ChangeContent(Content)
+    ChangeContent(Content),
+    RequestSettingsDetails,
+    GetSettingsDetails(TenantSettings),
+    ResponseError(String, StateError),
 }
 
 impl Component for SettingsHome {
@@ -28,7 +48,10 @@ impl Component for SettingsHome {
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
         SettingsHome {
             content: Content::General,
-            link
+            link,
+            setting_details: None,
+            error_request_settings: None,
+            fetch_task: None,
         }
     }
 
@@ -36,6 +59,46 @@ impl Component for SettingsHome {
         match msg {
             Msg::ChangeContent(content) => {
                 self.content = content;
+                true
+            }
+            Msg::RequestSettingsDetails => {
+                let request = Request::get(format!("{}/tenant/v2/settings", API_URL))
+                    // .header("Content-Type", "application/json")
+                    .header("access_token", "tokenidtelkomdomain")
+                    .body(Nothing)
+                    .expect("Could not build request.");
+                let callback = 
+                    self.link.callback(|response: Response<Json<Result<TenantSettings, anyhow::Error>>>| {
+                        let Json(data) = response.into_body();
+                        match data {
+                            Ok(dataok) => {
+                                ConsoleService::info(&format!("{:?}", dataok));
+                                Msg::GetSettingsDetails(dataok)
+                            }
+                            Err(error) => {
+                                Msg::ResponseError(error.to_string(), StateError::GetSettings)
+                            }
+                        }
+                    });
+                let task = FetchService::fetch(request, callback).expect("failed to start request");
+                self.fetch_task = Some(task);
+                true
+            }
+            Msg::GetSettingsDetails(data) => {
+                self.setting_details = Some(data);
+                self.fetch_task = None;
+                true
+            }
+            Msg::ResponseError(message, state) => {
+                match state {
+                    StateError::GetSettings => {
+                        self.error_request_settings = Some(message);
+                    }
+                    StateError::UpdateSettings => {
+                        // 
+                    }
+                }
+                self.fetch_task = None;
                 true
             }
         }

@@ -28,4 +28,5 @@ pub struct ResponseMessage {
 
 
 pub mod api;
+pub mod settings;
 
