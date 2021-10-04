@@ -3,101 +3,136 @@ use serde::{
     Serialize,
 };
 
-#[derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone, Eq, PartialEq)]
 pub struct ChangePassword {
-    enabled: bool,
-    html: String,
+    pub enabled: bool,
+    pub html: String,
 }
-#[derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone, Eq, PartialEq)]
 pub struct GuardianMfaPage {
-    enabled: bool,
-    html: String,
+    pub enabled: bool,
+    pub html: String,
 }
-#[derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone, Eq, PartialEq)]
 pub struct ErrorPage {
-    html: String,
-    show_log_link: bool,
-    url: String,
+    pub html: String,
+    pub show_log_link: bool,
+    pub url: String,
 }
-#[derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone, Eq, PartialEq)]
 pub struct DeviceFlow {
-    charset: String,
-    mask: String,
+    pub charset: String,
+    pub mask: String,
 }
-#[derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone, Eq, PartialEq)]
 pub struct Flags {
-    change_pwd_flow_v1: bool,
-    enable_apis_section: bool,
-    disable_impersonation: bool,
-    enable_client_connections: bool,
-    enable_pipeline2: bool,
-    allow_legacy_delegation_grant_types: bool,
-    allow_legacy_ro_grant_types: bool,
-    allow_legacy_tokeninfo_endpoint: bool,
-    enable_legacy_profile: bool,
-    enable_idtoken_api2: bool,
-    enable_public_signup_user_exists_error: bool,
-    enable_sso: bool,
-    allow_changing_enable_sso: bool,
-    disable_clickjack_protection_headers: bool,
-    no_disclose_enterprise_connections: bool,
-    enforce_client_authentication_on_passwordless_start: bool,
-    enable_adfs_waad_email_verification: bool,
-    revoke_refresh_token_grant: bool,
-    dashboard_log_streams_next: bool,
-    dashboard_insights_view: bool,
+    pub change_pwd_flow_v1: bool,
+    pub enable_apis_section: bool,
+    pub disable_impersonation: bool,
+    pub enable_client_connections: bool,
+    pub enable_pipeline2: bool,
+    pub allow_legacy_delegation_grant_types: bool,
+    pub allow_legacy_ro_grant_types: bool,
+    pub allow_legacy_tokeninfo_endpoint: bool,
+    pub enable_legacy_profile: bool,
+    pub enable_idtoken_api2: bool,
+    pub enable_public_signup_user_exists_error: bool,
+    pub enable_sso: bool,
+    pub allow_changing_enable_sso: bool,
+    pub disable_clickjack_protection_headers: bool,
+    pub no_disclose_enterprise_connections: bool,
+    pub enforce_client_authentication_on_passwordless_start: bool,
+    pub enable_adfs_waad_email_verification: bool,
+    pub revoke_refresh_token_grant: bool,
+    pub dashboard_log_streams_next: bool,
+    pub dashboard_insights_view: bool,
 }
-#[derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone, Eq, PartialEq)]
 pub struct SessionCookie {
-    mode: String
+    pub mode: String
 }
-#[derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone, Eq, PartialEq)]
 pub struct TenantSettings {
-    change_password: ChangePassword,
-    guardian_mfa_page: GuardianMfaPage,
-    default_audience: String,
-    default_directory: String,
-    error_page: ErrorPage,
-    device_flow: DeviceFlow,
-    flags: Flags,
-    friendly_name: String,
-    picture_url: String,
-    support_email: String,
-    support_url: String,
-    allowed_logout_urls: Vec<String>,
-    session_lifetime: u64,
-    idle_session_lifetime: u64,
-    sandbox_version: String,
-    sandbox_versions_available: Vec<String>,
-    default_redirection_uri: String,
-    enabled_locales: Vec<String>,
-    session_cookie: SessionCookie,
+    pub change_password: ChangePassword,
+    pub guardian_mfa_page: GuardianMfaPage,
+    pub default_audience: String,
+    pub default_directory: String,
+    pub error_page: ErrorPage,
+    pub device_flow: DeviceFlow,
+    pub flags: Flags,
+    pub friendly_name: String,
+    pub picture_url: String,
+    pub support_email: String,
+    pub support_url: String,
+    pub allowed_logout_urls: Vec<String>,
+    pub session_lifetime: u64,
+    pub idle_session_lifetime: u64,
+    pub sandbox_version: String,
+    pub sandbox_versions_available: Vec<String>,
+    pub default_redirection_uri: String,
+    pub enabled_locales: Vec<String>,
+    pub session_cookie: SessionCookie,
 }
 
-// impl TenantSettings {
-//     fn new() -> TenantSettings {
-//         TenantSettings {
-//             change_password: ChangePassword {
 
-//             },
-//             guardian_mfa_page: GuardianMfaPage,
-//             default_audience: String,
-//             default_directory: String,
-//             error_page: ErrorPage,
-//             device_flow: DeviceFlow,
-//             flags: Flags,
-//             friendly_name: String,
-//             picture_url: String,
-//             support_email: String,
-//             support_url: String,
-//             allowed_logout_urls: Vec<String>,
-//             session_lifetime: u64,
-//             idle_session_lifetime: u64,
-//             sandbox_version: String,
-//             sandbox_versions_available: Vec<String>,
-//             default_redirection_uri: String,
-//             enabled_locales: Vec<String>,
-//             session_cookie: SessionCookie,
-//         }
-//     }
-// }
+impl TenantSettings {
+    pub fn new() -> TenantSettings {
+        TenantSettings {
+            change_password: ChangePassword {
+                enabled: false,
+                html: String::from(""),
+            },
+            guardian_mfa_page: GuardianMfaPage {
+                enabled: false,
+                html: String::from(""),
+            },
+            default_audience: String::from(""),
+            default_directory: String::from(""),
+            error_page: ErrorPage {
+                html: String::from(""),
+                show_log_link: false,
+                url: String::from(""),
+            },
+            device_flow: DeviceFlow {
+                charset: String::from(""),
+                mask: String::from(""),
+            },
+            flags: Flags {
+                change_pwd_flow_v1: false,
+                enable_apis_section: false,
+                disable_impersonation: false,
+                enable_client_connections: false,
+                enable_pipeline2: false,
+                allow_legacy_delegation_grant_types: false,
+                allow_legacy_ro_grant_types: false,
+                allow_legacy_tokeninfo_endpoint: false,
+                enable_legacy_profile: false,
+                enable_idtoken_api2: false,
+                enable_public_signup_user_exists_error: false,
+                enable_sso: false,
+                allow_changing_enable_sso: false,
+                disable_clickjack_protection_headers: false,
+                no_disclose_enterprise_connections: false,
+                enforce_client_authentication_on_passwordless_start: false,
+                enable_adfs_waad_email_verification: false,
+                revoke_refresh_token_grant: false,
+                dashboard_log_streams_next: false,
+                dashboard_insights_view: false,
+            },
+            friendly_name: String::from(""),
+            picture_url: String::from(""),
+            support_email: String::from(""),
+            support_url: String::from(""),
+            allowed_logout_urls: vec![String::from("")],
+            session_lifetime: 0,
+            idle_session_lifetime: 0,
+            sandbox_version: String::from(""),
+            sandbox_versions_available: vec![String::from(""),String::from("")],
+            default_redirection_uri: String::from(""),
+            enabled_locales: vec![String::from("")],
+            session_cookie: SessionCookie {
+                mode: String::from(""),
+            },
+        }
+    }
+}

@@ -1,19 +1,113 @@
-use yew::prelude::*;
+use yew::{
+    prelude::*,
+    format::{ Json, Nothing },
+    services::{
+        ConsoleService,
+        fetch::{FetchService, FetchTask, Request, Response},
+    }
+};
+use crate::types::settings::{
+    TenantSettings,
+};
 
-pub struct SettingsGeneral {}
 
-pub enum Msg {}
+#[derive(Clone, Debug, Eq, PartialEq, Properties)]
+pub struct SettingsTabGeneralProps {
+    pub tenant_settings: TenantSettings,
+}
+
+pub struct SettingsGeneral {
+    tenant_settings: TenantSettings,
+    link: ComponentLink<Self>,
+}
+
+pub enum StateError {
+    UpdateSettings,
+    UpdateEnvironmentTag,
+    UpdateAuthorization,
+    UpdateErrorPage,
+    UpdateLanguage,
+}
+
+pub enum Data {
+    FriendlyName,
+    PictureUrl,
+    SupportEmail,
+    SupportUrl,
+    // environment tag
+    DefaultAudience,
+    DefaultDirectory,
+    ErrorPage,
+    // Language
+
+}
+
+pub enum Msg {
+    InputString(String, Data),
+    InputBool(bool, Data),
+}
 
 impl Component for SettingsGeneral {
     type Message = Msg;
-    type Properties = ();
+    type Properties = SettingsTabGeneralProps;
 
-    fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
-        SettingsGeneral {}
+    fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
+        ConsoleService::info(&format!("Tenant settings = {:?}", props.tenant_settings));
+        SettingsGeneral {
+            tenant_settings: props.tenant_settings,
+            link,
+        }
     }
 
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        true
+    fn update(&mut self, msg: Self::Message) -> ShouldRender {
+        match msg {
+            Msg::InputString(value, data) => {
+                match data {
+                    Data::FriendlyName => {
+                        self.tenant_settings.friendly_name = value;
+                        true
+                    }
+                    Data::PictureUrl => {
+                        self.tenant_settings.picture_url = value;
+                        true
+                    }
+                    Data::SupportEmail => {
+                        self.tenant_settings.support_email = value;
+                        true
+                    }
+                    Data::SupportUrl => {
+                        self.tenant_settings.support_url = value;
+                        true
+                    }
+                    Data::DefaultAudience => {
+                        self.tenant_settings.default_audience = value;
+                        true
+                    }
+                    Data::DefaultDirectory => {
+                        self.tenant_settings.default_directory = value;
+                        true
+                    }
+                    Data::ErrorPage => {
+                        self.tenant_settings.error_page.url = value;
+                        true
+                    }
+                    _ => {
+                        false
+                    }
+                }
+            }
+            Msg::InputBool(value, data) => {
+                match data {
+                    Data::ErrorPage => {
+                        self.tenant_settings.error_page.show_log_link = value;
+                        true
+                    }
+                    _ => {
+                        false
+                    }
+                }
+            }
+        }
     }
 
     fn change(&mut self, _: Self::Properties) -> ShouldRender {
@@ -21,6 +115,27 @@ impl Component for SettingsGeneral {
     }
 
     fn view(&self) -> Html {
+        let TenantSettings {
+            change_password,
+            guardian_mfa_page,
+            default_audience,
+            default_directory,
+            error_page,
+            device_flow,
+            flags,
+            friendly_name,
+            picture_url,
+            support_email,
+            support_url,
+            allowed_logout_urls,
+            session_lifetime,
+            idle_session_lifetime,
+            sandbox_version,
+            sandbox_versions_available,
+            default_redirection_uri,
+            enabled_locales,
+            session_cookie,
+        } = self.tenant_settings.clone();
         html! {
             <div>
 
@@ -28,6 +143,79 @@ impl Component for SettingsGeneral {
                     class="container border rounded p-4 d-flex flex-column mb-5"
                     style="font-size: 14px;"
                 >
+
+                    <div
+                        class="text-color-primary fw-bold mb-4"
+                        style="font-size: 16px;"
+                    >
+                        {"Tenant Information"}
+                    </div>
+                    <div
+                        class="row border-bottom mb-3"
+                    >
+                        <div
+                            class="col-lg-6 text-muted mb-4"
+                            style="font-size: 14px;"
+                        >
+                            {"Tenant Name"}
+                        </div>
+                        <div
+                            class="col-lg-6 mb-3"
+                        >
+                            <span
+                                class="text-color-primary"
+                            >
+                                {"dev-ofzd5p1b"}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div
+                        class="row border-bottom mb-3"
+                    >
+                        <div
+                            class="col-lg-6 text-muted mb-4"
+                            style="font-size: 14px;"
+                        >
+                            {"Region"}
+                        </div>
+                        <div
+                            class="col-lg-6 mb-3"
+                        >
+                            <span
+                                class="text-color-primary"
+                            >
+                                {"AU"}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div
+                        class="row"
+                    >
+                        <div
+                            class="col-lg-6 text-muted mb-4"
+                            style="font-size: 14px;"
+                        >
+                            {"Environment"}
+                        </div>
+                        <div
+                            class="col-lg-6 mb-3"
+                        >
+                            <span
+                                class="text-color-primary"
+                            >
+                                {"Development"}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="container border rounded p-4 d-flex flex-column mb-5"
+                    style="font-size: 14px;"
+                >
+
                     <div
                         class="row border-bottom"
                     >
@@ -52,8 +240,42 @@ impl Component for SettingsGeneral {
                                         class="form-control bg-input-grey"
                                         aria-label="Dollar amount (with dot and two decimal places)"
                                         placeholder="My Company Inc."
+                                        value={friendly_name.clone()}
+                                        oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::FriendlyName))
                                     />   
                                 </div>
+                            </div>
+
+                            <div
+                                class="mb-4"
+                            >
+                                <p class="mb-2 fw-bold">
+                                    {"Logo URL"}
+                                </p>
+                                <div
+                                    class="d-flex justify-content-center align-items-center border rounded-top"
+                                    style="height: 120px;"
+                                >
+                                    <img
+                                        src="https://cdn.auth0.com/manhattan/versions/1.3431.0/assets/badge.png"
+                                        style="height: 60px;"
+                                    />
+                                </div>
+                                <div class="input-group mb-2">
+                                    <input
+                                        type="text"
+                                        class="form-control bg-input-grey"
+                                        aria-label="Dollar amount (with dot and two decimal places)"
+                                        placeholder="Your logo URL"
+                                        value={picture_url}
+                                        oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::PictureUrl))
+                                    />   
+                                </div>
+                                <p
+                                    class="mb-0"
+                                >
+                                    {"If a URL is not provided, the Auth0 logo will be used."}
+                                </p>
                             </div>
 
                             <div
@@ -68,6 +290,8 @@ impl Component for SettingsGeneral {
                                         class="form-control bg-input-grey"
                                         aria-label="Dollar amount (with dot and two decimal places)"
                                         placeholder="support@my_company.com"
+                                        value={support_email}
+                                        oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::SupportEmail))
                                     />   
                                 </div>
                             </div>
@@ -84,6 +308,8 @@ impl Component for SettingsGeneral {
                                         class="form-control bg-input-grey"
                                         aria-label="Dollar amount (with dot and two decimal places)"
                                         placeholder="https://my-company.com"
+                                        value={support_url}
+                                        oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::SupportUrl))
                                     />   
                                 </div>
                             </div>
@@ -270,7 +496,7 @@ impl Component for SettingsGeneral {
                         <div
                             class="col-lg-6 text-color-primary fw-bold mb-4"
                         >
-                            {"RBAC Settings"}
+                            {"API Authorization Settings"}
                         </div>
                         <div
                             class="col-lg-6"
@@ -287,6 +513,8 @@ impl Component for SettingsGeneral {
                                         class="form-control bg-input-grey"
                                         aria-label="Dollar amount (with dot and two decimal places)"
                                         placeholder="https://your-default-endpoint/"
+                                        value={default_audience}
+                                        oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::DefaultAudience))
                                     />   
                                 </div>
                                 <p>
@@ -305,6 +533,8 @@ impl Component for SettingsGeneral {
                                         class="form-control bg-input-grey"
                                         aria-label="Dollar amount (with dot and two decimal places)"
                                         placeholder="Connection Name"
+                                        value={default_directory}
+                                        oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::DefaultDirectory))
                                     />   
                                 </div>
                                 <p>
@@ -342,13 +572,23 @@ impl Component for SettingsGeneral {
                                 <p class="mb-2 fw-bold">
                                     {"Default Error Page"}
                                 </p>
-                                <div class="card card-hover mb-2" style="cursor: pointer;">
+                                <div
+                                    class="card card-hover mb-2"
+                                    style="cursor: pointer;"
+                                    onclick=self.link.callback(|_| Msg::InputBool(false, Data::ErrorPage))
+                                >
                                     <div class="card-body p-3">
 
                                         <div
                                             class="d-flex"
                                         >
-                                            <input class="form-check-input me-2" type="radio" name="flexRadioDefault" id="flexRadioDefault1"/>
+                                            <input
+                                                class="form-check-input me-2"
+                                                type="radio"
+                                                name="flexRadioDefault"
+                                                id="flexRadioDefault1"
+                                                checked={ if error_page.show_log_link { false } else { true } }
+                                            />
 
                                             <div
                                                 class="d-grid"
@@ -379,13 +619,23 @@ impl Component for SettingsGeneral {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card card-hover mb-2" style="cursor: pointer;">
+                                <div
+                                    class="card card-hover mb-4"
+                                    style="cursor: pointer;"
+                                    onclick=self.link.callback(|_| Msg::InputBool(true, Data::ErrorPage))
+                                >
                                     <div class="card-body p-3">
 
                                         <div
                                             class="d-flex"
                                         >
-                                            <input class="form-check-input me-2" type="radio" name="flexRadioDefault" id="flexRadioDefault2"/>
+                                            <input
+                                                class="form-check-input me-2"
+                                                type="radio"
+                                                name="flexRadioDefault"
+                                                id="flexRadioDefault2"
+                                                checked={ if error_page.show_log_link { true } else { false } }
+                                            />
 
                                             <div
                                                 class="d-grid"
@@ -417,6 +667,32 @@ impl Component for SettingsGeneral {
                                     </div>
                                 </div>
 
+                                {
+                                    if self.tenant_settings.error_page.show_log_link {
+                                        html!{
+                                            <div
+                                                class="mb-4"
+                                            >
+                                                <p class="mb-2 fw-bold">
+                                                    {"Custom error page URL *"}
+                                                </p>
+                                                <div class="input-group mb-2">
+                                                    <input
+                                                        type="text"
+                                                        class="form-control bg-input-grey"
+                                                        aria-label="Dollar amount (with dot and two decimal places)"
+                                                        placeholder="http://mycompany.com/error/"
+                                                        value={error_page.url}
+                                                        oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::ErrorPage))
+                                                    />   
+                                                </div>
+                                            </div>
+                                        }
+                                    } else {
+                                        html! {}
+                                    }
+                                }
+
                             </div>
 
 
@@ -426,7 +702,7 @@ impl Component for SettingsGeneral {
                     </div>
 
                     <div
-                        class="row border-bottom mt-5"
+                        class="row mt-5"
                     >
                         <div
                             class="col-lg-6 text-color-primary fw-bold mb-4"
@@ -445,9 +721,8 @@ impl Component for SettingsGeneral {
                                 </p>
                                 <select class="form-select" aria-label="Default select example">
                                     <option selected=true>{"Open this select menu"}</option>
-                                    <option value="1">{"One"}</option>
-                                    <option value="2">{"Two"}</option>
-                                    <option value="3">{"Three"}</option>
+                                    <option value="1">{"English (en)"}</option>
+                                    <option value="2">{"Indonesian (id)"}</option>
                                 </select>
                             </div>
 
@@ -466,7 +741,7 @@ impl Component for SettingsGeneral {
                                     >
                                         <input class="form-check-input me-2 mt-0" style="font-size: 16px;" type="checkbox"/>
                                         <label class="form-check-label" style="font-size: 14px;" for="flexCheckCheckedDisabled">
-                                            {"Bosnian (bs)"}
+                                            {"English (en)"}
                                         </label>
                                     </div>
 
@@ -476,7 +751,7 @@ impl Component for SettingsGeneral {
                                     >
                                         <input class="form-check-input me-2 mt-0" style="font-size: 16px;" type="checkbox"/>
                                         <label class="form-check-label" style="font-size: 14px;" for="flexCheckCheckedDisabled">
-                                            {"Bulgarian (bg)"}
+                                            {"Indonesian (id)"}
                                         </label>
                                     </div>
 
@@ -499,8 +774,8 @@ impl Component for SettingsGeneral {
                     </div>
             
                 </div>
-
             </div>
+
         }
     }
 }
