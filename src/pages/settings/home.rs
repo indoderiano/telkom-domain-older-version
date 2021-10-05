@@ -1,8 +1,22 @@
-use yew::prelude::*;
+use yew::{
+    format::{ Json, Nothing },
+    prelude::*,
+    services::{
+        fetch::{ FetchService, FetchTask, Request, Response },
+        ConsoleService,
+    },
+};
 use super::general::SettingsGeneral;
 use super::tenant_members::SettingsTenantMembers;
 use super::custom_domain::SettingsCustomDomain;
 use super::signing_keys::SettingsSigningKeys;
+use crate::types::settings::{
+    TenantSettings,
+};
+use crate::configs::server::API_URL;
+use crate::components::{
+    loading2::Loading2,
+};
 
 pub enum Content {
     General,
@@ -14,11 +28,11 @@ pub enum Content {
 
 pub struct SettingsHome {
     content: Content,
-    link: ComponentLink<Self>
+    link: ComponentLink<Self>,
 }
 
 pub enum Msg {
-    ChangeContent(Content)
+    ChangeContent(Content),
 }
 
 impl Component for SettingsHome {
@@ -28,9 +42,16 @@ impl Component for SettingsHome {
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
         SettingsHome {
             content: Content::General,
-            link
+            link,
         }
     }
+
+    // fn rendered(&mut self, first_render: bool) {
+    //     if first_render {
+    //         ConsoleService::info("first render in settings");
+    //         self.link.send_message(Msg::RequestSettingsDetails);
+    //     }
+    // }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
@@ -144,15 +165,63 @@ impl Component for SettingsHome {
 
                 {
                     match self.content {
-                        Content::General => html! { <SettingsGeneral/> },
+                        // Content::General => {
+                        //     if let Some(data) = &self.tenant_settings {
+                        //         html! { <SettingsGeneral tenant_settings=data.clone() /> }
+                        //     } else {
+                        //         html! {}
+                        //     }
+                        // },
+                        Content::General => html! { <SettingsGeneral /> },
                         Content::TenantMembers => html! { <SettingsTenantMembers/> },
                         Content::CustomDomains => html! { <SettingsCustomDomain/> },
                         Content::SigningKeys => html! { <SettingsSigningKeys/> },
                         Content::Advanced => html! {},
-                        // _ => html! {}
                     }
+                    // if self.loading_request_settings {
+                    //     html! {
+                    //         <div
+                    //             style="
+                    //                 position: relative;
+                    //                 margin-top: 8rem;
+                    //             "
+                    //         >
+                    //             <Loading2 width=45 />
+                    //         </div>
+                    //     }
+                    // } else if self.error_request_settings.is_some() {
+                    //     html! {
+                    //         <div class="alert alert-warning mb-5" role="alert">
+                    //             <i class="bi bi-exclamation-triangle me-2"></i>
+                    //             { self.error_request_settings.clone().unwrap() }
+                    //         </div>
+                    //     }
+                    // } else {
+                    //     html! {
+                    //         { self.view_content() }
+                    //     }
+                    // }
                 }
             </div>
         }
     }
 }
+
+
+// impl SettingsHome {
+//     fn view_content (&self) -> Html {
+//         match self.content {
+//             Content::General => {
+//                 if let Some(data) = &self.tenant_settings {
+//                     html! { <SettingsGeneral tenant_settings=data.clone() /> }
+//                 } else {
+//                     html! {}
+//                 }
+//             },
+//             Content::TenantMembers => html! { <SettingsTenantMembers/> },
+//             Content::CustomDomains => html! { <SettingsCustomDomain/> },
+//             Content::SigningKeys => html! { <SettingsSigningKeys/> },
+//             Content::Advanced => html! {},
+//         }
+//     }
+// }

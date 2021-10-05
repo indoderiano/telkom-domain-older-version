@@ -135,17 +135,17 @@ impl Component for TabSettings {
                     .body(Json(&self.api_details))
                     .expect("Could not build request.");
                 let callback = self.link.callback(|response: Response<Json<Result<ResponseApiDetails, anyhow::Error>>>| {
-                let Json(data) = response.into_body();
-                match data {
-                    Ok(dataok) => {
-                        ConsoleService::info(&format!("{:?}", dataok));
-                        Msg::GetApiDetails(dataok.data)
+                    let Json(data) = response.into_body();
+                    match data {
+                        Ok(dataok) => {
+                            ConsoleService::info(&format!("{:?}", dataok));
+                            Msg::GetApiDetails(dataok.data)
+                        }
+                        Err(error) => {
+                            ConsoleService::info(&error.to_string());
+                            Msg::ResponseError(error.to_string(), StateError::Update)
+                        }
                     }
-                    Err(error) => {
-                        ConsoleService::info(&error.to_string());
-                        Msg::ResponseError(error.to_string(), StateError::Update)
-                    }
-                }
                 });
                 let task = FetchService::fetch(request, callback).expect("failed to start request");
                 self.loading_update_api = true;
@@ -546,16 +546,16 @@ impl Component for TabSettings {
                             </button>
 
                             {
-                              if self.error_update_api.is_some() {
+                                if self.error_update_api.is_some() {
                                 html! {
-                                  <div class="alert alert-warning mt-3" role="alert">
-                                      <i class="bi bi-exclamation-triangle me-2"></i>
-                                      { self.error_update_api.clone().unwrap() }
-                                  </div>
+                                    <div class="alert alert-warning mt-3" role="alert">
+                                        <i class="bi bi-exclamation-triangle me-2"></i>
+                                        { self.error_update_api.clone().unwrap() }
+                                    </div>
                                 }
-                              } else {
-                                  html! {}
-                              }
+                                } else {
+                                    html! {}
+                                }
                             }
 
                           </div>
