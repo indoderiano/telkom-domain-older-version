@@ -546,16 +546,16 @@ impl Component for TabSettings {
                             </button>
 
                             {
-                              if self.error_update_api.is_some() {
+                                if self.error_update_api.is_some() {
                                 html! {
-                                  <div class="alert alert-warning mt-3" role="alert">
-                                      <i class="bi bi-exclamation-triangle me-2"></i>
-                                      { self.error_update_api.clone().unwrap() }
-                                  </div>
+                                    <div class="alert alert-warning mt-3" role="alert">
+                                        <i class="bi bi-exclamation-triangle me-2"></i>
+                                        { self.error_update_api.clone().unwrap() }
+                                    </div>
                                 }
-                              } else {
-                                  html! {}
-                              }
+                                } else {
+                                    html! {}
+                                }
                             }
 
                           </div>

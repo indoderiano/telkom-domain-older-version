@@ -9,19 +9,19 @@ use yew::{
 use crate::types::settings::{
     TenantSettings,
 };
+use crate::configs::server::API_URL;
+use crate::components::{
+    loading2::Loading2,
+};
 
 
-#[derive(Clone, Debug, Eq, PartialEq, Properties)]
-pub struct SettingsTabGeneralProps {
-    pub tenant_settings: TenantSettings,
-}
-
-pub struct SettingsGeneral {
-    tenant_settings: TenantSettings,
-    link: ComponentLink<Self>,
-}
+// #[derive(Clone, Debug, Eq, PartialEq, Properties)]
+// pub struct SettingsTabGeneralProps {
+//     pub tenant_settings: TenantSettings,
+// }
 
 pub enum StateError {
+    GetSettings,
     UpdateSettings,
     UpdateEnvironmentTag,
     UpdateAuthorization,
@@ -42,25 +42,102 @@ pub enum Data {
 
 }
 
+pub struct SettingsGeneral {
+    tenant_settings: TenantSettings,
+    loading_request_settings: bool,
+    error_request_settings: Option<String>,
+    link: ComponentLink<Self>,
+    fetch_task: Option<FetchTask>,
+    loading_update_settings: bool,
+    loading_update_environment_tag: bool,
+    loading_update_authorization: bool,
+    loading_update_error_page: bool,
+    loading_update_language: bool,
+    error_update_settings: Option<String>,
+    error_update_environment_tag: Option<String>,
+    error_update_authorization: Option<String>,
+    error_update_error_page: Option<String>,
+    error_update_language: Option<String>,
+}
+
 pub enum Msg {
+    RequestSettingsDetails,
+    GetSettingsDetails(TenantSettings),
+
     InputString(String, Data),
     InputBool(bool, Data),
+    UpdateSettings,
+    UpdateEnvironmentTag,
+    UpdateAuthorization,
+    UpdateErrorPage,
+    UpdateLanguage,
+    GetTenantSettings(TenantSettings),
+    ResponseError(String, StateError),
 }
 
 impl Component for SettingsGeneral {
     type Message = Msg;
-    type Properties = SettingsTabGeneralProps;
+    type Properties = ();
 
-    fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        ConsoleService::info(&format!("Tenant settings = {:?}", props.tenant_settings));
+    fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
         SettingsGeneral {
-            tenant_settings: props.tenant_settings,
+            tenant_settings: TenantSettings::new(),
+            loading_request_settings: false,
+            error_request_settings: None,
             link,
+            fetch_task: None,
+            loading_update_settings: false,
+            loading_update_environment_tag: false,
+            loading_update_authorization: false,
+            loading_update_error_page: false,
+            loading_update_language: false,
+            error_update_settings: None,
+            error_update_environment_tag: None,
+            error_update_authorization: None,
+            error_update_error_page: None,
+            error_update_language: None, 
+        }
+    }
+
+    fn rendered(&mut self, first_render: bool) {
+        if first_render {
+            self.link.send_message(Msg::RequestSettingsDetails);
         }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
+            Msg::RequestSettingsDetails => {
+                let request = Request::get(format!("{}/tenant/v2/settings", API_URL))
+                    // .header("Content-Type", "application/json")
+                    .header("access_token", "tokenidtelkomdomain")
+                    .body(Nothing)
+                    .expect("Could not build request.");
+                let callback = 
+                    self.link.callback(|response: Response<Json<Result<TenantSettings, anyhow::Error>>>| {
+                        let Json(data) = response.into_body();
+                        match data {
+                            Ok(dataok) => {
+                                ConsoleService::info(&format!("{:?}", dataok));
+                                Msg::GetSettingsDetails(dataok)
+                            }
+                            Err(error) => {
+                                Msg::ResponseError(error.to_string(), StateError::GetSettings)
+                            }
+                        }
+                    });
+                let task = FetchService::fetch(request, callback).expect("failed to start request");
+                self.fetch_task = Some(task);
+                self.error_request_settings = None;
+                self.loading_request_settings = true;
+                true
+            }
+            Msg::GetSettingsDetails(data) => {
+                self.tenant_settings = data;
+                self.loading_request_settings = false;
+                self.fetch_task = None;
+                true
+            }
             Msg::InputString(value, data) => {
                 match data {
                     Data::FriendlyName => {
@@ -107,6 +184,78 @@ impl Component for SettingsGeneral {
                     }
                 }
             }
+            Msg::UpdateSettings => {
+                ConsoleService::info(&format!("{:?}", self.tenant_settings));
+                let request = Request::patch(format!("{}/tenant/v2/settings", API_URL))
+                    .header("Content-Type", "application/json")
+                    .header("access_token", "tokennotfromreducer")
+                    .body(Json(&self.tenant_settings))
+                    .expect("Could not build request.");
+                let callback = self.link.callback(|response: Response<Json<Result<TenantSettings, anyhow::Error>>>| {
+                    let Json(data) = response.into_body();
+                    match data {
+                        Ok(dataok) => {
+                            ConsoleService::info(&format!("{:?}", dataok));
+                            Msg::GetTenantSettings(dataok)
+                        }
+                        Err(error) => {
+                            ConsoleService::info(&error.to_string());
+                            Msg::ResponseError(error.to_string(), StateError::UpdateSettings)
+                        }
+                    }
+                });
+                let task = FetchService::fetch(request, callback).expect("failed to start request");
+                self.loading_update_settings = true;
+                self.fetch_task = Some(task);
+                true
+            }
+            Msg::GetTenantSettings(data) => {
+                self.fetch_task = None;
+                self.loading_update_settings = false;
+                self.error_update_settings = None;
+                self.tenant_settings = data;
+                true
+            }
+
+
+            Msg::ResponseError(message, state) => {
+                match state {
+                    StateError::GetSettings => {
+                        self.fetch_task = None;
+                        self.loading_request_settings = false;
+                        self.error_request_settings = Some(message);
+                    }
+                    StateError::UpdateSettings => {
+                        self.fetch_task = None;
+                        self.loading_update_settings = false;
+                        self.error_update_settings = Some(message);
+                    }
+                    StateError::UpdateEnvironmentTag => {
+                        self.fetch_task = None;
+                        self.loading_update_environment_tag = false;
+                        self.error_update_environment_tag = Some(message);
+                    }
+                    StateError::UpdateAuthorization => {
+                        self.fetch_task = None;
+                        self.loading_update_authorization = false;
+                        self.error_update_authorization = Some(message);
+                    }
+                    StateError::UpdateErrorPage => {
+                        self.fetch_task = None;
+                        self.loading_update_error_page = false;
+                        self.error_update_error_page = Some(message);
+                    }
+                    StateError::UpdateLanguage => {
+                        self.fetch_task = None;
+                        self.loading_update_language = false;
+                        self.error_update_language = Some(message);
+                    }
+                }
+                true
+            }
+            _ => {
+                false
+            }
         }
     }
 
@@ -115,6 +264,35 @@ impl Component for SettingsGeneral {
     }
 
     fn view(&self) -> Html {
+        if self.loading_request_settings {
+            html! {
+                <div
+                    style="
+                        position: relative;
+                        margin-top: 8rem;
+                    "
+                >
+                    <Loading2 width=45 />
+                </div>
+            }
+        } else if self.error_request_settings.is_some() {
+            html! {
+                <div class="alert alert-warning mb-5" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    { self.error_request_settings.clone().unwrap() }
+                </div>
+            }
+        } else {
+            html! {
+                { self.view_content() }
+            }
+        }
+    }
+}
+
+
+impl SettingsGeneral {
+    fn view_content (&self) -> Html {
         let TenantSettings {
             change_password,
             guardian_mfa_page,
@@ -242,6 +420,7 @@ impl Component for SettingsGeneral {
                                         placeholder="My Company Inc."
                                         value={friendly_name.clone()}
                                         oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::FriendlyName))
+                                        disabled={ if self.loading_update_settings {true} else {false} }
                                     />   
                                 </div>
                             </div>
@@ -269,6 +448,7 @@ impl Component for SettingsGeneral {
                                         placeholder="Your logo URL"
                                         value={picture_url}
                                         oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::PictureUrl))
+                                        disabled={ if self.loading_update_settings {true} else {false} }
                                     />   
                                 </div>
                                 <p
@@ -292,7 +472,8 @@ impl Component for SettingsGeneral {
                                         placeholder="support@my_company.com"
                                         value={support_email}
                                         oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::SupportEmail))
-                                    />   
+                                        disabled={ if self.loading_update_settings {true} else {false} }
+                                    />
                                 </div>
                             </div>
 
@@ -307,15 +488,44 @@ impl Component for SettingsGeneral {
                                         type="text"
                                         class="form-control bg-input-grey"
                                         aria-label="Dollar amount (with dot and two decimal places)"
-                                        placeholder="https://my-company.com"
+                                        placeholder="https://my-company.org/support"
                                         value={support_url}
                                         oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::SupportUrl))
-                                    />   
+                                        disabled={ if self.loading_update_settings {true} else {false} }
+                                    />
                                 </div>
                             </div>
 
-                            <button type="button" class="btn btn-primary mb-5 mt-3">{"Save"}</button>
-            
+                            <div
+                                class="mt-3 mb-5"
+                            >
+                                <button
+                                    type="button"
+                                    class=format!("btn {} btn-primary position-relative", if self.loading_update_settings {"loading"} else {""} )
+                                    onclick=self.link.callback(|_| Msg::UpdateSettings)
+                                >
+                                    <div class="telkom-label">
+                                        {"Save"}
+                                    </div>
+                                    <div class="telkom-spinner telkom-center">
+                                        <div class="spinner-border spinner-border-sm" role="status"/>
+                                    </div>
+                                </button>
+
+                                {
+                                    if self.error_update_settings.is_some() {
+                                    html! {
+                                        <div class="alert alert-warning mt-3" role="alert">
+                                            <i class="bi bi-exclamation-triangle me-2"></i>
+                                            { self.error_update_settings.clone().unwrap() }
+                                        </div>
+                                    }
+                                    } else {
+                                        html! {}
+                                    }
+                                }
+                            </div>
+
                         </div>
                     </div>
             
@@ -482,9 +692,36 @@ impl Component for SettingsGeneral {
                                 </div>
 
                             </div>
+                            
+                            <div
+                                class="mt-3 mb-5"
+                            >
+                                <button
+                                    type="button"
+                                    class=format!("btn {} btn-primary position-relative", if self.loading_update_environment_tag {"loading"} else {""} )
+                                    onclick=self.link.callback(|_| Msg::UpdateEnvironmentTag)
+                                >
+                                    <div class="telkom-label">
+                                        {"Save"}
+                                    </div>
+                                    <div class="telkom-spinner telkom-center">
+                                        <div class="spinner-border spinner-border-sm" role="status"/>
+                                    </div>
+                                </button>
 
-
-                            <button type="button" class="btn btn-primary mb-5 mt-3">{"Save"}</button>
+                                {
+                                    if self.error_update_environment_tag.is_some() {
+                                    html! {
+                                        <div class="alert alert-warning mt-3" role="alert">
+                                            <i class="bi bi-exclamation-triangle me-2"></i>
+                                            { self.error_update_environment_tag.clone().unwrap() }
+                                        </div>
+                                    }
+                                    } else {
+                                        html! {}
+                                    }
+                                }
+                            </div>
             
                         </div>
                     </div>
@@ -542,9 +779,35 @@ impl Component for SettingsGeneral {
                                 </p>
                             </div>
 
+                            <div
+                                class="mt-3 mb-5"
+                            >
+                                <button
+                                    type="button"
+                                    class=format!("btn {} btn-primary position-relative", if self.loading_update_authorization {"loading"} else {""} )
+                                    onclick=self.link.callback(|_| Msg::UpdateAuthorization)
+                                >
+                                    <div class="telkom-label">
+                                        {"Save"}
+                                    </div>
+                                    <div class="telkom-spinner telkom-center">
+                                        <div class="spinner-border spinner-border-sm" role="status"/>
+                                    </div>
+                                </button>
 
-                            <button type="button" class="btn btn-primary mb-5 mt-3">{"Save"}</button>
-            
+                                {
+                                    if self.error_update_authorization.is_some() {
+                                    html! {
+                                        <div class="alert alert-warning mt-3" role="alert">
+                                            <i class="bi bi-exclamation-triangle me-2"></i>
+                                            { self.error_update_authorization.clone().unwrap() }
+                                        </div>
+                                    }
+                                    } else {
+                                        html! {}
+                                    }
+                                }
+                            </div>
             
                         </div>
                     </div>
@@ -694,9 +957,36 @@ impl Component for SettingsGeneral {
                                 }
 
                             </div>
+                            
+                            <div
+                                class="mt-3 mb-5"
+                            >
+                                <button
+                                    type="button"
+                                    class=format!("btn {} btn-primary position-relative", if self.loading_update_error_page {"loading"} else {""} )
+                                    onclick=self.link.callback(|_| Msg::UpdateErrorPage)
+                                >
+                                    <div class="telkom-label">
+                                        {"Save"}
+                                    </div>
+                                    <div class="telkom-spinner telkom-center">
+                                        <div class="spinner-border spinner-border-sm" role="status"/>
+                                    </div>
+                                </button>
 
-
-                            <button type="button" class="btn btn-primary mb-5 mt-3">{"Save"}</button>
+                                {
+                                    if self.error_update_error_page.is_some() {
+                                    html! {
+                                        <div class="alert alert-warning mt-3" role="alert">
+                                            <i class="bi bi-exclamation-triangle me-2"></i>
+                                            { self.error_update_error_page.clone().unwrap() }
+                                        </div>
+                                    }
+                                    } else {
+                                        html! {}
+                                    }
+                                }
+                            </div>
             
                         </div>
                     </div>
@@ -768,14 +1058,41 @@ impl Component for SettingsGeneral {
                                 </div>
                             </div>
 
-                            <button type="button" class="btn btn-primary mb-5 mt-3">{"Save"}</button>
-            
+                            <div
+                                class="mt-3 mb-5"
+                            >
+                                <button
+                                    type="button"
+                                    class=format!("btn {} btn-primary position-relative", if self.loading_update_language {"loading"} else {""} )
+                                    onclick=self.link.callback(|_| Msg::UpdateLanguage)
+                                >
+                                    <div class="telkom-label">
+                                        {"Save"}
+                                    </div>
+                                    <div class="telkom-spinner telkom-center">
+                                        <div class="spinner-border spinner-border-sm" role="status"/>
+                                    </div>
+                                </button>
+
+                                {
+                                    if self.error_update_language.is_some() {
+                                    html! {
+                                        <div class="alert alert-warning mt-3" role="alert">
+                                            <i class="bi bi-exclamation-triangle me-2"></i>
+                                            { self.error_update_language.clone().unwrap() }
+                                        </div>
+                                    }
+                                    } else {
+                                        html! {}
+                                    }
+                                }
+                            </div>
+
                         </div>
                     </div>
             
                 </div>
             </div>
-
         }
     }
 }
