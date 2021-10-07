@@ -6,6 +6,8 @@ const RouterSettings = express.Router()
 
 RouterSettings.get('/v2/settings', Authentication, ControllerSettings.get)
 RouterSettings.patch('/v2/settings', Authentication, ControllerSettings.update)
+RouterSettings.get('/v2/settings/members', Authentication, ControllerSettings.getMembers)
+RouterSettings.post('/v2/settings/members', Authentication, ControllerSettings.createMember)
 
 module.exports={
     RouterSettings,

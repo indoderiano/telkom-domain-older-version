@@ -6,8 +6,13 @@ use yew::{
         fetch::{FetchService, FetchTask, Request, Response},
     }
 };
+use serde::{
+    Deserialize,
+    Serialize,
+};
 use crate::types::settings::{
     TenantSettings,
+    ErrorPage,
 };
 use crate::configs::server::API_URL;
 use crate::components::{
@@ -41,6 +46,29 @@ pub enum Data {
     // Language
 
 }
+
+#[derive(Serialize, Debug, Clone)]
+struct DataSettings {
+    friendly_name: String,
+    picture_url: String,
+    support_email: String,
+    support_url: String,
+}
+// Data environment
+#[derive(Serialize, Debug, Clone)]
+struct DataAuthorization {
+    default_audience: String,
+    default_directory: String,
+}
+#[derive(Serialize, Debug, Clone)]
+struct DataErrorPage {
+    error_page: ErrorPage
+}
+// #[derive(Serialize, Debug, Clone)]
+// struct DataLanguage {
+//     default_language: String,
+//     supported_language: String,
+// }
 
 pub struct SettingsGeneral {
     tenant_settings: TenantSettings,
@@ -185,11 +213,17 @@ impl Component for SettingsGeneral {
                 }
             }
             Msg::UpdateSettings => {
-                ConsoleService::info(&format!("{:?}", self.tenant_settings));
+                let data_settings = DataSettings {
+                    friendly_name: self.tenant_settings.friendly_name.clone(),
+                    picture_url: self.tenant_settings.picture_url.clone(),
+                    support_email: self.tenant_settings.support_email.clone(),
+                    support_url: self.tenant_settings.support_url.clone(),
+                };
+                ConsoleService::info(&format!("data settings = {:?}", data_settings));
                 let request = Request::patch(format!("{}/tenant/v2/settings", API_URL))
                     .header("Content-Type", "application/json")
                     .header("access_token", "tokennotfromreducer")
-                    .body(Json(&self.tenant_settings))
+                    .body(Json(&data_settings))
                     .expect("Could not build request.");
                 let callback = self.link.callback(|response: Response<Json<Result<TenantSettings, anyhow::Error>>>| {
                     let Json(data) = response.into_body();
@@ -209,15 +243,72 @@ impl Component for SettingsGeneral {
                 self.fetch_task = Some(task);
                 true
             }
+            Msg::UpdateAuthorization => {
+                let data_authorization = DataAuthorization {
+                    default_audience: self.tenant_settings.default_audience.clone(),
+                    default_directory: self.tenant_settings.default_directory.clone(),
+                };
+                ConsoleService::info(&format!("data authorization = {:?}", data_authorization));
+                let request = Request::patch(format!("{}/tenant/v2/settings", API_URL))
+                    .header("Content-Type", "application/json")
+                    .header("access_token", "tokennotfromreducer")
+                    .body(Json(&data_authorization))
+                    .expect("Could not build request.");
+                let callback = self.link.callback(|response: Response<Json<Result<TenantSettings, anyhow::Error>>>| {
+                    let Json(data) = response.into_body();
+                    match data {
+                        Ok(dataok) => {
+                            ConsoleService::info(&format!("{:?}", dataok));
+                            Msg::GetTenantSettings(dataok)
+                        }
+                        Err(error) => {
+                            ConsoleService::info(&error.to_string());
+                            Msg::ResponseError(error.to_string(), StateError::UpdateAuthorization)
+                        }
+                    }
+                });
+                let task = FetchService::fetch(request, callback).expect("failed to start request");
+                self.loading_update_authorization = true;
+                self.fetch_task = Some(task);
+                true
+            }
+            Msg::UpdateErrorPage => {
+                let data_error_page = DataErrorPage {
+                    error_page: self.tenant_settings.error_page.clone()
+                };
+                ConsoleService::info(&format!("data error page = {:?}", data_error_page));
+                let request = Request::patch(format!("{}/tenant/v2/settings", API_URL))
+                    .header("Content-Type", "application/json")
+                    .header("access_token", "tokennotfromreducer")
+                    .body(Json(&data_error_page))
+                    .expect("Could not build request.");
+                let callback = self.link.callback(|response: Response<Json<Result<TenantSettings, anyhow::Error>>>| {
+                    let Json(data) = response.into_body();
+                    match data {
+                        Ok(dataok) => {
+                            ConsoleService::info(&format!("{:?}", dataok));
+                            Msg::GetTenantSettings(dataok)
+                        }
+                        Err(error) => {
+                            ConsoleService::info(&error.to_string());
+                            Msg::ResponseError(error.to_string(), StateError::UpdateAuthorization)
+                        }
+                    }
+                });
+                let task = FetchService::fetch(request, callback).expect("failed to start request");
+                self.loading_update_error_page = true;
+                self.fetch_task = Some(task);
+                true
+            }
             Msg::GetTenantSettings(data) => {
                 self.fetch_task = None;
                 self.loading_update_settings = false;
+                self.loading_update_authorization = false;
+                self.loading_update_error_page = false;
                 self.error_update_settings = None;
                 self.tenant_settings = data;
                 true
             }
-
-
             Msg::ResponseError(message, state) => {
                 match state {
                     StateError::GetSettings => {

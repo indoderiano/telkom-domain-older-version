@@ -1,19 +1,176 @@
-use yew::prelude::*;
+use yew::{
+    prelude::*,
+    format::{ Json, Nothing },
+    services::{
+        ConsoleService,
+        fetch::{FetchService, FetchTask, Request, Response},
+    }
+};
+use crate::types::{
+    ResponseMessage,
+    settings::{
+        TenantMember,
+    },
+};
+use crate::components::{
+    loading2::Loading2,
+};
+use crate::configs::server::API_URL;
 
-pub struct SettingsTenantMembers {}
 
-pub enum Msg {}
+pub struct MemberCreate {
+    email: String,
+    role: String,
+}
+
+#[derive(Serialize, Debug, Clone)]
+pub enum DataMemberCreate {
+    Email,
+    Role,
+}
+
+pub enum StateError {
+    RequestMembers,
+    CreateMember,
+}
+
+pub struct SettingsTenantMembers {
+    members_list: Option<Vec<TenantMember>>,
+    link: ComponentLink<Self>,
+    fetch_task: Option<FetchTask>,
+    loading_request_members: bool,
+    error_request_members: Option<String>,
+    member_create: MemberCreate,
+    loading_create_member: bool,
+    error_create_member: Option<String>,
+}
+
+pub enum Msg {
+    RequestMembers,
+    GetMembers(Vec<TenantMember>),
+    InputString(String, DataMemberCreate),
+    CreateMember,
+    ResponseError(String, StateError)
+}
 
 impl Component for SettingsTenantMembers {
     type Message = Msg;
     type Properties = ();
 
-    fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
-        SettingsTenantMembers {}
+    fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
+        SettingsTenantMembers {
+            members_list: None,
+            link,
+            fetch_task: None,
+            loading_request_members: false,
+            error_request_members: None,
+            member_create: MemberCreate {
+                email: String::from(""),
+                role: String::from(""),
+            },
+            loading_create_member: false,
+            error_create_member: None,
+        }
     }
 
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        true
+    fn rendered(&mut self, first_render: bool) {
+        if first_render {
+            self.link.send_message(Msg::RequestMembers);
+        }
+    }
+
+    fn update(&mut self, msg: Self::Message) -> ShouldRender {
+        match msg {
+            Msg::RequestMembers => {
+                // Default State
+                self.fetch_task = None;
+                self.loading_create_member = false;
+
+                let request = Request::get(format!("{}/tenant/v2/settings/members", API_URL))
+                    .header("access_token", "tokenidtelkomdomain")
+                    .body(Nothing)
+                    .expect("Could not build request.");
+                let callback = 
+                    self.link.callback(|response: Response<Json<Result<Vec<TenantMember>, anyhow::Error>>>| {
+                        let Json(data) = response.into_body();
+                        match data {
+                            Ok(dataok) => {
+                                ConsoleService::info(&format!("{:?}", dataok));
+                                Msg::GetMembers(dataok)
+                            }
+                            Err(error) => {
+                                Msg::ResponseError(error.to_string(), StateError::RequestMembers)
+                            }
+                        }
+                    });
+                let task = FetchService::fetch(request, callback).expect("failed to start request");
+                self.fetch_task = Some(task);
+                self.error_request_members = None;
+                self.loading_request_members = true;
+                true
+            }
+            Msg::GetMembers(members) => {
+                self.members_list = Some(members);
+                self.fetch_task = None;
+                self.loading_request_members = false;
+                true
+            }
+            Msg::InputString(value, data) => {
+                match data {
+                    DataMemberCreate::Email => {
+                        self.member_create.email = value;
+                    }
+                    DataMemberCreate::Role => {
+                        if self.member_create.role == String::from("Admin") {
+                            self.member_create.role = String::from("");
+                        } else {
+                            self.member_create.role = String::from("Admin");
+                        }
+                    }
+                }
+                true
+            }
+            Msg::CreateMember => {
+                let request = Request::post(format!("{}/tenant/v2/settings/members", API_URL))
+                    .header("Content-Type", "application/json")    
+                    .header("access_token", "tokenidtelkomdomain")
+                    .body(Json(&self.member_create))
+                    .expect("Could not build request.");
+                let callback = 
+                    self.link.callback(|response: Response<Json<Result<ResponseMessage, anyhow::Error>>>| {
+                        let Json(data) = response.into_body();
+                        match data {
+                            Ok(dataok) => {
+                                ConsoleService::info(&format!("{:?}", dataok));
+                                Msg::RequestMembers
+                            }
+                            Err(error) => {
+                                Msg::ResponseError(error.to_string(), StateError::CreateMember)
+                            }
+                        }
+                    });
+                let task = FetchService::fetch(request, callback).expect("failed to start request");
+                self.fetch_task = Some(task);
+                self.error_create_member = None;
+                self.loading_create_member = true;
+                true
+            }
+            Msg::ResponseError(message, state) => {
+                match state {
+                    StateError::RequestMembers => {
+                        self.fetch_task = None;
+                        self.loading_request_members = false;
+                        self.error_request_members = Some(message);
+                    }
+                    StateError::CreateMember => {
+                        self.fetch_task = None;
+                        self.loading_create_member = false;
+                        self.error_create_member = Some(message);
+                    }
+                }
+                true
+            }
+        }
     }
 
     fn change(&mut self, _: Self::Properties) -> ShouldRender {
@@ -21,6 +178,28 @@ impl Component for SettingsTenantMembers {
     }
 
     fn view(&self) -> Html {
+        if self.loading_request_members {
+            html! {
+                <div
+                    style="
+                        position: relative;
+                        margin-top: 8rem;
+                    "
+                >
+                    <Loading2 width=45 />
+                </div>
+            }
+        } else {
+            html! {
+                { self.view_content() }
+            }
+        }
+    }
+}
+
+
+impl SettingsTenantMembers {
+    fn view_content (&self) -> Html {
         html! {
             <div>
                 <div
@@ -57,57 +236,31 @@ impl Component for SettingsTenantMembers {
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>
-                            <div
-                                class="p-2 d-flex"
-                            >
-                                <div
-                                    style="flex: 0 0 auto; width: 40px; height: 40px; background-color: rgb(100,100,100);"
-                                    class="d-flex justify-content-center align-items-center rounded-circle me-3"
-                                >
-                                    <i class="bi bi-info-lg text-light"></i>
-                                </div>
-
-                                <div
-                                    class="d-grid"
-                                    style="min-width: 40px;"
-                                >
-                                    <span
-                                        class="fw-bold"
-                                        style="
-                                            white-space: nowrap;
-                                            text-overflow: ellipsis;
-                                            overflow: hidden;
-                                            font-size: 14px;
-                                            text-decoration: none;
-                                        "
+                        { 
+                            
+                            if self.error_request_members.is_some() {
+                                html! {
+                                    <div class="alert alert-warning mb-5" role="alert">
+                                        <i class="bi bi-exclamation-triangle me-2"></i>
+                                        { self.error_request_members.clone().unwrap() }
+                                    </div>
+                                }
+                            } else if let Some(members) = self.members_list.clone() {
+                                html! {
+                                    <>
+                                        { self.view_members(members) }
+                                    </>
+                                }
+                            } else {
+                                html! {
+                                    <div
+                                        class="text-align-center"
                                     >
-                                        {"ronaldo"}
-                                    </span>
-                                    <p
-                                        class="mb-0 text-muted"
-                                        style="
-                                            white-space: nowrap;
-                                            text-overflow: ellipsis;
-                                            overflow: hidden;
-                                            font-size: 14px;
-                                        "
-                                    >
-                                        {"ronaldo@gmail.com (google-oauth2)"}
-                                    </p>
-                                </div>
-
-                            </div>
-                        </td>
-                        <td>{"Admin"}</td>
-                        <td>
-                            <span
-                                class="badge bg-danger fw-bolder"
-                                style="text-transform: uppercase; letter-spacing: 1px; font-size: 10px;"
-                            >{"disabled"}</span>
-                        </td>
-                    </tr>
+                                        {"There are no users"}
+                                    </div>
+                                }
+                            }
+                        }
                     </tbody>
                 </table>
 
@@ -138,6 +291,7 @@ impl Component for SettingsTenantMembers {
                                             id="basic-url"
                                             aria-describedby="basic-addon3"
                                             placeholder="john@mail.com"
+                                            oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, DataMemberCreate::Email))
                                         />
                                     </div>
                                 </div>
@@ -153,8 +307,17 @@ impl Component for SettingsTenantMembers {
 
                                     <div>
 
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"/>
+                                        <div
+                                            class="form-check mb-3"
+                                            onclick=self.link.callback(|_| Msg::InputString(String::from("none"), DataMemberCreate::Role))
+                                        >
+                                            <input
+                                                class="form-check-input"
+                                                type="checkbox"
+                                                value=""
+                                                id="flexCheckDefault"
+                                                checked={ if self.member_create.role == String::from("Admin") {true} else {false} }
+                                            />
                                             <label class="form-check-label d-grid" for="flexCheckDefault">
                                                 <span
                                                     style="
@@ -291,12 +454,115 @@ impl Component for SettingsTenantMembers {
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{"Cancel"}</button>
-                                <button type="button" class="btn btn-primary">{"Invite"}</button>
+                                // <button
+                                //     type="button"
+                                //     class="btn btn-primary"
+                                //     onclick=self.link.callback( |_| Msg::CreateMember )
+                                // >{"Invite"}</button>
+                                <button
+                                    type="button"
+                                    class=format!("btn {} btn-primary position-relative", if self.loading_create_member {"loading"} else {""} )
+                                    onclick=self.link.callback(|_| Msg::CreateMember)
+                                    disabled={ if self.loading_create_member {true} else {false} }
+                                >
+                                    <div class="telkom-label">
+                                      {"Invite"}
+                                    </div>
+                                    <div class="telkom-spinner telkom-center">
+                                      <div class="spinner-border spinner-border-sm" role="status"/>
+                                    </div>
+                                </button>
                             </div>
+                            {
+                                if self.error_create_member.is_some() {
+                                    html! {
+                                        <div class="modal-footer">
+                                            <div class="alert alert-warning" role="alert">
+                                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                                { self.error_create_member.clone().unwrap() }
+                                            </div>
+                                        </div>
+                                    }
+                                } else {
+                                    html! {}
+                                }
+                            }
                         </div>
                     </div>
                 </div>
             </div>
         }
+    }
+
+    fn view_members (&self, members: Vec<TenantMember>) -> Vec<Html> {
+        members.iter().map(|member| {
+            html! {
+                <tr>
+                    <td>
+                        <div
+                            class="p-2 d-flex"
+                        >
+                            <div
+                                style="flex: 0 0 auto; width: 40px; height: 40px; background-color: rgb(100,100,100);"
+                                class="d-flex justify-content-center align-items-center rounded-circle me-3"
+                            >
+                                <i class="bi bi-info-lg text-light"></i>
+                            </div>
+
+                            <div
+                                class="d-grid"
+                                style="min-width: 40px;"
+                            >
+                                <span
+                                    class="fw-bold"
+                                    style="
+                                        white-space: nowrap;
+                                        text-overflow: ellipsis;
+                                        overflow: hidden;
+                                        font-size: 14px;
+                                        text-decoration: none;
+                                    "
+                                >
+                                    {member.username.clone()}
+                                </span>
+                                <p
+                                    class="mb-0 text-muted"
+                                    style="
+                                        white-space: nowrap;
+                                        text-overflow: ellipsis;
+                                        overflow: hidden;
+                                        font-size: 14px;
+                                    "
+                                >
+                                    {member.email.clone()}
+                                </p>
+                            </div>
+
+                        </div>
+                    </td>
+                    <td>{member.roles.clone()}</td>
+                    <td>
+                        {
+                            if member.is_mfa {
+                                html! {
+                                    <span
+                                        class="badge fw-bolder"
+                                        style="text-transform: uppercase; letter-spacing: 1px; font-size: 10px;"
+                                    >{"able"}</span>
+                                }
+                            } else {
+                                html! {
+                                    <span
+                                        class="badge bg-danger fw-bolder"
+                                        style="text-transform: uppercase; letter-spacing: 1px; font-size: 10px;"
+                                    >{"disabled"}</span>
+                                }
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+        })
+        .collect()
     }
 }
