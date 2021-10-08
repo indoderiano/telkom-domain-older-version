@@ -12,18 +12,21 @@ use crate::types::{
         TenantMember,
     },
 };
+use serde::{
+    Serialize,
+};
 use crate::components::{
     loading2::Loading2,
 };
 use crate::configs::server::API_URL;
 
 
+#[derive(Serialize, Debug, Clone)]
 pub struct MemberCreate {
     email: String,
     role: String,
 }
 
-#[derive(Serialize, Debug, Clone)]
 pub enum DataMemberCreate {
     Email,
     Role,
@@ -40,6 +43,7 @@ pub struct SettingsTenantMembers {
     fetch_task: Option<FetchTask>,
     loading_request_members: bool,
     error_request_members: Option<String>,
+    show_modal_create_member: bool, 
     member_create: MemberCreate,
     loading_create_member: bool,
     error_create_member: Option<String>,
@@ -48,6 +52,7 @@ pub struct SettingsTenantMembers {
 pub enum Msg {
     RequestMembers,
     GetMembers(Vec<TenantMember>),
+    ShowModalCreate(bool),
     InputString(String, DataMemberCreate),
     CreateMember,
     ResponseError(String, StateError)
@@ -64,6 +69,7 @@ impl Component for SettingsTenantMembers {
             fetch_task: None,
             loading_request_members: false,
             error_request_members: None,
+            show_modal_create_member: false,
             member_create: MemberCreate {
                 email: String::from(""),
                 role: String::from(""),
@@ -115,6 +121,10 @@ impl Component for SettingsTenantMembers {
                 self.loading_request_members = false;
                 true
             }
+            Msg::ShowModalCreate(status) => {
+                self.show_modal_create_member = status;
+                true
+            }
             Msg::InputString(value, data) => {
                 match data {
                     DataMemberCreate::Email => {
@@ -137,15 +147,15 @@ impl Component for SettingsTenantMembers {
                     .body(Json(&self.member_create))
                     .expect("Could not build request.");
                 let callback = 
-                    self.link.callback(|response: Response<Json<Result<ResponseMessage, anyhow::Error>>>| {
+                    self.link.batch_callback(|response: Response<Json<Result<ResponseMessage, anyhow::Error>>>| {
                         let Json(data) = response.into_body();
                         match data {
                             Ok(dataok) => {
                                 ConsoleService::info(&format!("{:?}", dataok));
-                                Msg::RequestMembers
+                                vec![Msg::ShowModalCreate(false), Msg::RequestMembers]
                             }
                             Err(error) => {
-                                Msg::ResponseError(error.to_string(), StateError::CreateMember)
+                                vec![Msg::ResponseError(error.to_string(), StateError::CreateMember)]
                             }
                         }
                     });
@@ -189,6 +199,13 @@ impl Component for SettingsTenantMembers {
                     <Loading2 width=45 />
                 </div>
             }
+        } else if self.error_request_members.is_some() {
+            html! {
+                <div class="alert alert-warning mb-5" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    { self.error_request_members.clone().unwrap() }
+                </div>
+            }
         } else {
             html! {
                 { self.view_content() }
@@ -220,7 +237,8 @@ impl SettingsTenantMembers {
                         <button
                             type="button"
                             class="btn btn-primary text-nowrap"
-                            data-bs-toggle="modal" data-bs-target="#exampleModal"
+                            onclick=self.link.callback(|_| Msg::ShowModalCreate(true))
+                            // data-bs-toggle="modal" data-bs-target="#exampleModal"
                         >
                             <span>{"Add Member"}</span>
                         </button>
@@ -267,11 +285,13 @@ impl SettingsTenantMembers {
 
                 // MODAL NEW MEMBER
                 <div
-                    class="modal fade"
-                    id="exampleModal"
-                    tabindex="-1"
-                    aria-labelledby="exampleModalLabel"
-                    aria-hidden="true"
+                    // class="modal fade"
+                    class=format!("modal fade {}", if self.show_modal_create_member {"show"} else {""})
+                    style="display: block;"
+                    // id="exampleModal"
+                    // tabindex="-1"
+                    // aria-labelledby="exampleModalLabel"
+                    // aria-hidden="true"
                 >
                     <div class="modal-dialog modal-dialog-scrollable">
                         <div class="modal-content">
@@ -292,6 +312,7 @@ impl SettingsTenantMembers {
                                             aria-describedby="basic-addon3"
                                             placeholder="john@mail.com"
                                             oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, DataMemberCreate::Email))
+                                            disabled={ if self.loading_create_member {true} else {false} }
                                         />
                                     </div>
                                 </div>
@@ -309,6 +330,7 @@ impl SettingsTenantMembers {
 
                                         <div
                                             class="form-check mb-3"
+                                            style=format!("{}", if self.loading_create_member {"pointer-events: none;"} else {""} )
                                             onclick=self.link.callback(|_| Msg::InputString(String::from("none"), DataMemberCreate::Role))
                                         >
                                             <input
@@ -490,6 +512,9 @@ impl SettingsTenantMembers {
                         </div>
                     </div>
                 </div>
+                <div
+                    class=format!("modal-backdrop fade {}", if self.show_modal_create_member {"show"} else {""})
+                />
             </div>
         }
     }

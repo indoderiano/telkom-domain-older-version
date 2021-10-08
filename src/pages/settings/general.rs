@@ -72,9 +72,9 @@ struct DataErrorPage {
 
 pub struct SettingsGeneral {
     tenant_settings: TenantSettings,
+    link: ComponentLink<Self>,
     loading_request_settings: bool,
     error_request_settings: Option<String>,
-    link: ComponentLink<Self>,
     fetch_task: Option<FetchTask>,
     loading_update_settings: bool,
     loading_update_environment_tag: bool,
@@ -291,7 +291,7 @@ impl Component for SettingsGeneral {
                         }
                         Err(error) => {
                             ConsoleService::info(&error.to_string());
-                            Msg::ResponseError(error.to_string(), StateError::UpdateAuthorization)
+                            Msg::ResponseError(error.to_string(), StateError::UpdateErrorPage)
                         }
                     }
                 });
@@ -594,6 +594,7 @@ impl SettingsGeneral {
                                     type="button"
                                     class=format!("btn {} btn-primary position-relative", if self.loading_update_settings {"loading"} else {""} )
                                     onclick=self.link.callback(|_| Msg::UpdateSettings)
+                                    disabled={ if self.loading_update_settings {true} else {false} }
                                 >
                                     <div class="telkom-label">
                                         {"Save"}
@@ -843,7 +844,8 @@ impl SettingsGeneral {
                                         placeholder="https://your-default-endpoint/"
                                         value={default_audience}
                                         oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::DefaultAudience))
-                                    />   
+                                        disabled={ if self.loading_update_authorization {true} else {false} }
+                                    />
                                 </div>
                                 <p>
                                     {"API Audience to use by default for API Authorization flows . Note: This setting is equivalent to appending the audience to every authorization request made to the tenant for every application. This will cause new behavior that might result in breaking changes for some of your applications. If you require assistance, contact support."}
@@ -863,7 +865,8 @@ impl SettingsGeneral {
                                         placeholder="Connection Name"
                                         value={default_directory}
                                         oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::DefaultDirectory))
-                                    />   
+                                        disabled={ if self.loading_update_authorization {true} else {false} }
+                                    />
                                 </div>
                                 <p>
                                     {"Name of the connection to be use for Password Grant exchanges. The default_directory value should be the exact name of an existing connections of one of the following strategies: ad, auth0, email, sms, waad, adfs"}
@@ -877,6 +880,7 @@ impl SettingsGeneral {
                                     type="button"
                                     class=format!("btn {} btn-primary position-relative", if self.loading_update_authorization {"loading"} else {""} )
                                     onclick=self.link.callback(|_| Msg::UpdateAuthorization)
+                                    disabled={ if self.loading_update_authorization {true} else {false} }
                                 >
                                     <div class="telkom-label">
                                         {"Save"}
@@ -928,7 +932,7 @@ impl SettingsGeneral {
                                 </p>
                                 <div
                                     class="card card-hover mb-2"
-                                    style="cursor: pointer;"
+                                    style=format!("cursor: pointer; {}", if self.loading_update_error_page {"pointer-events: none;"} else {""} )
                                     onclick=self.link.callback(|_| Msg::InputBool(false, Data::ErrorPage))
                                 >
                                     <div class="card-body p-3">
@@ -975,7 +979,7 @@ impl SettingsGeneral {
                                 </div>
                                 <div
                                     class="card card-hover mb-4"
-                                    style="cursor: pointer;"
+                                    style=format!("cursor: pointer; {}", if self.loading_update_error_page {"pointer-events: none;"} else {""} )
                                     onclick=self.link.callback(|_| Msg::InputBool(true, Data::ErrorPage))
                                 >
                                     <div class="card-body p-3">
@@ -1038,7 +1042,8 @@ impl SettingsGeneral {
                                                         placeholder="http://mycompany.com/error/"
                                                         value={error_page.url}
                                                         oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::ErrorPage))
-                                                    />   
+                                                        disabled={ if self.loading_update_error_page {true} else {false} }
+                                                    />
                                                 </div>
                                             </div>
                                         }
@@ -1056,6 +1061,7 @@ impl SettingsGeneral {
                                     type="button"
                                     class=format!("btn {} btn-primary position-relative", if self.loading_update_error_page {"loading"} else {""} )
                                     onclick=self.link.callback(|_| Msg::UpdateErrorPage)
+                                    disabled={ if self.loading_update_error_page {true} else {false} }
                                 >
                                     <div class="telkom-label">
                                         {"Save"}
