@@ -6,32 +6,352 @@ class ControllerApp {
             message: "App fetched",
             data: [
                 {
-                    id: 1,
-                    name: "App Pertama",
-                    client_id: "60daccd6dff9a6003e8ef6ef",
-                    api_type: "Custom App 1",
-                    logo_url: "https://cdn.auth0.com/manhattan/versions/1.3226.0/assets/non_interactive.svg"
+                    "client_id": "AaiyAPdpYdesoKnqjj8HJqRn4T5titww",
+                    "tenant": "",
+                    "name": "My application 1",
+                    "description": "",
+                    "global": false,
+                    "client_secret": "MG_TNT2ver-SylNat-_VeMmd-4m0Waba0jr1troztBniSChEw0glxEmgEi2Kw40H",
+                    "app_type": "",
+                    "logo_uri": "https://cdn.auth0.com/manhattan/versions/1.3312.0/assets/badge.png",
+                    "is_first_party": false,
+                    "oidc_conformant": false,
+                    "callbacks": [
+                    "http://localhost/callback"
+                    ],
+                    "allowed_origins": [
+                    ""
+                    ],
+                    "web_origins": [
+                    ""
+                    ],
+                    "client_aliases": [
+                    ""
+                    ],
+                    "allowed_clients": [
+                    ""
+                    ],
+                    "allowed_logout_urls": [
+                    "http://localhost/logoutCallback"
+                    ],
+                    "grant_types": [
+                    ""
+                    ],
+                    "jwt_configuration": {
+                    "lifetime_in_seconds": 36000,
+                    "secret_encoded": true,
+                    "scopes": {},
+                    "alg": "HS256"
+                    },
+                    "signing_keys": [
+                    "object"
+                    ],
+                    "encryption_key": {
+                    "pub": "",
+                    "cert": "",
+                    "subject": ""
+                    },
+                    "sso": false,
+                    "sso_disabled": false,
+                    "cross_origin_auth": false,
+                    "cross_origin_loc": "",
+                    "custom_login_page_on": true,
+                    "custom_login_page": "",
+                    "custom_login_page_preview": "",
+                    "form_template": "",
+                    "addons": {
+                    "aws": {},
+                    "azure_blob": {},
+                    "azure_sb": {},
+                    "rms": {},
+                    "mscrm": {},
+                    "slack": {},
+                    "sentry": {},
+                    "box": {},
+                    "cloudbees": {},
+                    "concur": {},
+                    "dropbox": {},
+                    "echosign": {},
+                    "egnyte": {},
+                    "firebase": {},
+                    "newrelic": {},
+                    "office365": {},
+                    "salesforce": {},
+                    "salesforce_api": {},
+                    "salesforce_sandbox_api": {},
+                    "samlp": {},
+                    "layer": {},
+                    "sap_api": {},
+                    "sharepoint": {},
+                    "springcm": {},
+                    "wams": {},
+                    "wsfed": {},
+                    "zendesk": {},
+                    "zoom": {},
+                    "sso_integration": "object"
+                    },
+                    "token_endpoint_auth_method": "none",
+                    "client_metadata": {},
+                    "mobile": {
+                    "android": {
+                        "app_package_name": "com.example",
+                        "sha256_cert_fingerprints": [
+                        "D8:A0:83:..."
+                        ]
+                    },
+                    "ios": {
+                        "team_id": "9JA89QQLNQ",
+                        "app_bundle_identifier": "com.my.bundle.id"
+                    }
+                    },
+                    "initiate_login_uri": "",
+                    "native_social_login": {
+                    "apple": "object",
+                    "facebook": "object"
+                    },
+                    "refresh_token": {
+                    "rotation_type": "non-rotating",
+                    "expiration_type": "non-expiring",
+                    "leeway": 0,
+                    "token_lifetime": 0,
+                    "infinite_token_lifetime": false,
+                    "idle_token_lifetime": 0,
+                    "infinite_idle_token_lifetime": false
+                    },
+                    "organization_usage": "deny",
+                    "organization_require_behavior": "no_prompt"
                 },
                 {
-                    id: 2,
-                    name: "App Pertama",
-                    client_id: "60daccd6dff9a6003e8ef6ef",
-                    api_type: "Custom App 2",
-                    logo_url: "https://cdn.auth0.com/manhattan/versions/1.3226.0/assets/non_interactive.svg"
+                    "client_id": "AaiyAPdpYdesoKnqjj8HJqRn4T5titww",
+                    "tenant": "",
+                    "name": "My application 2",
+                    "description": "",
+                    "global": false,
+                    "client_secret": "MG_TNT2ver-SylNat-_VeMmd-4m0Waba0jr1troztBniSChEw0glxEmgEi2Kw40H",
+                    "app_type": "",
+                    "logo_uri": "https://cdn.auth0.com/manhattan/versions/1.3312.0/assets/badge.png",
+                    "is_first_party": false,
+                    "oidc_conformant": false,
+                    "callbacks": [
+                    "http://localhost/callback"
+                    ],
+                    "allowed_origins": [
+                    ""
+                    ],
+                    "web_origins": [
+                    ""
+                    ],
+                    "client_aliases": [
+                    ""
+                    ],
+                    "allowed_clients": [
+                    ""
+                    ],
+                    "allowed_logout_urls": [
+                    "http://localhost/logoutCallback"
+                    ],
+                    "grant_types": [
+                    ""
+                    ],
+                    "jwt_configuration": {
+                    "lifetime_in_seconds": 36000,
+                    "secret_encoded": true,
+                    "scopes": {},
+                    "alg": "HS256"
+                    },
+                    "signing_keys": [
+                    "object"
+                    ],
+                    "encryption_key": {
+                    "pub": "",
+                    "cert": "",
+                    "subject": ""
+                    },
+                    "sso": false,
+                    "sso_disabled": false,
+                    "cross_origin_auth": false,
+                    "cross_origin_loc": "",
+                    "custom_login_page_on": true,
+                    "custom_login_page": "",
+                    "custom_login_page_preview": "",
+                    "form_template": "",
+                    "addons": {
+                    "aws": {},
+                    "azure_blob": {},
+                    "azure_sb": {},
+                    "rms": {},
+                    "mscrm": {},
+                    "slack": {},
+                    "sentry": {},
+                    "box": {},
+                    "cloudbees": {},
+                    "concur": {},
+                    "dropbox": {},
+                    "echosign": {},
+                    "egnyte": {},
+                    "firebase": {},
+                    "newrelic": {},
+                    "office365": {},
+                    "salesforce": {},
+                    "salesforce_api": {},
+                    "salesforce_sandbox_api": {},
+                    "samlp": {},
+                    "layer": {},
+                    "sap_api": {},
+                    "sharepoint": {},
+                    "springcm": {},
+                    "wams": {},
+                    "wsfed": {},
+                    "zendesk": {},
+                    "zoom": {},
+                    "sso_integration": "object"
+                    },
+                    "token_endpoint_auth_method": "none",
+                    "client_metadata": {},
+                    "mobile": {
+                    "android": {
+                        "app_package_name": "com.example",
+                        "sha256_cert_fingerprints": [
+                        "D8:A0:83:..."
+                        ]
+                    },
+                    "ios": {
+                        "team_id": "9JA89QQLNQ",
+                        "app_bundle_identifier": "com.my.bundle.id"
+                    }
+                    },
+                    "initiate_login_uri": "",
+                    "native_social_login": {
+                    "apple": "object",
+                    "facebook": "object"
+                    },
+                    "refresh_token": {
+                    "rotation_type": "non-rotating",
+                    "expiration_type": "non-expiring",
+                    "leeway": 0,
+                    "token_lifetime": 0,
+                    "infinite_token_lifetime": false,
+                    "idle_token_lifetime": 0,
+                    "infinite_idle_token_lifetime": false
+                    },
+                    "organization_usage": "deny",
+                    "organization_require_behavior": "no_prompt"
                 },
                 {
-                    id: 3,
-                    name: "App Pertama",
-                    client_id: "60daccd6dff9a6003e8ef6ef",
-                    api_type: "Custom App 3",
-                    logo_url: "https://cdn.auth0.com/manhattan/versions/1.3226.0/assets/non_interactive.svg"
-                },
-                {
-                    id: 4,
-                    name: "App Pertama",
-                    client_id: "60daccd6dff9a6003e8ef6ef",
-                    api_type: "Custom App 4",
-                    logo_url: "https://cdn.auth0.com/manhattan/versions/1.3226.0/assets/non_interactive.svg"
+                    "client_id": "AaiyAPdpYdesoKnqjj8HJqRn4T5titww",
+                    "tenant": "",
+                    "name": "My application 3",
+                    "description": "",
+                    "global": false,
+                    "client_secret": "MG_TNT2ver-SylNat-_VeMmd-4m0Waba0jr1troztBniSChEw0glxEmgEi2Kw40H",
+                    "app_type": "",
+                    "logo_uri": "https://cdn.auth0.com/manhattan/versions/1.3312.0/assets/badge.png",
+                    "is_first_party": false,
+                    "oidc_conformant": false,
+                    "callbacks": [
+                    "http://localhost/callback"
+                    ],
+                    "allowed_origins": [
+                    ""
+                    ],
+                    "web_origins": [
+                    ""
+                    ],
+                    "client_aliases": [
+                    ""
+                    ],
+                    "allowed_clients": [
+                    ""
+                    ],
+                    "allowed_logout_urls": [
+                    "http://localhost/logoutCallback"
+                    ],
+                    "grant_types": [
+                    ""
+                    ],
+                    "jwt_configuration": {
+                    "lifetime_in_seconds": 36000,
+                    "secret_encoded": true,
+                    "scopes": {},
+                    "alg": "HS256"
+                    },
+                    "signing_keys": [
+                    "object"
+                    ],
+                    "encryption_key": {
+                    "pub": "",
+                    "cert": "",
+                    "subject": ""
+                    },
+                    "sso": false,
+                    "sso_disabled": false,
+                    "cross_origin_auth": false,
+                    "cross_origin_loc": "",
+                    "custom_login_page_on": true,
+                    "custom_login_page": "",
+                    "custom_login_page_preview": "",
+                    "form_template": "",
+                    "addons": {
+                    "aws": {},
+                    "azure_blob": {},
+                    "azure_sb": {},
+                    "rms": {},
+                    "mscrm": {},
+                    "slack": {},
+                    "sentry": {},
+                    "box": {},
+                    "cloudbees": {},
+                    "concur": {},
+                    "dropbox": {},
+                    "echosign": {},
+                    "egnyte": {},
+                    "firebase": {},
+                    "newrelic": {},
+                    "office365": {},
+                    "salesforce": {},
+                    "salesforce_api": {},
+                    "salesforce_sandbox_api": {},
+                    "samlp": {},
+                    "layer": {},
+                    "sap_api": {},
+                    "sharepoint": {},
+                    "springcm": {},
+                    "wams": {},
+                    "wsfed": {},
+                    "zendesk": {},
+                    "zoom": {},
+                    "sso_integration": "object"
+                    },
+                    "token_endpoint_auth_method": "none",
+                    "client_metadata": {},
+                    "mobile": {
+                    "android": {
+                        "app_package_name": "com.example",
+                        "sha256_cert_fingerprints": [
+                        "D8:A0:83:..."
+                        ]
+                    },
+                    "ios": {
+                        "team_id": "9JA89QQLNQ",
+                        "app_bundle_identifier": "com.my.bundle.id"
+                    }
+                    },
+                    "initiate_login_uri": "",
+                    "native_social_login": {
+                    "apple": "object",
+                    "facebook": "object"
+                    },
+                    "refresh_token": {
+                    "rotation_type": "non-rotating",
+                    "expiration_type": "non-expiring",
+                    "leeway": 0,
+                    "token_lifetime": 0,
+                    "infinite_token_lifetime": false,
+                    "idle_token_lifetime": 0,
+                    "infinite_idle_token_lifetime": false
+                    },
+                    "organization_usage": "deny",
+                    "organization_require_behavior": "no_prompt"
                 }
             ]
         }

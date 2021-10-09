@@ -106,9 +106,9 @@ pub enum AppRoute {
     #[to = "/{tenant_id}/apis"]
     ApisHome { tenant_id: String },
     #[to = "/applications/settings"]
-    ApplicationSettings,
-    #[to = "/applications"]
-    ApplicationHome,
+    ApplicationSettings ,
+    #[to = "/{tenant_id}/applications"]
+    ApplicationHome { tenant_id: String, tenant_idd: String, app_id: i32 },
     #[to = "/authentication/database/settings"]
     DatabaseSettings,
     #[to = "/authentication/database/create"]
@@ -284,11 +284,6 @@ impl Component for App {
                     }
                 },
 
-
-
-
-
-
                 // LOGGED IN ROUTES
                 AppRoute::Activity => {
                     if is_logged_in {
@@ -322,12 +317,14 @@ impl Component for App {
                         html! {<HomePage/>}
                     }
                 },
-                AppRoute::ApplicationHome => {
+                AppRoute::ApplicationHome{ tenant_id, tenant_idd, app_id } => {
                     if is_logged_in {
-                        html! {<ApplicationHome/>}
+                        html! {<ApplicationHome tenant_id=tenant_id tenant_idd=tenant_idd
+                        app_id=app_id    />}
                     } else {
-                        route_service.set_route("/", ());
-                        html! {<HomePage/>}
+                        // route_service.set_route("/", ());
+                        html! {<ApplicationHome tenant_id=tenant_id tenant_idd=tenant_idd
+                        app_id=app_id    />}
                     }
                 },
                 AppRoute::ApplicationSettings => {

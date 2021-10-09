@@ -1,79 +1,65 @@
-use yew::prelude::*;
-use yew_router::components::RouterAnchor;
+use yew::{
+    format::{Json, Nothing},
+    prelude::*,
+    services::fetch::{FetchService, FetchTask, Request, Response},
+};
+
 use crate::app::AppRoute;
+use crate::types::{
+    application::{AppList, ResponseAppList},
+    ResponseMessage,
+};
+use yew::services::ConsoleService;
+use yew_router::components::RouterAnchor;
 
-pub struct ApplicationHome {}
+use crate::components::loading2::Loading2;
 
-pub enum Msg {}
+#[derive(Clone, Debug, Eq, PartialEq, Properties)]
+pub struct AppProps {
+    pub tenant_id: String,
+    pub tenant_idd: String,
+    pub app_id: i32
+    
+}
 
-impl Component for ApplicationHome {
-    type Message = Msg;
-    type Properties = ();
+pub enum StateError {
+    AppList,
+}
 
-    fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
-        ApplicationHome {}
-    }
+pub struct ApplicationHome {
+    tenant_id: String,
+    fetch_task: Option<FetchTask>,
+    link: ComponentLink<Self>,
+    loading_get_app: bool,
+    app_list: Vec<AppList>,
+    error_app_list: Option<String>,
+}
 
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        true
-    }
+pub enum Msg {
+    DefaultState,
+    RequestAppList,
+    GetAppList(Vec<AppList>),
+    ResponseError(String, StateError),
+}
 
-    fn change(&mut self, _: Self::Properties) -> ShouldRender {
-        false
-    }
-
-    fn view(&self) -> Html {
+impl ApplicationHome {
+    fn view_app_list(&self) -> Vec<Html> {
         type Anchor = RouterAnchor<AppRoute>;
-        html! {
-        <>
-                    <div 
-                        class="col py-3"
-                    >
+        let tenant_id = &self.tenant_id;
+        self.app_list
+            .iter()
+            .map(|app| {
+                html! {
+                    <>
                         <div>
-                            <div 
-                                class="mx-auto pt-5 pb-5 px-4" 
-                                style="max-width: 1048px;"
-                            >
-                                <div 
-                                    class="mb-5"
-                                >
-                                    <div 
-                                        class="d-flex flex-row mb-3"
-                                    >
-                                    <div 
-                                        class="flex-fill fs-3 fw-bold"
-                                    >
-                                        {"Applications"}
-                                    </div>
-                                    <div>
-                                        <button 
-                                            type="button" 
-                                            class="btn btn-primary d-flex align-items-center" 
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#exampleModal"
-                                        >
-                                            <i  
-                                                class="bi bi-plus me-2" 
-                                                style="margin-left: -5px;"
-                                            >
-                                            </i>
-                                            <span>{"Create Application"}</span>
-                                        </button>
-                                    </div>
-                                    </div>
-                                    <p>{"Setup a application to use for Authentication."}</p>
-                                </div>
-
-                        // <!-- LIST -->
-                            <div>
-                                <div 
+                                <div
                                     class="d-flex border-bottom border-1 list-hover"
                                 >
-                                <div 
-                                    class="p-3 d-flex" 
+                                <div
+                                    class="p-3 d-flex"
                                     style="width: 40%;"
                                 >
-                                    <div 
+                                    <div
                                         style="flex: 0 0 auto; width: 40px; height: 40px; background-color: #eff0f2;"
                                         class="d-flex justify-content-center align-items-center rounded me-3"
                                     >
@@ -87,23 +73,13 @@ impl Component for ApplicationHome {
                                         />
                                     </div>
 
-                                    <div 
-                                        class="d-grid" 
+                                    <div
+                                        class="d-grid"
                                         style="min-width: 40px;"
                                     >
-                                        // <a
-                                        //     class="fw-bold mb-0" 
-                                        //     style=" white-space: nowrap;
-                                        //             text-overflow: ellipsis;
-                                        //             overflow: hidden;
-                                        //             font-size: 14px;
-                                        //             text-decoration: none;" 
-                                        //     href="#">
-                                        //     {"API Explorer Application"}
-                                        // </a>
                                         <Anchor route=AppRoute::ApplicationSettings>
                                                 <a
-                                                    class="fw-bold mb-0" 
+                                                    class="fw-bold mb-0"
                                                     style=" white-space: nowrap;
                                                             text-overflow: ellipsis;
                                                             overflow: hidden;
@@ -113,8 +89,8 @@ impl Component for ApplicationHome {
                                                     {"API Explorer Application"}
                                                 </a>
                                             </Anchor>
-                                        <p 
-                                            class="mb-0 text-muted" 
+                                        <p
+                                            class="mb-0 text-muted"
                                             style=" white-space: nowrap;
                                                     text-overflow: ellipsis;
                                                     overflow: hidden;
@@ -125,16 +101,16 @@ impl Component for ApplicationHome {
                                     </div>
                                 </div>
 
-                                <div 
+                                <div
                                     class="p-3 d-flex flex-fill align-items-center text-muted"
                                 >
-                                    <span 
+                                    <span
                                         style="font-size: 14px; margin-right: 8px; white-space: nowrap;"
                                     >
                                     {"Client ID:"}
                                     </span>
-                                    <div 
-                                        class="rounded" 
+                                    <div
+                                        class="rounded"
                                         style=" background-color: #eff0f2;
                                                 white-space: nowrap;
                                                 text-overflow: ellipsis;
@@ -145,35 +121,35 @@ impl Component for ApplicationHome {
                                     >
                                         {"AunM1dD5rf3p6xALjnssbrVWSiYiFBcy"}
                                     </div>
-                                    <i 
+                                    <i
                                         class="bi bi-files ms-1"
                                     >
                                     </i>
                                 </div>
 
-                                <div 
+                                <div
                                     class="p-3 d-flex align-items-center dropdown"
                                 >
-                                    <button 
-                                        type="button" 
+                                    <button
+                                        type="button"
                                         style="flex: 0 0 auto; width: 30px; height: 30px;"
                                         class="btn d-flex justify-content-center align-items-center rounded border" role="button"
-                                        id="dropdownMenuButton1" 
-                                        data-bs-toggle="dropdown" 
+                                        id="dropdownMenuButton1"
+                                        data-bs-toggle="dropdown"
                                         aria-expanded="false"
                                     >
-                                        <i 
+                                        <i
                                             class="bi bi-three-dots"
                                         >
                                         </i>
                                     </button>
-                                    <ul 
-                                        class="dropdown-menu" 
+                                    <ul
+                                        class="dropdown-menu"
                                         aria-labelledby="dropdownMenuButton1"
                                     >
                                         <li>
-                                            <a 
-                                                class="dropdown-item fs-7" 
+                                            <a
+                                                class="dropdown-item fs-7"
                                                 href="#"
                                             >
                                                 {"Quickstart"}
@@ -185,8 +161,8 @@ impl Component for ApplicationHome {
                                             </Anchor>
                                         </li>
                                         <li>
-                                            <a 
-                                                class="dropdown-item fs-7" 
+                                            <a
+                                                class="dropdown-item fs-7"
                                                 href="#"
                                             >
                                                 {"API"}
@@ -196,288 +172,208 @@ impl Component for ApplicationHome {
                                 </div>
                             </div>
                         </div>
+                    </>
+                }
+            })
+            .collect()
+    }
 
+    fn view_app_list_empty(&self) -> Html {
+        html! {
+            <div style="
+                display: flex;
+                text-align: center;
+                align-items: center;
+                flex-direction: column;
+                margin-top: 60px;
+                padding: 40px;
+                border-radius: 6px;
+                border: 1px solid #e3e4e6;"
+            >
+
+                <img width="150" height=""
+                    src="https://assets-global.website-files.com/60058af53d79fbd8e14841ea/602e971e34a1e12c00b8c9ab_sso.svg"
+                />
+
+                <h4
+                    style="padding-top: 20px;"
+                >
+                    {"You don't have any App yet."}
+                </h4>
+                <button
+                    type="button"
+                    class="btn btn-primary mt-3 d-flex align-items-center"
+                    // data-bs-toggle="modal"
+                    // data-bs-target="#exampleModal"
+                    // onclick=self.link.callback(|_| {Msg::ShowModalCreate(true)})
+                >
+                    <i class="bi bi-plus me-2" style="margin-left: -5px;"></i>
+                    <span>{"Create APP"}</span>
+                </button>
+            </div>
+        }
+    }
+}
+
+impl Component for ApplicationHome {
+    type Message = Msg;
+    type Properties = AppProps;
+
+    fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
+        ConsoleService::info(&format!("Apis home props, tenant id = {}", props.tenant_id));
+        ApplicationHome {
+            tenant_id: props.tenant_id,
+            error_app_list: None,
+            fetch_task: None,
+            link,
+            loading_get_app: false,
+            app_list: Vec::new(),
+        }
+    }
+
+    fn rendered(&mut self, first_render: bool) {
+        if first_render {
+            ConsoleService::info("This is first render");
+            self.link.send_message(Msg::RequestAppList);
+        }
+    }
+
+    fn update(&mut self, msg: Self::Message) -> ShouldRender {
+        match msg {
+            Msg::DefaultState => {
+                // self.show_modal_create = false;
+                self.loading_get_app = false;
+                // self.error_api_list: None,
+                // self.loading_create_app = false;
+                // self.error_api_create: None,
+                // self.api_create.name = String::from("");
+                // self.api_create.identifier = String::from("");
+                // self.api_create.sign_algorithm = String::from("");
+                true
+            }
+            Msg::RequestAppList => {
+                let request = Request::get("http://localhost:3000/applications/tenantid")
+                    .header("access_token", "tokenidtelkomdomain")
+                    .body(Nothing)
+                    .expect("Could not build request.");
+                let callback = self.link.callback(
+                    |response: Response<Json<Result<ResponseAppList, anyhow::Error>>>| {
+                        let Json(data) = response.into_body();
+                        match data {
+                            Ok(dataok) => Msg::GetAppList(dataok.data),
+                            Err(error) => {
+                                Msg::ResponseError(error.to_string(), StateError::AppList)
+                            }
+                        }
+                    },
+                );
+                let task = FetchService::fetch(request, callback).expect("failed to start request");
+                self.fetch_task = Some(task);
+                self.error_app_list = None;
+                self.loading_get_app = true;
+                true
+            }
+            Msg::GetAppList(data) => {
+                self.app_list = data;
+                self.loading_get_app = false;
+                self.fetch_task = None;
+                true
+            }
+            Msg::ResponseError(message, state) => {
+                match state {
+                    StateError::AppList => {
+                        self.loading_get_app = false;
+                        self.error_app_list = Some(message);
+                    }
+                }
+                true
+            }
+        }
+    }
+
+    fn change(&mut self, _: Self::Properties) -> ShouldRender {
+        false
+    }
+
+    fn view(&self) -> Html {
+        type Anchor = RouterAnchor<AppRoute>;
+        html! {
+        <>
+                    <div
+                        class="col py-3"
+                    >
                         <div>
-                            <div 
-                                class="d-flex border-bottom border-1 list-hover"
+                            <div
+                                class="mx-auto pt-5 pb-5 px-4"
+                                style="max-width: 1048px;"
                             >
-                                <div class="p-3 d-flex" style="width: 40%;">
-                                    <div style="flex: 0 0 auto; width: 40px; height: 40px; background-color: #eff0f2;"
-                                    class="d-flex justify-content-center align-items-center rounded me-3">
-                                    <img
-                                        src="https://cdn.auth0.com/manhattan/versions/1.3226.0/assets/non_interactive.svg" style=" color: transparent;
-                                        width: 100%;
-                                        height: 100%;
-                                        object-fit: cover;
-                                        text-align: center;
-                                        text-indent: 10000px;"/>
-                                    </div>
-
-                                    <div class="d-grid" style="min-width: 40px;">
-                                    <a class="fw-bold mb-0" style="
-                                                white-space: nowrap;
-                                                text-overflow: ellipsis;
-                                                overflow: hidden;
-                                                font-size: 14px;
-                                                text-decoration: none;
-                                            " href="#">
-                                        {"Management API (Test Application)"}
-                                    </a>
-                                    <p class="mb-0 text-muted" style="
-                                                white-space: nowrap;
-                                                text-overflow: ellipsis;
-                                                overflow: hidden;
-                                                font-size: 14px;
-                                            ">
-                                        {"Machine to Machine"}
-                                    </p>
-                                </div>
-
-                                </div>
-
-                                <div class="p-3 d-flex flex-fill align-items-center text-muted">
-                                    <span style="font-size: 14px; margin-right: 8px; white-space: nowrap;">
-                                        {"Client ID:"}
-                                    </span>
-                                    <div class="rounded" style="
-                                            background-color: #eff0f2;
-                                            white-space: nowrap;
-                                            text-overflow: ellipsis;
-                                            overflow: hidden;
-                                            font-size: 14px;
-                                            padding: 2px 6px;
-                                            font-family: 'Roboto Mono', monospace;"
-                                    >
-                                        {"AunM1dD5rf3p6xALjnssbrVWSiYiFBcy"}
-                                    </div>
-                                    <i class="bi bi-files ms-1"></i>
-                                </div>
-
-                                <div class="p-3 d-flex align-items-center dropdown">
-                                    <button type="button" style="flex: 0 0 auto; width: 30px; height: 30px;"
-                                    class="btn d-flex justify-content-center align-items-center rounded border" role="button"
-                                    id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-three-dots"></i>
-                                    </button>
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li><a class="dropdown-item fs-7" href="#">{"Quickstart"}</a></li>
-                                    <li><a class="dropdown-item fs-7" href="#">{"Settings"}</a></li>
-                                    <li><a class="dropdown-item fs-7" href="#">{"API"}</a></li>
-                                    </ul>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="d-flex border-bottom border-1 list-hover">
-                                <div class="p-3 d-flex" style="width: 40%;">
-                                    <div style="flex: 0 0 auto; width: 40px; height: 40px; background-color: #eff0f2;"
-                                    class="d-flex justify-content-center align-items-center rounded me-3">
-                                    <img src="https://cdn.auth0.com/manhattan/versions/1.3226.0/assets/none.svg"
-                                        style=" color: transparent;
-                                        width: 100%;
-                                        height: 100%;
-                                        object-fit: cover;
-                                        text-align: center;
-                                        text-indent: 10000px;"/>
-                                    </div>
-
-                                    <div class="d-grid" style="min-width: 40px;">
-                                    <a class="fw-bold mb-0" style="
-                                                white-space: nowrap;
-                                                text-overflow: ellipsis;
-                                                overflow: hidden;
-                                                font-size: 14px;
-                                                text-decoration: none;
-                                            " href="#">
-                                        {"Default App"}
-                                    </a>
-                                    <p class="mb-0 text-muted" style="
-                                                white-space: nowrap;
-                                                text-overflow: ellipsis;
-                                                overflow: hidden;
-                                                font-size: 14px;
-                                            ">
-                                        {"Generic"}
-                                    </p>
-                                    </div>
-
-                                </div>
-
-                                <div class="p-3 d-flex flex-fill align-items-center text-muted">
-                                    <span style="font-size: 14px; margin-right: 8px; white-space: nowrap;">
-                                    {"Client ID:"}
-                                    </span>
-                                    <div class="rounded" style="
-                                        background-color: #eff0f2;
-                                        white-space: nowrap;
-                                        text-overflow: ellipsis;
-                                        overflow: hidden;
-                                        font-size: 14px;
-                                        padding: 2px 6px;
-                                        font-family: 'Roboto Mono', monospace;
-                                    ">
-                                    {"AunM1dD5rf3p6xALjnssbrVWSiYiFBcy"}
-                                    </div>
-                                    <i class="bi bi-files ms-1"></i>
-                                </div>
-
-                                <div class="p-3 d-flex align-items-center dropdown">
-                                    <button type="button" style="flex: 0 0 auto; width: 30px; height: 30px;"
-                                    class="btn d-flex justify-content-center align-items-center rounded border" role="button"
-                                    id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-three-dots"></i>
-                                    </button>
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li><a class="dropdown-item fs-7" href="#">{"Quickstart"}</a></li>
-                                    <li><a class="dropdown-item fs-7" href="#">{"Settings"}</a></li>
-                                    <li><a class="dropdown-item fs-7" href="#">{"Addons"}</a></li>
-                                    <li><a class="dropdown-item fs-7" href="#">{"Connections"}</a></li>
-                                    <li><a class="dropdown-item fs-7" href="#">{"Organizations"}</a></li>
-                                    </ul>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="d-flex border-bottom border-1 list-hover">
-                                <div class="p-3 d-flex" style="width: 40%;">
-                                    <div style="flex: 0 0 auto; width: 40px; height: 40px; background-color: #eff0f2;"
-                                    class="d-flex justify-content-center align-items-center rounded me-3">
-                                    <img src="https://cdn.auth0.com/manhattan/versions/1.3226.0/assets/spa.svg"
-                                        style=" color: transparent;
-                                        width: 100%;
-                                        height: 100%;
-                                        object-fit: cover;
-                                        text-align: center;
-                                        text-indent: 10000px;"/>
-                                    </div>
-
-                                    <div class="d-grid" style="min-width: 40px;">
-                                    <a class="fw-bold mb-0" style="
-                                                white-space: nowrap;
-                                                text-overflow: ellipsis;
-                                                overflow: hidden;
-                                                font-size: 14px;
-                                                text-decoration: none;
-                                            " href="#">
-                                        {"My App"}
-                                    </a>
-                                    <p class="mb-0 text-muted" style="
-                                                white-space: nowrap;
-                                                text-overflow: ellipsis;
-                                                overflow: hidden;
-                                                font-size: 14px;
-                                            ">
-                                        {"Single Page Application"}
-                                    </p>
-                                    </div>
-                                </div>
-
-                                <div class="p-3 d-flex flex-fill align-items-center text-muted">
-                                    <span style="font-size: 14px; margin-right: 8px; white-space: nowrap;">
-                                    {"Client ID:"}
-                                    </span>
-                                    <div class="rounded" style="
-                                        background-color: #eff0f2;
-                                        white-space: nowrap;
-                                        text-overflow: ellipsis;
-                                        overflow: hidden;
-                                        font-size: 14px;
-                                        padding: 2px 6px;
-                                        font-family: 'Roboto Mono', monospace;
-                                    ">
-                                        {"AunM1dD5rf3p6xALjnssbrVWSiYiFBcy"}
-                                    </div>
-                                    <i class="bi bi-files ms-1"></i>
-                                </div>
-
-                                <div class="p-3 d-flex align-items-center dropdown">
-                                    <button type="button" style="flex: 0 0 auto; width: 30px; height: 30px;"
-                                    class="btn d-flex justify-content-center align-items-center rounded border" role="button"
-                                    id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-three-dots"></i>
-                                    </button>
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li><a class="dropdown-item fs-7" href="#">{"Quickstart"}</a></li>
-                                    <li><a class="dropdown-item fs-7" href="#">{"Settings"}</a></li>
-                                    <li><a class="dropdown-item fs-7" href="#">{"Addons"}</a></li>
-                                    <li><a class="dropdown-item fs-7" href="#">{"Connections"}</a></li>
-                                    <li><a class="dropdown-item fs-7" href="#">{"Organizations"}</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="d-flex border-bottom border-1 list-hover">
-                                <div class="p-3 d-flex" style="width: 40%;">
-                                    <div style="flex: 0 0 auto; width: 40px; height: 40px; background-color: #eff0f2;"
-                                    class="d-flex justify-content-center align-items-center rounded me-3">
-                                    <img
-                                        src="https://cdn.auth0.com/manhattan/versions/1.3226.0/assets/non_interactive.svg" style=" color: transparent;
-                                        width: 100%;
-                                        height: 100%;
-                                        object-fit: cover;
-                                        text-align: center;
-                                        text-indent: 10000px;"/>
-                                    </div>
-
-                                <div class="d-grid" style="min-width: 40px;">
-                                    <a class="fw-bold mb-0" style="
-                                                white-space: nowrap;
-                                                text-overflow: ellipsis;
-                                                overflow: hidden;
-                                                font-size: 14px;
-                                                text-decoration: none;
-                                            " href="#">
-                                        {"Test (Test Application)"}
-                                    </a>
-                                    <p class="mb-0 text-muted" style="
-                                                white-space: nowrap;
-                                                text-overflow: ellipsis;
-                                                overflow: hidden;
-                                                font-size: 14px;
-                                            ">
-                                        {"Machine To Machine"}
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div class="p-3 d-flex flex-fill align-items-center text-muted">
-                                <span style="font-size: 14px; margin-right: 8px; white-space: nowrap;">
-                                    {"Client ID:"}
-                                </span>
-                                <div class="rounded" style="
-                                        background-color: #eff0f2;
-                                        white-space: nowrap;
-                                        text-overflow: ellipsis;
-                                        overflow: hidden;
-                                        font-size: 14px;
-                                        padding: 2px 6px;
-                                        font-family: 'Roboto Mono', monospace;"
+                                <div
+                                    class="mb-5"
                                 >
-                                    {"AunM1dD5rf3p6xALjnssbrVWSiYiFBcy"}
+                                    <div
+                                        class="d-flex flex-row mb-3"
+                                    >
+                                    <div
+                                        class="flex-fill fs-3 fw-bold"
+                                    >
+                                        {"Applications"}
+                                    </div>
+                                    <div>
+                                        <button
+                                            type="button"
+                                            class="btn btn-primary d-flex align-items-center"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#exampleModal"
+                                        >
+                                            <i
+                                                class="bi bi-plus me-2"
+                                                style="margin-left: -5px;"
+                                            >
+                                            </i>
+                                            <span>{"Create Application"}</span>
+                                        </button>
+                                    </div>
+                                    </div>
+                                    <p>{"Setup a application to use for Authentication."}</p>
                                 </div>
-                                <i class="bi bi-files ms-1"></i>
-                            </div>
 
-                            <div class="p-3 d-flex align-items-center dropdown">
-                                    <button type="button" style="flex: 0 0 auto; width: 30px; height: 30px;"
-                                    class="btn d-flex justify-content-center align-items-center rounded border" role="button"
-                                    id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-three-dots"></i>
-                                    </button>
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li><a class="dropdown-item fs-7" href="#">{"Quickstart"}</a></li>
-                                    <li><a class="dropdown-item fs-7" href="#">{"Settings"}</a></li>
-                                    <li><a class="dropdown-item fs-7" href="#">{"API"}</a></li>
-                                    </ul>
+                        // <!-- LIST -->
+                        
+                        {
+                    if self.loading_get_app {
+                        html! {
+                            <div
+                                style="
+                                    position: relative;
+                                    margin-top: 8rem;
+                                "
+                            >
+                                <Loading2 width=45 />
                             </div>
+                        }
+                    } else if self.error_app_list.is_some() {
+                        html! {
+                            <div class="alert alert-warning mb-5" role="alert">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                { self.error_app_list.clone().unwrap() }
                             </div>
-                        </div>
+                        }
+                    } else if self.app_list.len() == 0 {
+                        html! {
+                            <>
+                                { self.view_app_list_empty() }
+                            </>
+                        }
+                    } else {
+                        html! {
+                            <>
+                                { self.view_app_list() }
+                            </>
+                        }
+                    }
+                }
+
+
 
 
                         // <!-- Modal -->

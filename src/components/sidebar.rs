@@ -37,6 +37,8 @@ impl Component for Sidebar {
     let acc = self.dispatch.state().clone();
     ConsoleService::info(&format!("sidebar acc tenant id is {:?}", acc.tenant_id));
     let tenant_id = if let Some(id) = acc.tenant_id { id } else { String::from("no_tenant_id") };
+    let tenant_idd: String = "ini_idd".to_string();
+    let app_id: i32 = 100;
     html! {
       <div
         class="col-auto col-md-3 col-xl-3 px-sm-3 px-0 bg-white fw-bold h-100"
@@ -97,14 +99,15 @@ impl Component for Sidebar {
                                           <div role="region" id="quantum-product-91331-accordion" aria-labelledby="quantum-product-91331-title">
                                               <ul id="menu_item1" class="submenu collapse jss105" data-bs-parent="#nav_accordion">
                                                   <li class="jss74">
-                                                      <Anchor route=AppRoute::ApplicationHome>
+                                                      <Anchor route=AppRoute::ApplicationHome
+                                                      { tenant_id: tenant_id.clone(), tenant_idd: tenant_idd, app_id: app_id } >
                                                           <a title="Applications" class="jss76 jss77" href="#"
                                                               ><span class="jss80 jss81"></span><span
                                                               class="jss79">{"Applications"}</span></a>
                                                       </Anchor>
                                                   </li>
                                                   <li class="jss74">
-                                                      <Anchor route=AppRoute::ApisHome{ tenant_id: tenant_id } >
+                                                      <Anchor route=AppRoute::ApisHome{ tenant_id: tenant_id.clone() } >
                                                           <a title="APIs" class="jss76 jss77" href="#"
                                                               ><span class="jss80 jss81"></span><span
                                                               class="jss79">{"APIs"}</span>
