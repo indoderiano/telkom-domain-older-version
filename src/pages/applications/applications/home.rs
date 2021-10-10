@@ -17,9 +17,6 @@ use crate::components::loading2::Loading2;
 #[derive(Clone, Debug, Eq, PartialEq, Properties)]
 pub struct AppProps {
     pub tenant_id: String,
-    pub tenant_idd: String,
-    pub app_id: i32
-    
 }
 
 pub enum StateError {
@@ -46,136 +43,118 @@ impl ApplicationHome {
     fn view_app_list(&self) -> Vec<Html> {
         type Anchor = RouterAnchor<AppRoute>;
         let tenant_id = &self.tenant_id;
-        self.app_list
-            .iter()
-            .map(|app| {
-                html! {
-                    <>
-                        <div>
+        self.app_list.iter().map(|app| {
+            html! {
+                <>
+                    <div>
+                            <div
+                                class="d-flex border-bottom border-1 list-hover"
+                            >
+                            <div
+                                class="p-3 d-flex"
+                                style="width: 40%;"
+                            >
                                 <div
-                                    class="d-flex border-bottom border-1 list-hover"
+                                    style="flex: 0 0 auto; width: 40px; height: 40px; background-color: #eff0f2;"
+                                    class="d-flex justify-content-center align-items-center rounded me-3"
                                 >
-                                <div
-                                    class="p-3 d-flex"
-                                    style="width: 40%;"
-                                >
-                                    <div
-                                        style="flex: 0 0 auto; width: 40px; height: 40px; background-color: #eff0f2;"
-                                        class="d-flex justify-content-center align-items-center rounded me-3"
-                                    >
-                                        <img
-                                            src="https://cdn.auth0.com/manhattan/versions/1.3226.0/assets/non_interactive.svg" style=" color: transparent;
-                                            width: 100%;
-                                            height: 100%;
-                                            object-fit: cover;
-                                            text-align: center;
-                                            text-indent: 10000px;"
-                                        />
-                                    </div>
-
-                                    <div
-                                        class="d-grid"
-                                        style="min-width: 40px;"
-                                    >
-                                        <Anchor route=AppRoute::ApplicationSettings>
-                                                <a
-                                                    class="fw-bold mb-0"
-                                                    style=" white-space: nowrap;
-                                                            text-overflow: ellipsis;
-                                                            overflow: hidden;
-                                                            font-size: 14px;
-                                                            text-decoration: none;" 
-                                                    href="#">
-                                                    {"API Explorer Application"}
-                                                </a>
-                                            </Anchor>
-                                        <p
-                                            class="mb-0 text-muted"
-                                            style=" white-space: nowrap;
-                                                    text-overflow: ellipsis;
-                                                    overflow: hidden;
-                                                    font-size: 14px;"
-                                        >
-                                            {"Machine to Machine"}
-                                        </p>
-                                    </div>
+                                    <img
+                                        src={"https://cdn.auth0.com/manhattan/versions/1.3312.0/assets/badge.png"} style=" color: transparent;
+                                        width: 100%;
+                                        height: 100%;
+                                        object-fit: cover;
+                                        text-align: center;
+                                        text-indent: 10000px;"
+                                    />
                                 </div>
 
                                 <div
-                                    class="p-3 d-flex flex-fill align-items-center text-muted"
+                                    class="d-grid"
+                                    style="min-width: 40px;"
                                 >
-                                    <span
-                                        style="font-size: 14px; margin-right: 8px; white-space: nowrap;"
-                                    >
-                                    {"Client ID:"}
-                                    </span>
-                                    <div
-                                        class="rounded"
-                                        style=" background-color: #eff0f2;
-                                                white-space: nowrap;
+                                    <Anchor route=AppRoute::ApplicationSettings>
+                                            <a
+                                                class="fw-bold mb-0"
+                                                style=" white-space: nowrap;
+                                                        text-overflow: ellipsis;
+                                                        overflow: hidden;
+                                                        font-size: 14px;
+                                                        text-decoration: none;" 
+                                                href="#">
+                                                { &app.name }
+                                            </a>
+                                        </Anchor>
+                                    <p
+                                        class="mb-0 text-muted"
+                                        style=" white-space: nowrap;
                                                 text-overflow: ellipsis;
                                                 overflow: hidden;
-                                                font-size: 14px;
-                                                padding: 2px 6px;
-                                                font-family: 'Roboto Mono', monospace;"
+                                                font-size: 14px;"
                                     >
-                                        {"AunM1dD5rf3p6xALjnssbrVWSiYiFBcy"}
-                                    </div>
-                                    <i
-                                        class="bi bi-files ms-1"
-                                    >
-                                    </i>
-                                </div>
-
-                                <div
-                                    class="p-3 d-flex align-items-center dropdown"
-                                >
-                                    <button
-                                        type="button"
-                                        style="flex: 0 0 auto; width: 30px; height: 30px;"
-                                        class="btn d-flex justify-content-center align-items-center rounded border" role="button"
-                                        id="dropdownMenuButton1"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false"
-                                    >
-                                        <i
-                                            class="bi bi-three-dots"
-                                        >
-                                        </i>
-                                    </button>
-                                    <ul
-                                        class="dropdown-menu"
-                                        aria-labelledby="dropdownMenuButton1"
-                                    >
-                                        <li>
-                                            <a
-                                                class="dropdown-item fs-7"
-                                                href="#"
-                                            >
-                                                {"Quickstart"}
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <Anchor route=AppRoute::ApplicationSettings classes="dropdown-item fs-7">
-                                                {"Settings"}
-                                            </Anchor>
-                                        </li>
-                                        <li>
-                                            <a
-                                                class="dropdown-item fs-7"
-                                                href="#"
-                                            >
-                                                {"API"}
-                                            </a>
-                                        </li>
-                                    </ul>
+                                        { &app.app_type }
+                                    </p>
                                 </div>
                             </div>
+
+                            <div
+                                class="p-3 d-flex flex-fill align-items-center text-muted"
+                            >
+                                <span
+                                    style="font-size: 14px; margin-right: 8px; white-space: nowrap;"
+                                >
+                                {"Client ID:"}
+                                </span>
+                                <div
+                                    class="rounded"
+                                    style=" background-color: #eff0f2;
+                                            white-space: nowrap;
+                                            text-overflow: ellipsis;
+                                            overflow: hidden;
+                                            font-size: 14px;
+                                            padding: 2px 6px;
+                                            font-family: 'Roboto Mono', monospace;"
+                                >
+                                    { &app.client_id }
+                                </div>
+                                <i
+                                    class="bi bi-files ms-1"
+                                >
+                                </i>
+                            </div>
+
+                            <div
+                                class="p-3 d-flex align-items-center dropdown"
+                            >
+                                <button
+                                    type="button"
+                                    style="flex: 0 0 auto; width: 30px; height: 30px;"
+                                    class="btn d-flex justify-content-center align-items-center rounded border" role="button"
+                                    id="dropdownMenuButton1"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                >
+                                    <i
+                                        class="bi bi-three-dots"
+                                    >
+                                    </i>
+                                </button>
+                                <ul
+                                    class="dropdown-menu"
+                                    aria-labelledby="dropdownMenuButton1"
+                                >
+                                    <li>
+                                        <Anchor route=AppRoute::ApplicationSettings classes="dropdown-item fs-7">
+                                            {"Settings"}
+                                        </Anchor>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                    </>
-                }
-            })
-            .collect()
+                    </div>
+                </>
+            }
+        })
+        .collect()
     }
 
     fn view_app_list_empty(&self) -> Html {
@@ -220,7 +199,7 @@ impl Component for ApplicationHome {
     type Properties = AppProps;
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        ConsoleService::info(&format!("Apis home props, tenant id = {}", props.tenant_id));
+        ConsoleService::info(&format!("Apps home props, tenant id = {}", props.tenant_id));
         ApplicationHome {
             tenant_id: props.tenant_id,
             error_app_list: None,
@@ -260,7 +239,10 @@ impl Component for ApplicationHome {
                     |response: Response<Json<Result<ResponseAppList, anyhow::Error>>>| {
                         let Json(data) = response.into_body();
                         match data {
-                            Ok(dataok) => Msg::GetAppList(dataok.data),
+                            Ok(dataok) => {
+                                ConsoleService::info(&format!("{:?}", dataok));
+                                Msg::GetAppList(dataok.data)
+                            } 
                             Err(error) => {
                                 Msg::ResponseError(error.to_string(), StateError::AppList)
                             }

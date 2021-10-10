@@ -9,10 +9,10 @@ class ControllerApp {
                     "client_id": "AaiyAPdpYdesoKnqjj8HJqRn4T5titww",
                     "tenant": "",
                     "name": "My application 1",
-                    "description": "",
+                    "description": "Machine to Machine",
                     "global": false,
                     "client_secret": "MG_TNT2ver-SylNat-_VeMmd-4m0Waba0jr1troztBniSChEw0glxEmgEi2Kw40H",
-                    "app_type": "",
+                    "app_type": "Machine to Machine",
                     "logo_uri": "https://cdn.auth0.com/manhattan/versions/1.3312.0/assets/badge.png",
                     "is_first_party": false,
                     "oidc_conformant": false,
@@ -122,13 +122,13 @@ class ControllerApp {
                     "organization_require_behavior": "no_prompt"
                 },
                 {
-                    "client_id": "AaiyAPdpYdesoKnqjj8HJqRn4T5titww",
+                    "client_id": "JklAbdpYdesokmZWay87AAqRn4T5titw",
                     "tenant": "",
                     "name": "My application 2",
-                    "description": "",
+                    "description": "Single Page Application",
                     "global": false,
                     "client_secret": "MG_TNT2ver-SylNat-_VeMmd-4m0Waba0jr1troztBniSChEw0glxEmgEi2Kw40H",
-                    "app_type": "",
+                    "app_type": "Single Page Application",
                     "logo_uri": "https://cdn.auth0.com/manhattan/versions/1.3312.0/assets/badge.png",
                     "is_first_party": false,
                     "oidc_conformant": false,
@@ -238,13 +238,13 @@ class ControllerApp {
                     "organization_require_behavior": "no_prompt"
                 },
                 {
-                    "client_id": "AaiyAPdpYdesoKnqjj8HJqRn4T5titww",
+                    "client_id": "ABCFiyAPdpYdesoKnj8HJqRn4T5titww",
                     "tenant": "",
                     "name": "My application 3",
-                    "description": "",
+                    "description": "Mobile Application",
                     "global": false,
                     "client_secret": "MG_TNT2ver-SylNat-_VeMmd-4m0Waba0jr1troztBniSChEw0glxEmgEi2Kw40H",
-                    "app_type": "",
+                    "app_type": "Mobile Application",
                     "logo_uri": "https://cdn.auth0.com/manhattan/versions/1.3312.0/assets/badge.png",
                     "is_first_party": false,
                     "oidc_conformant": false,
@@ -367,6 +367,7 @@ class ControllerApp {
             //     data: ""
             // })
         }, 3000)
+
     }
 
     static create(req, res, next) {

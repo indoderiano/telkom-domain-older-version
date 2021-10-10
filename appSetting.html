@@ -36,7 +36,7 @@
               <div class="input-group mb-2">
                 <input type="text" class="form-control bg-input-grey"
                   aria-label="Dollar amount (with dot and two decimal places)" value={name}
-                  oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::Name)) />
+                  />
               </div>
             </div>
 
@@ -47,7 +47,7 @@
               <div class="input-group mb-2">
                 <input type="text" class="form-control bg-input-grey"
                   aria-label="Dollar amount (with dot and two decimal places)" value={domain}
-                  oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::Identifier)) />
+                  />
               </div>
             </div>
 
@@ -58,7 +58,7 @@
               <div class="input-group mb-2">
                 <input type="text" class="form-control bg-input-grey"
                   aria-label="Dollar amount (with dot and two decimal places)" value={client_id}
-                  oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::Identifier)) />
+                  />
               </div>
             </div>
 
@@ -69,7 +69,7 @@
               <div class="input-group mb-2">
                 <input type="text" class="form-control bg-input-grey"
                   aria-label="Dollar amount (with dot and two decimal places)" value={client_secret}
-                  oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::Identifier)) />
+                  />
               </div>
               <p>
                 {"The Client Secret is not base64 encoded.""}
@@ -102,10 +102,12 @@
               <p class="mb-2 fw-bold">
                 {"Application Logo"}
               </p>
+              <div class="col-md-12 p-2 text-center border rounded p-5"><img height="65px" width="60px"
+                  src="https://cdn.auth0.com/manhattan/versions/1.3431.0/assets/./badge.png"></div>
               <div class="input-group mb-2">
                 <input type="text" class="form-control bg-input-grey"
                   aria-label="Dollar amount (with dot and two decimal places)" value={https://path.to/my_logo.png}
-                  oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::Identifier)) />
+                  />
               </div>
               <p>
                 {"The URL of the logo to display for the application, if none is set the default badge for this type of
@@ -136,7 +138,6 @@
               </p>
               <div class="input-group mb-3">
                 <select class="form-select" id="application_type" disabled>
-                  None
                   <option selected=true disabled>{"None"}</option>
                 </select>
               </div>
@@ -163,7 +164,7 @@
               <div class="input-group mb-2">
                 <input type="text" class="form-control bg-input-grey"
                   aria-label="Dollar amount (with dot and two decimal places)" value={https://myapp.org/login}
-                  oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::Identifier)) />
+                  />
               </div>
               <p>
                 {"In some scenarios, Auth0 will need to redirect to your application’s login page. This URI needs to
@@ -271,8 +272,9 @@
                 {"Rotation"}
               </p>
               <div class="form-check form-switch fs-3 mb-4">
-                <input class="form-check-input" type="checkbox" checked={rbac} onclick=self.link.callback(|_|
-                  Msg::InputText(String::from("none"), Data::Rbac)) />
+                <input class="form-check-input" type="checkbox" 
+                checked={rbac} 
+                />
               </div>
               <p class="text-color-disabled">
                 {"When enabled, as a result of exchanging a refresh token, a new refresh token will be issued and the
@@ -302,87 +304,61 @@
 
             <div class="mb-4">
               <p class="mb-2 fw-bold">
-                {"Rotation"}
+                {"Absolute Expiration"}
               </p>
               <div class="form-check form-switch fs-3 mb-4">
-                <input class="form-check-input" type="checkbox" checked={rbac} onclick=self.link.callback(|_|
-                  Msg::InputText(String::from("none"), Data::Rbac)) />
+                <input class="form-check-input" type="checkbox" checked={rbac}/>
               </div>
               <p class="text-color-disabled">
-                {"When enabled, as a result of exchanging a refresh token, a new refresh token will be issued and the
-                existing token will be invalidated. This allows for automatic detection of token reuse if the token is
-                leaked. In addition, an absolute expiration lifetime must be set."}
+                {"When enabled, a refresh_token will expire based on an absolute lifetime, after which the token can no
+                longer be used. If rotation is enabled, an expiration lifetime must be set."}
               </p>
             </div>
 
             <div class="mb-4">
               <p class="mb-2 fw-bold">
-                {"Reuse Interval"}
+                {"Absolute Lifetime"}
               </p>
-              <input type="number" class="form-control" min="1" value="0" width="50px" />
+              <input type="number" class="form-control col-lg-8" min="1" value="0" width="50px" />
               <p class="text-color-disabled">
-                {"The allowable leeway time that the same refresh_token can be used to request an access_token without
-                triggering automatic reuse detection."}
+                {"Sets the absolute lifetime of a refresh_token (in seconds)."}
               </p>
             </div>
+
+            <div class="mb-4">
+              <p class="mb-2 fw-bold">
+                {"Inactivity Expiration"}
+              </p>
+              <div class="form-check form-switch fs-3 mb-4">
+                <input class="form-check-input" type="checkbox" checked={rbac} />
+              </div>
+              <p class="text-color-disabled">
+                {"When enabled, a refresh_token will expire based on a specified inactivity lifetime, after which the
+                token can no longer be used."}
+              </p>
+            </div>
+
+            <div class="mb-4">
+              <p class="mb-2 fw-bold">
+                {"Inactivity Lifetime"}
+              </p>
+              <input type="number" class="form-control col-lg-8" min="1" value="0" width="50px" />
+              <p class="text-color-disabled">
+                {"Sets the inactivity lifetime of a refresh_token (in seconds)."}
+              </p>
+            </div>
+
+
+
           </div>
         </div>
 
         <div class="row border-bottom mt-5">
-          <div class="col-lg-6 text-color-primary fw-bold mb-4">
-            {"Access Settings"}
-          </div>
-          <div class="col-lg-6">
-            <div class="mb-4">
-              <p class="mb-2 fw-bold">
-                {"Allow Skipping User Consent"}
-              </p>
-              <div class="form-check form-switch fs-3 mb-4">
-                <input class="form-check-input" type="checkbox" checked={allow_skip_user} onclick=self.link.callback(|_|
-                  Msg::InputText(String::from("none"), Data::AllowSkipUser)) />
-              </div>
-              <p class="text-color-disabled">
-                {"If this setting is enabled, this API will skip user consent for applications flagged as First Party."}
-              </p>
-            </div>
-
-            <div class="mb-4">
-              <p class="mb-2 fw-bold">
-                {"Allow Offline Access"}
-              </p>
-              <div class="form-check form-switch fs-3 mb-4">
-                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" checked={allow_off_acc}
-                  onclick=self.link.callback(|_| Msg::InputText(String::from("none"), Data::AllowOffAcc)) />
-              </div>
-              <p>
-                {"If this setting is enabled, Auth0 will allow applications to ask for Refresh Tokens for this API."}
-              </p>
-            </div>
 
             <div class="mb-5 mt-3">
-              <button type="button" class=format!("btn {} btn-primary position-relative", if self.loading_update_api
-                {"loading"} else {""} ) onclick=self.link.callback(|_| Msg::Save) disabled={ if self.loading_update_api
-                {true} else {false} }>
-                <div class="telkom-label">
-                  {"Save"}
-                </div>
-                <div class="telkom-spinner telkom-center">
-                  <div class="spinner-border spinner-border-sm" role="status" />
-                </div>
-              </button>
-
-              {
-              if self.error_update_api.is_some() {
-              html! {
-              <div class="alert alert-warning" role="alert">
-                <i class="bi bi-exclamation-triangle me-2"></i>
-                { self.error_update_api.clone().unwrap() }
+              <div class="col-md-12 p-2 text-center">
+                <button type="button" class="btn btn-primary">{"Save Changes"} </button>
               </div>
-              }
-              } else {
-              html! {}
-              }
-              }
 
             </div>
           </div>
@@ -398,37 +374,32 @@
         <div class="alert alert-danger d-flex flex-row justify-content-between" role="alert">
           <div>
             <p class="fw-bold">
-              {"Delete This API"}
+              {"Delete This Application"}
             </p>
             {"Once confirmed, this operation can't be undone!"}
           </div>
           <div>
-            // <button // type="button" // class="btn btn-danger" //>{"Delete"}</button>
-
-            <button type="button" class=format!("btn {} btn-danger position-relative", if self.loading_delete_api
-              {"loading"} else {""} ) onclick=self.link.callback(|_| Msg::Delete) disabled={ if self.loading_delete_api
-              {true} else {false} }>
-              <div class="telkom-label">
-                {"Delete"}
-              </div>
-              <div class="telkom-spinner telkom-center">
-                <div class="spinner-border spinner-border-sm" role="status" />
-              </div>
-            </button>
-            {
-            if self.error_delete_api.is_some() {
-            html! {
-            <div class="alert alert-warning" role="alert">
-              <i class="bi bi-exclamation-triangle me-2"></i>
-              { self.error_delete_api.clone().unwrap() }
-            </div>
-            }
-            } else {
-            html! {}
-            }
-            }
+          <button type="button" class="btn btn-danger m-auto p-2">{"Delete"}</button>
+            
           </div>
         </div>
+        
+        <div class="alert alert-danger d-flex flex-row justify-content-between" role="alert">
+          <div>
+            <p class="fw-bold">
+              {"Rotate secret"}
+            </p>
+            {"All authorized apps will need to be updated with the new client secret."}
+          </div>
+          <div>
+            <button type="button" class="btn btn-danger m-auto p-2">{"Delete"}</button>
+
+          </div>
+        </div>
+
+
+
+
       </div>
     </div>
 
