@@ -72,7 +72,7 @@ impl ApplicationHome {
                                     class="d-grid"
                                     style="min-width: 40px;"
                                 >
-                                    <Anchor route=AppRoute::ApplicationSettings>
+                                    <Anchor route=AppRoute::ApplicationSettings { tenant_id: tenant_id.clone(), app_id: app.client_id.clone() } >
                                             <a
                                                 class="fw-bold mb-0"
                                                 style=" white-space: nowrap;
@@ -143,7 +143,7 @@ impl ApplicationHome {
                                     aria-labelledby="dropdownMenuButton1"
                                 >
                                     <li>
-                                        <Anchor route=AppRoute::ApplicationSettings classes="dropdown-item fs-7">
+                                        <Anchor route=AppRoute::ApplicationSettings { tenant_id: tenant_id.clone(), app_id: app.client_id.clone() }classes="dropdown-item fs-7">
                                             {"Settings"}
                                         </Anchor>
                                     </li>

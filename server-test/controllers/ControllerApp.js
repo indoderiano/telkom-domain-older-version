@@ -387,26 +387,34 @@ class ControllerApp {
         console.log(req.params)
 
         let data = {
-            message: "Api loaded",
-            data: {
-                id: 1,
-                name: "Auth0 Management API",
-                api_id: "60daccd6dff9a6003e8ef6ef",
-                api_type: "System API",
-                identifier: "https://dev-r5y8heyf.au.auth0.com/api/v2/",
-                token_exp: 100000,
-                token_exp_browser: 10000,
-                sign_algorithm: "algorithm signing",
-                rbac: true,
-                permission_acc_token: true,
-                allow_skip_user: true,
-                allow_off_acc: true,
-                tenant_id: "dev-ofzd5p1b"
+            message: "App loaded",
+            data: {                
+                tenant: "dev-1wj84p4q",
+                name: "My App 1",
+                domain: "dev-test-telkom.us.auth0.com",
+                client_id: "EsKRzYf48U2kgbFtAb5rVz4YuvKHF92s",
+                client_secret: "6ERYcgr8moH4K28QKsj1qsHjVHhPojiUhi1laphUKM4KoQ0Av6CIbRvrr_Svw_U2",
+                description: "This is description",
+                app_logo: "https://cdn.auth0.com/manhattan/versions/1.3431.0/assets/badge.png",
+                app_type: "Single Page Application",
+                authentication_method: "",
+                login_url: "https://telkom-domain.com/login",
+                allowed_urls : "https://telkom-domain.com/login, https://telkom-domain.co.id/login",
+                allowed_logout_urls : "https://telkom-domain.com/logout",
+                allowed_web_origins: "https://login.mydomain.com",
+                allowed_origins: "https://telkom-domain.com/login, https://telkom-domain.co.id/login",
+                token_exp: 36000,
+                refresh_token_rotation: true,
+                refresh_token_rotation_interval: 0,
+                refesh_token_absolute_expiration: true,
+                refesh_token_absolute_expiration_lifetime: 2592000,
+                refesh_token_inactivity_expiration: true,
+                refesh_token_inactivity_expiration_lifetime: 1296000,
             }
         }
 
         setTimeout(() => {
-            console.log("return data api details");
+            console.log("return data app details");
             res.send(data)
         }, 3000)
 

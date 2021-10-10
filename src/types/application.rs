@@ -161,3 +161,34 @@ pub struct ResponseAppList {
 //     pub organization_usage: String,
 //     pub organization_require_behavior: String,
 // }
+
+#[derive(Deserialize, Serialize, Debug, Clone, Eq, PartialEq)]
+pub struct AppDetails {
+    pub tenant: String,
+    pub name: String,
+    pub domain: String,
+    pub client_id: String,
+    pub client_secret: String,
+    pub description: String,
+    pub app_logo: String,
+    pub app_type: String,
+    pub authentication_method: String,
+    pub login_url: String,
+    pub allowed_urls : String,
+    pub allowed_logout_urls : String,
+    pub allowed_web_origins: String,
+    pub allowed_origins: String,
+    pub token_exp: u32,
+    pub refresh_token_rotation: bool,
+    pub refresh_token_rotation_interval: i32,
+    pub refesh_token_absolute_expiration: bool,
+    pub refesh_token_absolute_expiration_lifetime: i32,
+    pub refesh_token_inactivity_expiration: bool,
+    pub refesh_token_inactivity_expiration_lifetime: i32,
+}
+
+#[derive(Deserialize, Debug, Clone)]
+pub struct ResponseAppDetails {
+    pub message: String,
+    pub data: AppDetails
+}

@@ -105,8 +105,8 @@ pub enum AppRoute {
     ApisSettings { tenant_id: String, api_id: String },
     #[to = "/{tenant_id}/apis"]
     ApisHome { tenant_id: String },
-    #[to = "/applications/settings"]
-    ApplicationSettings ,
+    #[to = "/{tenant_id}/applications/{app_id}/settings"]
+    ApplicationSettings { tenant_id: String, app_id: String },
     #[to = "/{tenant_id}/applications"]
     ApplicationHome { tenant_id: String },
     #[to = "/authentication/database/settings"]
@@ -325,9 +325,9 @@ impl Component for App {
                         html! {<HomePage/>}
                     }
                 },
-                AppRoute::ApplicationSettings => {
+                AppRoute::ApplicationSettings{ tenant_id, app_id } => {
                     if is_logged_in {
-                        html! {<ApplicationSettings/>}
+                        html! {<ApplicationSettings tenant_id=tenant_id app_id=app_id />}
                     } else {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
