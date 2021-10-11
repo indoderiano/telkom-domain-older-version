@@ -286,7 +286,7 @@ impl ApplicationSettings {
                 {
                     match self.content {
                         Content::Connection => html! { <ConnectionTab/> },
-                        Content::Settings => html! { <TabSettings/> }
+                        Content::Settings => html! { <TabSettings app_details=self.app_details.clone()/> }
                     }
                 }
 

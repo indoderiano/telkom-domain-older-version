@@ -1,24 +1,215 @@
-use yew::prelude::*;
-pub struct TabSettings {}
-pub enum Msg {}
+use yew::{
+    prelude::*,
+    format::{ Json, Nothing },
+    services::{
+        ConsoleService,
+        fetch::{FetchService, FetchTask, Request, Response},
+    }
+};
+use yew_router::service::RouteService;
+use crate::types::{
+	application::{ AppDetails, ResponseAppDetails },
+	ResponseMessage,
+};
+
+#[derive(Clone, Debug, Eq, PartialEq, Properties)]
+pub struct AppsTabSettingsProps {
+    pub app_details: AppDetails,
+}
+
+pub enum StateError {
+    Update,
+    Delete,
+}
+
+pub enum Data {
+    Tenant,
+    Name,
+    Domain,
+    ClientId,
+    ClientSecret,
+    Description,
+    AppLogo,
+    AppType,
+    AuthenticationMethod,
+    LoginUrl,
+    AllowedUrls ,
+    AllowedLogoutUrls ,
+    AllowedWebOrigins,
+    AllowedOrigins,
+    TokenExp,
+    RefreshTokenRotation,
+    RefreshTokenRotationInterval,
+    RefeshTokenAbsoluteExpiration,
+    RefeshTokenAbsoluteExpirationLifetime,
+    RefeshTokenInactivityExpiration,
+    RefeshTokenInactivityExpirationLifetime,
+}
+
+pub struct TabSettings {
+  app_details: AppDetails,
+  link: ComponentLink<Self>,
+  fetch_task: Option<FetchTask>,
+  loading_update_app: bool,
+  error_update_app: Option<String>,
+  loading_delete_app: bool,
+  error_delete_app: Option<String>,
+  route_service: RouteService,
+}
+
+pub enum Msg {
+  InputText(String, Data),
+  // Save,
+  GetAppDetails(AppDetails),
+  // ResponseError(String, StateError),
+  // Delete,
+  // RedirectToApp,
+}
 
 impl Component for TabSettings {
     type Message = Msg;
-    type Properties = ();
+    type Properties = AppsTabSettingsProps;
 
-    fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
-        TabSettings {}
+    fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
+        TabSettings {
+          app_details: props.app_details,
+          link,
+          fetch_task: None,
+          loading_update_app: false,
+          error_update_app: None,
+          loading_delete_app: false,
+          error_delete_app: None,
+          route_service: RouteService::new(),
+        }
     }
 
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        true
+    fn update(&mut self, msg: Self::Message) -> ShouldRender {
+      match msg {
+        Msg::InputText(input, data) => {
+          match data {
+            Data::Tenant => {
+                self.app_details.tenant = input;
+            }
+            Data::Name => {
+                self.app_details.name = input;
+            }
+            Data::Domain => {
+                self.app_details.domain = input;
+            }
+            Data::ClientId => {
+                self.app_details.client_id = input;
+            }
+            Data::ClientSecret => {
+                self.app_details.client_secret = input;
+            }
+            Data::Description => {
+                self.app_details.description = input;
+            }
+            Data::AppLogo => {
+                self.app_details.app_logo = input;
+            }
+            Data::AppType => {
+                self.app_details.app_type = input;
+            }
+            Data::AuthenticationMethod => {
+                self.app_details.authentication_method = input;
+            }
+            Data::LoginUrl => {
+                self.app_details.login_url = input;
+            }
+            Data::AllowedUrls => {
+                self.app_details.allowed_urls = input;
+            }
+            Data::AllowedLogoutUrls => {
+                self.app_details.allowed_logout_urls = input;
+            }
+            Data::AllowedWebOrigins => {
+                self.app_details.allowed_web_origins = input;
+            }
+            Data::AllowedOrigins => {
+                self.app_details.allowed_origins = input;
+            }
+            Data::TokenExp => {
+                if input.is_empty() {
+                    self.app_details.token_exp = 36000;
+                } else {
+                    self.app_details.token_exp = input.parse::<u32>().unwrap();
+                }
+            }
+            Data::RefreshTokenRotation => {
+                self.app_details.refresh_token_rotation = !self.app_details.refresh_token_rotation;
+            }
+            Data::RefreshTokenRotationInterval => {
+                if input.is_empty() {
+                    self.app_details.refresh_token_rotation_interval = 0;
+                } else {
+                    self.app_details.refresh_token_rotation_interval = input.parse::<i32>().unwrap();
+                }
+            }
+            Data::RefeshTokenAbsoluteExpiration => {
+                self.app_details.refesh_token_absolute_expiration = !self.app_details.refesh_token_absolute_expiration;
+            }
+            Data::RefeshTokenAbsoluteExpirationLifetime => {
+                if input.is_empty() {
+                    self.app_details.refesh_token_absolute_expiration_lifetime = 2592000;
+                } else {
+                    self.app_details.refesh_token_absolute_expiration_lifetime = input.parse::<i32>().unwrap();
+                }
+            }
+            Data::RefeshTokenInactivityExpiration => {
+                self.app_details.refesh_token_inactivity_expiration = !self.app_details.refesh_token_inactivity_expiration;
+            }
+            Data::RefeshTokenInactivityExpirationLifetime => {
+                if input.is_empty() {
+                    self.app_details.refesh_token_inactivity_expiration_lifetime = 1296000;
+                } else {
+                    self.app_details.refesh_token_inactivity_expiration_lifetime = input.parse::<i32>().unwrap();
+                }
+            }
+            _ => {
+              ()
+            }
+          }
+          true
+        }
+        Msg::GetAppDetails(data) => {
+          self.fetch_task = None;
+          self.loading_update_app = false;
+          self.app_details = data;
+          true
+        }
+      }
     }
+        
 
     fn change(&mut self, _: Self::Properties) -> ShouldRender {
         false
     }
 
     fn view(&self) -> Html {
+      let AppDetails {
+            tenant: _,
+            name,
+            domain,
+            client_id,
+            client_secret,
+            description,
+            app_logo,
+            app_type,
+            authentication_method: _,
+            login_url,
+            allowed_urls,
+            allowed_logout_urls,
+            allowed_web_origins,
+            allowed_origins,
+            token_exp,
+            refresh_token_rotation,
+            refresh_token_rotation_interval,
+            refesh_token_absolute_expiration,
+            refesh_token_absolute_expiration_lifetime,
+            refesh_token_inactivity_expiration,
+            refesh_token_inactivity_expiration_lifetime,
+        } = self.app_details.clone();
         html! {
             <>
                 <div>
@@ -35,7 +226,7 @@ impl Component for TabSettings {
               </p>
               <div class="input-group mb-2">
                 <input type="text" class="form-control bg-input-grey"
-                  aria-label="Dollar amount (with dot and two decimal places)" value={"name"}
+                  aria-label="Dollar amount (with dot and two decimal places)" value={name}
                   />
               </div>
             </div>
@@ -46,7 +237,7 @@ impl Component for TabSettings {
               </p>
               <div class="input-group mb-2">
                 <input type="text" class="form-control bg-input-grey"
-                  aria-label="Dollar amount (with dot and two decimal places)" value={"domain"}
+                  aria-label="Dollar amount (with dot and two decimal places)" value={domain}
                   />
               </div>
             </div>
@@ -57,7 +248,7 @@ impl Component for TabSettings {
               </p>
               <div class="input-group mb-2">
                 <input type="text" class="form-control bg-input-grey"
-                  aria-label="Dollar amount (with dot and two decimal places)" value={"client_id"}
+                  aria-label="Dollar amount (with dot and two decimal places)" value={client_id}
                   />
               </div>
             </div>
@@ -68,7 +259,7 @@ impl Component for TabSettings {
               </p>
               <div class="input-group mb-2">
                 <input type="text" class="form-control bg-input-grey"
-                  aria-label="Dollar amount (with dot and two decimal places)" value={"client_secret"}
+                  aria-label="Dollar amount (with dot and two decimal places)" value={client_secret}
                   />
               </div>
               <p>
@@ -81,7 +272,7 @@ impl Component for TabSettings {
                 {"Description"}
               </p>
               <div class="input-group mb-2">
-                <textarea class="form-control" rows="4" placeholder="Add a description in less than 140 character"></textarea>
+                <textarea class="form-control" rows="4" placeholder="Add a description in less than 140 character">{description}</textarea>
               </div>
               <p class="text-color-disabled">
                 {"A free text description of the application. Max character count is 140."}
@@ -106,7 +297,7 @@ impl Component for TabSettings {
                   src="https://cdn.auth0.com/manhattan/versions/1.3431.0/assets/./badge.png"/></div>
               <div class="input-group mb-2">
                 <input type="text" class="form-control bg-input-grey"
-                  aria-label="logo-path" value={"https://path.to/my_logo.png"}
+                  aria-label="logo-path" value={app_logo}
                   />
               </div>
               <p>
@@ -121,7 +312,7 @@ impl Component for TabSettings {
               </p>
               <div class="input-group mb-3">
                 <select class="form-select" id="application_type">
-                  <option selected=true>{"Custom App"}</option>
+                  <option selected=true>{app_type}</option>
                   <option value="1">{"Single Web Application"}</option>
                   <option value="2">{"Machine to Machine"}</option>
                   <option value="3">{"Native"}</option>
@@ -164,7 +355,7 @@ impl Component for TabSettings {
               <div class="input-group mb-2">
                 <input type="text" class="form-control bg-input-grey"
                   aria-label="Dollar amount (with dot and two decimal places)" 
-                //   value={https://myapp.org/login }
+                  value={login_url}
                   />
               </div>
               <p>
@@ -179,7 +370,7 @@ impl Component for TabSettings {
                 {"Allowed Callback URLs"}
               </p>
               <div class="input-group mb-2">
-                <textarea class="form-control" rows="4"></textarea>
+                <textarea class="form-control" rows="4">{allowed_urls}</textarea>
               </div>
               <p class="text-color-disabled">
                 {"After the user authenticates we will only call back to any of these URLs. You can specify multiple
@@ -196,7 +387,7 @@ impl Component for TabSettings {
               </p>
               <div class="input-group mb-2">
                 <textarea class="form-control" rows="4"
-                  placeholder="Add a description in less than 140 character"></textarea>
+                  placeholder="Add a description in less than 140 character">{allowed_logout_urls}</textarea>
               </div>
               <p class="text-color-disabled">
                 {"A set of URLs that are valid to redirect to after logout from Auth0. After a user logs out from Auth0
@@ -213,7 +404,7 @@ impl Component for TabSettings {
               </p>
               <div class="input-group mb-2">
                 <textarea class="form-control" rows="4"
-                  placeholder="Add a description in less than 140 character"></textarea>
+                  placeholder="Add a description in less than 140 character">{allowed_web_origins}</textarea>
               </div>
               <p class="text-color-disabled">
                 {"Comma-separated list of allowed origins for use with Cross-Origin Authentication, Device Flow, and web
@@ -230,7 +421,7 @@ impl Component for TabSettings {
               </p>
               <div class="input-group mb-2">
                 <textarea class="form-control" rows="4"
-                  placeholder="Add a description in less than 140 character"></textarea>
+                  placeholder="Add a description in less than 140 character">{allowed_origins}</textarea>
               </div>
               <p class="text-color-disabled">
                 {"Allowed Origins are URLs that will be allowed to make requests from JavaScript to Auth0 API (typically
@@ -254,7 +445,7 @@ impl Component for TabSettings {
               <p class="mb-2 fw-bold">
                 {"ID Token Expiration "}
               </p>
-              <input type="number" class="form-control" min="1" value="36000" width="50px" />
+              <input type="number" class="form-control" min="1" value={token_exp.to_string()}width="50px" />
               <p class="text-color-disabled">
                 {"This setting allows you to set the lifetime of the id_token (in seconds)"}
               </p>
@@ -274,7 +465,7 @@ impl Component for TabSettings {
               </p>
               <div class="form-check form-switch fs-3 mb-4">
                 <input class="form-check-input" type="checkbox" 
-                checked=true
+                checked={refresh_token_rotation}
                 />
               </div>
               <p class="text-color-disabled">
@@ -288,7 +479,7 @@ impl Component for TabSettings {
               <p class="mb-2 fw-bold">
                 {"Reuse Interval"}
               </p>
-              <input type="number" class="form-control" min="1" value="0" width="50px" />
+              <input type="number" class="form-control" min="1" value={refresh_token_rotation_interval.to_string()} width="50px" />
               <p class="text-color-disabled">
                 {"The allowable leeway time that the same refresh_token can be used to request an access_token without
                 triggering automatic reuse detection."}
@@ -308,7 +499,7 @@ impl Component for TabSettings {
                 {"Absolute Expiration"}
               </p>
               <div class="form-check form-switch fs-3 mb-4">
-                <input class="form-check-input" type="checkbox" checked=true/>
+                <input class="form-check-input" type="checkbox" checked={refesh_token_absolute_expiration}/>
               </div>
               <p class="text-color-disabled">
                 {"When enabled, a refresh_token will expire based on an absolute lifetime, after which the token can no
@@ -320,7 +511,7 @@ impl Component for TabSettings {
               <p class="mb-2 fw-bold">
                 {"Absolute Lifetime"}
               </p>
-              <input type="number" class="form-control col-lg-8" min="1" value="0" width="50px" />
+              <input type="number" class="form-control col-lg-8" min="1" value={refesh_token_absolute_expiration_lifetime.to_string()} width="50px" />
               <p class="text-color-disabled">
                 {"Sets the absolute lifetime of a refresh_token (in seconds)."}
               </p>
@@ -331,7 +522,7 @@ impl Component for TabSettings {
                 {"Inactivity Expiration"}
               </p>
               <div class="form-check form-switch fs-3 mb-4">
-                <input class="form-check-input" type="checkbox" checked=true />
+                <input class="form-check-input" type="checkbox" checked={refesh_token_inactivity_expiration} />
               </div>
               <p class="text-color-disabled">
                 {"When enabled, a refresh_token will expire based on a specified inactivity lifetime, after which the
@@ -343,13 +534,11 @@ impl Component for TabSettings {
               <p class="mb-2 fw-bold">
                 {"Inactivity Lifetime"}
               </p>
-              <input type="number" class="form-control col-lg-8" min="1" value="0" width="50px" />
+              <input type="number" class="form-control col-lg-8" min="1" value={refesh_token_inactivity_expiration_lifetime.to_string()} width="50px" />
               <p class="text-color-disabled">
                 {"Sets the inactivity lifetime of a refresh_token (in seconds)."}
               </p>
             </div>
-
-
 
           </div>
         </div>

@@ -37,8 +37,6 @@ impl Component for Sidebar {
     let acc = self.dispatch.state().clone();
     ConsoleService::info(&format!("sidebar acc tenant id is {:?}", acc.tenant_id));
     let tenant_id = if let Some(id) = acc.tenant_id { id } else { String::from("no_tenant_id") };
-    let tenant_idd: String = "ini_idd".to_string();
-    let app_id: i32 = 100;
     html! {
       <div
         class="col-auto col-md-3 col-xl-3 px-sm-3 px-0 bg-white fw-bold h-100"
