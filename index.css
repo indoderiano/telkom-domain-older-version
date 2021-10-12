@@ -225,7 +225,7 @@
   
   .jss70 {
     top: 65px;
-    width: 66px;
+    width: 78px!important;
     bottom: 0;
     height: auto;
     display: flex;
@@ -238,7 +238,7 @@
   }
   
   .jss70:hover {
-    width: 265px;
+    width: 265px!important;
     box-shadow: 16px 0px 16px rgba(0, 0, 0, 0.1);
     transition: width 195ms cubic-bezier(0.4, 0, 1, 1) 0ms, box-shadow 195ms cubic-bezier(0.4, 0, 1, 1) 0ms;
   }
@@ -251,7 +251,7 @@
   
   @media (min-width:1280px) {
     .jss70 {
-      width: 265px;
+      width: 265px!important;
     }
   }
   

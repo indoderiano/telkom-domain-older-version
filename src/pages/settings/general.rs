@@ -7,7 +7,7 @@ use yew::{
     }
 };
 use serde::{
-    Deserialize,
+    // Deserialize,
     Serialize,
 };
 use crate::types::settings::{
@@ -196,9 +196,9 @@ impl Component for SettingsGeneral {
                         self.tenant_settings.error_page.url = value;
                         true
                     }
-                    _ => {
-                        false
-                    }
+                    // _ => {
+                    //     false
+                    // }
                 }
             }
             Msg::InputBool(value, data) => {
@@ -385,25 +385,25 @@ impl Component for SettingsGeneral {
 impl SettingsGeneral {
     fn view_content (&self) -> Html {
         let TenantSettings {
-            change_password,
-            guardian_mfa_page,
+            change_password: _,
+            guardian_mfa_page: _,
             default_audience,
             default_directory,
             error_page,
-            device_flow,
-            flags,
+            device_flow: _,
+            flags: _,
             friendly_name,
             picture_url,
             support_email,
             support_url,
-            allowed_logout_urls,
-            session_lifetime,
-            idle_session_lifetime,
-            sandbox_version,
-            sandbox_versions_available,
-            default_redirection_uri,
-            enabled_locales,
-            session_cookie,
+            allowed_logout_urls: _,
+            session_lifetime: _,
+            idle_session_lifetime: _,
+            sandbox_version: _,
+            sandbox_versions_available: _,
+            default_redirection_uri: _,
+            enabled_locales: _,
+            session_cookie: _,
         } = self.tenant_settings.clone();
         html! {
             <div>
