@@ -34,9 +34,9 @@ impl Component for Sidebar {
 
   fn view(&self) -> Html {
     type Anchor = RouterAnchor<AppRoute>;
-    let acc = self.dispatch.state().clone();
-    ConsoleService::info(&format!("sidebar acc tenant id is {:?}", acc.tenant_id));
-    let tenant_id = if let Some(id) = acc.tenant_id { id } else { String::from("no_tenant_id") };
+    let account = self.dispatch.state().clone();
+    ConsoleService::info(&format!("sidebar account tenant id is {:?}", account.tenant_id));
+    let tenant_id = if let Some(id) = account.tenant_id { id } else { String::from("no_tenant_id") };
     html! {
       <div
         class="col-auto col-md-3 col-xl-3 px-sm-3 px-0 bg-white fw-bold h-100"

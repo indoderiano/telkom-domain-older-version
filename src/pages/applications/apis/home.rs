@@ -13,6 +13,7 @@ use crate::types::{
 use crate::components::{
     loading2::Loading2,
 };
+use crate::configs::server::API_URL;
 
 
 #[derive(Clone, Debug, Eq, PartialEq, Properties)]
@@ -106,8 +107,9 @@ impl ApisHome {
                                         font-size: 14px;
                                     "
                                 >
-                                    // {"System API"}
-                                    { &api.api_type }
+                                    {
+                                        if api.is_system {"System API"} else {"Custom Api"}
+                                    }
                                 </p>
                             </div>
             
@@ -213,11 +215,7 @@ impl Component for ApisHome {
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
         ConsoleService::info(&format!("Apis home props, tenant id = {}", props.tenant_id));
 
-        let api_create = ApiCreate {
-            name: String::from(""),
-            identifier: String::from(""),
-            sign_algorithm: String::from("RS256"),
-        };
+        let api_create = ApiCreate::new();
 
         ApisHome {
             tenant_id: props.tenant_id,
@@ -237,9 +235,9 @@ impl Component for ApisHome {
 
         if first_render {
             ConsoleService::info("This is first render");
-            
             self.link.send_message(Msg::RequestApiList);
         }
+
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
@@ -252,11 +250,11 @@ impl Component for ApisHome {
                 // self.error_api_create: None,
                 self.api_create.name = String::from("");
                 self.api_create.identifier = String::from("");
-                self.api_create.sign_algorithm = String::from("");
+                self.api_create.signing_alg = String::from("");
                 true
             }
             Msg::RequestApiList => {
-                let request = Request::get("http://localhost:3000/api/tenantid")
+                let request = Request::get(format!("{}/api/v2/resource-servers/tenantid", API_URL))
                     // .header("Content-Type", "application/json")
                     .header("access_token", "tokenidtelkomdomain")
                     .body(Nothing)
@@ -281,14 +279,6 @@ impl Component for ApisHome {
             }
             Msg::GetApiList(data) => {
                 self.api_list = data;
-                // match response {
-                //     Ok(data) => {
-                //         ConsoleService::info(&format!("{:?}", data));
-                //     }
-                //     Err(error) => {
-                //         ConsoleService::info(&error.to_string());
-                //     }
-                // }
                 self.loading_get_api = false;
                 self.fetch_task = None;
                 true
@@ -302,7 +292,7 @@ impl Component for ApisHome {
                         self.api_create.identifier = input;
                     }
                     DataApiCreate::SignAlg => {
-                        self.api_create.sign_algorithm = input;
+                        self.api_create.signing_alg = input;
                     }
                 }
                 true
@@ -313,7 +303,7 @@ impl Component for ApisHome {
             }
             Msg::Create => {
                 ConsoleService::info(&format!("{:?}", self.api_create));
-                let request = Request::post("http://localhost:3000/api/tenantid")
+                let request = Request::post(format!("{}/api/v2/resource-servers/tenantid", API_URL))
                     .header("Content-Type", "application/json")
                     .header("access_token", "tokenidtelkomdomain")
                     .body(Json(&self.api_create))
@@ -348,6 +338,7 @@ impl Component for ApisHome {
                         self.error_api_create = Some(message);
                     }
                 }
+                self.fetch_task = None;
                 true
             }
         }

@@ -29,4 +29,5 @@ pub struct ResponseMessage {
 pub mod application;
 pub mod api;
 pub mod login;
+pub mod settings;
 
