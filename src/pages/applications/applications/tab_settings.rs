@@ -6,6 +6,7 @@ use yew::{
         fetch::{FetchService, FetchTask, Request, Response},
     }
 };
+use crate::app::AppRoute;
 use yew_router::service::RouteService;
 use crate::types::{
 	application::{ AppDetails, ResponseAppDetails },
@@ -59,11 +60,11 @@ pub struct TabSettings {
 
 pub enum Msg {
   InputText(String, Data),
-  // Save,
+  Save,
   GetAppDetails(AppDetails),
-  // ResponseError(String, StateError),
-  // Delete,
-  // RedirectToApp,
+  ResponseError(String, StateError),
+  Delete,
+  RedirectToApp,
 }
 
 impl Component for TabSettings {
@@ -172,10 +173,80 @@ impl Component for TabSettings {
           }
           true
         }
+        Msg::Save => {
+          ConsoleService::info(&format!("{:?}", self.app_details));
+          let request = Request::put("http://localhost:3000/applications/tenantid/applications/dev-1wj84p4q")
+              .header("Content-Type", "application/json")
+              .header("access_token", "tokenidtelkomdomain")
+              .body(Json(&self.app_details))
+              .expect("Could not build request.");
+          let callback = self.link.callback(|response: Response<Json<Result<ResponseAppDetails, anyhow::Error>>>| {
+          let Json(data) = response.into_body();
+          match data {
+              Ok(dataok) => {
+                  ConsoleService::info(&format!("{:?}", dataok));
+                  Msg::GetAppDetails(dataok.data)
+              }
+              Err(error) => {
+                  ConsoleService::info(&error.to_string());
+                  Msg::ResponseError(error.to_string(), StateError::Update)
+              }
+          }
+          });
+          let task = FetchService::fetch(request, callback).expect("failed to start request");
+          self.loading_update_app = true;
+          self.fetch_task = Some(task);
+          true
+        }
         Msg::GetAppDetails(data) => {
           self.fetch_task = None;
           self.loading_update_app = false;
           self.app_details = data;
+          true
+        }
+        Msg::ResponseError(message, state) => {
+          match state {
+            StateError::Update => {
+                self.fetch_task = None;
+                self.loading_update_app = false;
+                self.error_update_app = Some(message);
+            }
+            StateError::Delete => {
+                    self.fetch_task = None;
+                    self.loading_delete_app = false;
+                    self.error_delete_app = Some(message);
+            }
+          }
+          true
+        }
+        Msg::Delete => {
+          let request = Request::delete("http://localhost:3000/applications/tenantid/applications/dev-1wj84p4q")
+              .header("Content-Type", "application/json")
+              .header("access_token", "tokenidtelkomdomain")
+              .body(Nothing)
+              .expect("Could not build request.");
+          let callback = self.link.callback(|response: Response<Json<Result<ResponseMessage, anyhow::Error>>>| {
+          let Json(data) = response.into_body();
+          match data {
+              Ok(dataok) => {
+                  ConsoleService::info(&format!("{:?}", dataok));
+                  Msg::RedirectToApp
+              }
+              Err(error) => {
+                  ConsoleService::info(&error.to_string());
+                  Msg::ResponseError(error.to_string(), StateError::Delete)
+              }
+          }
+          });
+          let task = FetchService::fetch(request, callback).expect("failed to start request");
+          self.loading_delete_app = true;
+          self.fetch_task = Some(task);
+          true
+        }
+        Msg::RedirectToApp => {
+          self.loading_delete_app = false;
+          self.fetch_task = None;
+          self.route_service.set_route(&format!("/{}/apis", self.app_details.tenant), ());
           true
         }
       }
@@ -547,8 +618,33 @@ impl Component for TabSettings {
 
             <div class="mb-5 mt-3">
               <div class="col-md-12 p-2 text-center">
-                <button type="button" class="btn btn-primary">{"Save Changes"} </button>
+                <button
+                  type="button"
+                  class=format!("btn {} btn-primary position-relative", if self.loading_update_app {"loading"} else {""} )
+                  onclick=self.link.callback(|_| Msg::Save)
+                  disabled={ if self.loading_update_app {true} else {false} }
+                >
+                  <div class="telkom-label">
+                    {"Save Changes"}
+                  </div>
+                  <div class="telkom-spinner telkom-center">
+                    <div class="spinner-border spinner-border-sm" role="status"/>
+                  </div>
+                </button>
               </div>
+
+              {
+                if self.error_update_app.is_some() {
+                  html! {
+                    <div class="alert alert-warning" role="alert">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        { self.error_update_app.clone().unwrap() }
+                    </div>
+                  }
+                } else {
+                    html! {}
+                }
+              }
 
             </div>
           </div>
@@ -569,7 +665,31 @@ impl Component for TabSettings {
             {"Once confirmed, this operation can't be undone!"}
           </div>
           <div>
-          <button type="button" class="btn btn-danger m-auto p-2">{"Delete"}</button>
+          <button
+            type="button"
+            class=format!("btn {} btn-danger position-relative", if self.loading_delete_app {"loading"} else {""} )
+            onclick=self.link.callback(|_| Msg::Delete)
+            disabled={ if self.loading_delete_app {true} else {false} }
+        >
+            <div class="telkom-label">
+                {"Delete"}
+            </div>
+            <div class="telkom-spinner telkom-center">
+                <div class="spinner-border spinner-border-sm" role="status"/>
+            </div>
+        </button>
+            {
+                if self.error_delete_app.is_some() {
+                    html! {
+                        <div class="alert alert-warning" role="alert">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            { self.error_delete_app.clone().unwrap() }
+                        </div>
+                    }
+                } else {
+                    html! {}
+                }
+            }
             
           </div>
         </div>

@@ -59,7 +59,7 @@ impl ApplicationHome {
                                     class="d-flex justify-content-center align-items-center rounded me-3"
                                 >
                                     <img
-                                        src={"https://cdn.auth0.com/manhattan/versions/1.3312.0/assets/badge.png"} style=" color: transparent;
+                                        src={app.logo_uri.clone()} style=" color: transparent;
                                         width: 100%;
                                         height: 100%;
                                         object-fit: cover;
