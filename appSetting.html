@@ -21,385 +21,129 @@
   <body>
 
 
-    <div>
-
-      <div class="container border rounded p-4 d-flex flex-column mb-5" style="font-size: 14px;">
-        <div class="row border-bottom">
-          <div class="col-lg-6 text-color-primary fw-bold mb-4">
-            {"Basic Information"}
+    <div class=format!("modal fade {}", if self.show_modal_create {"show"} else {""}) // id="exampleModal"
+      tabindex="-1" // aria-labelledby="exampleModalLabel" // aria-hidden="true" // style=format!("display: {};", if
+      self.show_modal_create {"block; transition: display .15s linear .15s"} else {"none; transition: display .15s
+      linear .15s"}) style="display: block;" aria-modal={ if self.show_modal_create {"true"} else {"false"} } role={ if
+      self.show_modal_create {"dialog"} else {""} } aria-hidden={ if self.show_modal_create {"false"} else {"true"} } //
+      onclick=self.link.callback(|_| {Msg::ShowModalCreate(false)})>
+      <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">{"New API"}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+              onclick=self.link.callback(|_| {Msg::ShowModalCreate(false)})></button>
           </div>
-          <div class="col-lg-6">
+          <div class="modal-body" style="font-size: 14px;">
             <div class="mb-4">
-              <p class="mb-2 fw-bold">
-                {"Name*"}
-              </p>
+              <label for="basic-url" class="form-label fw-bold">{"Name"}</label>
               <div class="input-group mb-2">
-                <input type="text" class="form-control bg-input-grey"
-                  aria-label="Dollar amount (with dot and two decimal places)" value={name}
-                  />
+                <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3"
+                  oninput=self.link.callback(|data: InputData| Msg::Input(data.value, DataApiCreate::Name)) />
               </div>
+              <label class="form-label text-muted">{"A friendly name for the API"}</label>
             </div>
+
 
             <div class="mb-4">
-              <p class="mb-2 fw-bold">
-                {"Domain"}
-              </p>
-              <div class="input-group mb-2">
-                <input type="text" class="form-control bg-input-grey"
-                  aria-label="Dollar amount (with dot and two decimal places)" value={domain}
-                  />
-              </div>
-            </div>
-
-            <div class="mb-4">
-              <p class="mb-2 fw-bold">
-                {"Client ID"}
-              </p>
-              <div class="input-group mb-2">
-                <input type="text" class="form-control bg-input-grey"
-                  aria-label="Dollar amount (with dot and two decimal places)" value={client_id}
-                  />
-              </div>
-            </div>
-
-            <div class="mb-4">
-              <p class="mb-2 fw-bold">
-                {"Client Secret"}
-              </p>
-              <div class="input-group mb-2">
-                <input type="text" class="form-control bg-input-grey"
-                  aria-label="Dollar amount (with dot and two decimal places)" value={client_secret}
-                  />
-              </div>
-              <p>
-                {"The Client Secret is not base64 encoded.""}
-              </p>
-            </div>
-
-            <div class="mb-5">
-              <p class="mb-2 fw-bold">
-                {"Description"}
-              </p>
-              <div class="input-group mb-2">
-                <textarea class="form-control" rows="4" placeholder="Add a description in less than 140 character"></textarea>
-              </div>
-              <p class="text-color-disabled">
-                {"A free text description of the application. Max character count is 140."}
-              </p>
-            </div>
-
-          </div>
-        </div>
-
-
-
-        <div class="row border-bottom mt-5">
-          <div class="col-lg-6 text-color-primary fw-bold mb-4">
-            {"Application Properties"}
-          </div>
-          <div class="col-lg-6">
-            <div class="mb-4">
-              <p class="mb-2 fw-bold">
-                {"Application Logo"}
-              </p>
-              <div class="col-md-12 p-2 text-center border rounded p-5"><img height="65px" width="60px"
-                  src="https://cdn.auth0.com/manhattan/versions/1.3431.0/assets/./badge.png"></div>
-              <div class="input-group mb-2">
-                <input type="text" class="form-control bg-input-grey"
-                  aria-label="Dollar amount (with dot and two decimal places)" value={https://path.to/my_logo.png}
-                  />
-              </div>
-              <p>
-                {"The URL of the logo to display for the application, if none is set the default badge for this type of
-                application will be shown. Recommended size is 150x150 pixels."}
-              </p>
-            </div>
-
-            <div class="mb-4">
-              <p class="mb-2 fw-bold">
-                {Application Type"}
-              </p>
-              <div class="input-group mb-3">
-                <select class="form-select" id="application_type">
-                  <option selected=true>{"Custom App"}</option>
-                  <option value="1">{"Single Web Application"}</option>
-                  <option value="2">{"Machine to Machine"}</option>
-                  <option value="3">{"Native"}</option>
-                </select>
-              </div>
-              <p>
-                {"The type of application will determine which settings you can configure from the dashboard."}
-              </p>
-            </div>
-
-            <div class="mb-4">
-              <p class="mb-2 fw-bold">
-                {"Token Endpoint Authentication Method"}
-              </p>
-              <div class="input-group mb-3">
-                <select class="form-select" id="application_type" disabled>
-                  <option selected=true disabled>{"None"}</option>
-                </select>
-              </div>
-              <p>
-                {"Defines the requested authentication method for the token endpoint. Possible values are 'None' (public
-                application without a client secret), 'Post' (application uses HTTP POST parameters) or 'Basic'
-                (application uses HTTP Basic)."}
-              </p>
-            </div>
-
-          </div>
-        </div>
-
-        <div class="row border-bottom mt-5">
-          <div class="col-lg-6 text-color-primary fw-bold mb-4">
-            {"Application URIs"}
-          </div>
-          <div class="col-lg-6">
-            
-            <div class="mb-4">
-              <p class="mb-2 fw-bold">
-                {"Application Login URI"}
-              </p>
-              <div class="input-group mb-2">
-                <input type="text" class="form-control bg-input-grey"
-                  aria-label="Dollar amount (with dot and two decimal places)" value={https://myapp.org/login}
-                  />
-              </div>
-              <p>
-                {"In some scenarios, Auth0 will need to redirect to your application’s login page. This URI needs to
-                point to a route in your application that should redirect to your tenant’s /authorize endpoint"}
-              </p>
-            </div>
-
-
-            <div class="mb-5">
-              <p class="mb-2 fw-bold">
-                {"Allowed Callback URLs"}
-              </p>
-              <div class="input-group mb-2">
-                <textarea class="form-control" rows="4"></textarea>
-              </div>
-              <p class="text-color-disabled">
-                {"After the user authenticates we will only call back to any of these URLs. You can specify multiple
-                valid URLs by comma-separating them (typically to handle different environments like QA or testing).
-                Make sure to specify the protocol (https://) otherwise the callback may fail in some cases. With the
-                exception of custom URI schemes for native clients, all callbacks should use protocol https://. You can
-                use Organization URL parameters in these URLs."}
-              </p>
-            </div>
-
-            <div class="mb-5">
-              <p class="mb-2 fw-bold">
-                {"Allowed Logout URLs"}
-              </p>
-              <div class="input-group mb-2">
-                <textarea class="form-control" rows="4"
-                  placeholder="Add a description in less than 140 character"></textarea>
-              </div>
-              <p class="text-color-disabled">
-                {"A set of URLs that are valid to redirect to after logout from Auth0. After a user logs out from Auth0
-                you can redirect them with the returnTo query parameter. The URL that you use in returnTo must be listed
-                here. You can specify multiple valid URLs by comma-separating them. You can use the star symbol as a
-                wildcard for subdomains (*.google.com). Query strings and hash information are not taken into account
-                when validating these URLs."}
-              </p>
-            </div>
-
-            <div class="mb-5">
-              <p class="mb-2 fw-bold">
-                {"Allowed Web Origins"}
-              </p>
-              <div class="input-group mb-2">
-                <textarea class="form-control" rows="4"
-                  placeholder="Add a description in less than 140 character"></textarea>
-              </div>
-              <p class="text-color-disabled">
-                {"Comma-separated list of allowed origins for use with Cross-Origin Authentication, Device Flow, and web
-                message response mode, in the form of <scheme> "://" <host> [ ":" <port> ], such as
-                https://login.mydomain.com or http://localhost:3000. You can use wildcards at the subdomain level
-                (e.g.: https://*.contoso.com). Query strings and hash information are not taken into account when
-                validating these URLs."}
-              </p>
-            </div>
-
-            <div class="mb-5">
-              <p class="mb-2 fw-bold">
-                {"Allowed Origins (CORS)"}
-              </p>
-              <div class="input-group mb-2">
-                <textarea class="form-control" rows="4"
-                  placeholder="Add a description in less than 140 character"></textarea>
-              </div>
-              <p class="text-color-disabled">
-                {"Allowed Origins are URLs that will be allowed to make requests from JavaScript to Auth0 API (typically
-                used with CORS). By default, all your callback URLs will be allowed. This field allows you to enter
-                other origins if you need to. You can specify multiple valid URLs by comma-separating them or one by
-                line, and also use wildcards at the subdomain level (e.g.: https://*.contoso.com). Query strings and
-                hash information are not taken into account when validating these URLs.. You can use Organization URL
-                placeholders in these URLs."}
-              </p>
-            </div>
-
-          </div>
-        </div>
-
-        <div class="row border-bottom mt-5">
-          <div class="col-lg-6 text-color-primary fw-bold mb-4">
-            {"ID TOKEN"}
-          </div>
-          <div class="col-lg-6">
-            <div class="mb-4">
-              <p class="mb-2 fw-bold">
-                {"ID Token Expiration "}
-              </p>
-              <input type="number" class="form-control" min="1" value="36000" width="50px" />
-              <p class="text-color-disabled">
-                {"This setting allows you to set the lifetime of the id_token (in seconds)"}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div class="row border-bottom mt-5">
-          <div class="col-lg-6 text-color-primary fw-bold mb-4">
-            {"Refresh Token Rotation"}
-          </div>
-          <div class="col-lg-6">
-
-            <div class="mb-4">
-              <p class="mb-2 fw-bold">
-                {"Rotation"}
-              </p>
-              <div class="form-check form-switch fs-3 mb-4">
-                <input class="form-check-input" type="checkbox" 
-                checked={rbac} 
-                />
-              </div>
-              <p class="text-color-disabled">
-                {"When enabled, as a result of exchanging a refresh token, a new refresh token will be issued and the
-                existing token will be invalidated. This allows for automatic detection of token reuse if the token is
-                leaked. In addition, an absolute expiration lifetime must be set."}
-              </p>
-            </div>
-
-            <div class="mb-4">
-              <p class="mb-2 fw-bold">
-                {"Reuse Interval"}
-              </p>
-              <input type="number" class="form-control" min="1" value="0" width="50px" />
-              <p class="text-color-disabled">
-                {"The allowable leeway time that the same refresh_token can be used to request an access_token without
-                triggering automatic reuse detection."}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div class="row border-bottom mt-5">
-          <div class="col-lg-6 text-color-primary fw-bold mb-4">
-            {"Refresh Token Expiration"}
-          </div>
-          <div class="col-lg-6">
-
-            <div class="mb-4">
-              <p class="mb-2 fw-bold">
-                {"Absolute Expiration"}
-              </p>
-              <div class="form-check form-switch fs-3 mb-4">
-                <input class="form-check-input" type="checkbox" checked={rbac}/>
-              </div>
-              <p class="text-color-disabled">
-                {"When enabled, a refresh_token will expire based on an absolute lifetime, after which the token can no
-                longer be used. If rotation is enabled, an expiration lifetime must be set."}
-              </p>
-            </div>
-
-            <div class="mb-4">
-              <p class="mb-2 fw-bold">
-                {"Absolute Lifetime"}
-              </p>
-              <input type="number" class="form-control col-lg-8" min="1" value="0" width="50px" />
-              <p class="text-color-disabled">
-                {"Sets the absolute lifetime of a refresh_token (in seconds)."}
-              </p>
-            </div>
-
-            <div class="mb-4">
-              <p class="mb-2 fw-bold">
-                {"Inactivity Expiration"}
-              </p>
-              <div class="form-check form-switch fs-3 mb-4">
-                <input class="form-check-input" type="checkbox" checked={rbac} />
-              </div>
-              <p class="text-color-disabled">
-                {"When enabled, a refresh_token will expire based on a specified inactivity lifetime, after which the
-                token can no longer be used."}
-              </p>
-            </div>
-
-            <div class="mb-4">
-              <p class="mb-2 fw-bold">
-                {"Inactivity Lifetime"}
-              </p>
-              <input type="number" class="form-control col-lg-8" min="1" value="0" width="50px" />
-              <p class="text-color-disabled">
-                {"Sets the inactivity lifetime of a refresh_token (in seconds)."}
-              </p>
-            </div>
-
-
-
-          </div>
-        </div>
-
-        <div class="row border-bottom mt-5">
-
-            <div class="mb-5 mt-3">
-              <div class="col-md-12 p-2 text-center">
-                <button type="button" class="btn btn-primary">{"Save Changes"} </button>
+              
+              <div class="MuiFormGroup-root"><label class="MuiFormLabel-root">Choose an application type</label>
+                <div class="jss2 jss386" data-cosmos-key="column-layout">
+                  <div
+                    class="MuiPaper-root MuiCard-root jss396 jss397 jss387 jss389 jss394 jss391 MuiPaper-outlined MuiPaper-rounded">
+                    <div class="jss2 jss398" data-cosmos-key="row-layout">
+                      <div class="jss2 jss399 jss279 jss293 jss288 jss298" data-cosmos-key="avatar"><img
+                          data-cosmos-key="image"
+                          src="https://cdn.auth0.com/manhattan/versions/1.3431.0/assets/native.svg" class="jss280">
+                      </div>
+                      <h6 class="MuiTypography-root MuiTypography-subtitle2" data-cosmos-key="text">Native</h6>
+                      <p class="MuiTypography-root MuiTypography-body2" data-cosmos-key="text">Mobile, desktop, CLI and
+                        smart device apps running natively.</p>
+                      <p class="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary"
+                        data-cosmos-key="text">e.g.: iOS, Electron, Apple TV apps</p>
+                    </div>
+                  </div>
+                  <div
+                    class="MuiPaper-root MuiCard-root jss396 jss400 jss387 jss389 jss391 MuiPaper-outlined MuiPaper-rounded">
+                    <div class="jss2 jss398" data-cosmos-key="row-layout">
+                      <div class="jss2 jss402 jss279 jss293 jss288 jss298" data-cosmos-key="avatar"><img
+                          data-cosmos-key="image" src="https://cdn.auth0.com/manhattan/versions/1.3431.0/assets/spa.svg"
+                          class="jss280"></div>
+                      <h6 class="MuiTypography-root MuiTypography-subtitle2" data-cosmos-key="text">Single Page Web
+                        Applications</h6>
+                      <p class="MuiTypography-root MuiTypography-body2" data-cosmos-key="text">A JavaScript front-end
+                        app that uses an API.</p>
+                      <p class="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary"
+                        data-cosmos-key="text">e.g.: Angular, React, Vue</p>
+                    </div>
+                  </div>
+                  <div
+                    class="MuiPaper-root MuiCard-root jss396 jss403 jss387 jss389 jss391 MuiPaper-outlined MuiPaper-rounded">
+                    <div class="jss2 jss398" data-cosmos-key="row-layout">
+                      <div class="jss2 jss405 jss279 jss293 jss288 jss298" data-cosmos-key="avatar"><img
+                          data-cosmos-key="image"
+                          src="https://cdn.auth0.com/manhattan/versions/1.3431.0/assets/regular_web.svg" class="jss280">
+                      </div>
+                      <h6 class="MuiTypography-root MuiTypography-subtitle2" data-cosmos-key="text">Regular Web
+                        Applications</h6>
+                      <p class="MuiTypography-root MuiTypography-body2" data-cosmos-key="text">Traditional web app using
+                        redirects.</p>
+                      <p class="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary"
+                        data-cosmos-key="text">e.g.: Node.js Express, ASP.NET, Java, PHP</p>
+                    </div>
+                  </div>
+                  <div
+                    class="MuiPaper-root MuiCard-root jss396 jss406 jss387 jss389 jss391 MuiPaper-outlined MuiPaper-rounded">
+                    <div class="jss2 jss398" data-cosmos-key="row-layout">
+                      <div class="jss2 jss408 jss279 jss293 jss288 jss298" data-cosmos-key="avatar"><img
+                          data-cosmos-key="image"
+                          src="https://cdn.auth0.com/manhattan/versions/1.3431.0/assets/non_interactive.svg"
+                          class="jss280"></div>
+                      <h6 class="MuiTypography-root MuiTypography-subtitle2" data-cosmos-key="text">Machine to Machine
+                        Applications</h6>
+                      <p class="MuiTypography-root MuiTypography-body2" data-cosmos-key="text">CLIs, daemons or services
+                        running on your backend.</p>
+                      <p class="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary"
+                        data-cosmos-key="text">e.g.: Shell script</p>
+                    </div>
+                  </div>
+                </div>
               </div>
 
+
+
             </div>
-          </div>
-        </div>
-
-      </div>
-
-      <div style="font-size: 14px;">
-        <p class="fw-bold">
-          {"Danger Zone"}
-        </p>
-
-        <div class="alert alert-danger d-flex flex-row justify-content-between" role="alert">
-          <div>
-            <p class="fw-bold">
-              {"Delete This Application"}
-            </p>
-            {"Once confirmed, this operation can't be undone!"}
-          </div>
-          <div>
-          <button type="button" class="btn btn-danger m-auto p-2">{"Delete"}</button>
             
           </div>
-        </div>
-        
-        <div class="alert alert-danger d-flex flex-row justify-content-between" role="alert">
-          <div>
-            <p class="fw-bold">
-              {"Rotate secret"}
-            </p>
-            {"All authorized apps will need to be updated with the new client secret."}
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick=self.link.callback(|_|
+              {Msg::ShowModalCreate(false)})>{"Cancel"}</button>
+            <button type="button" class=format!("btn {} btn-primary position-relative", if self.loading_create_api
+              {"loading"} else {""} ) onclick=self.link.callback(|_| Msg::Create) disabled={ if self.loading_create_api
+              {true} else {false} }>
+              <div class="telkom-label">
+                {"Create"}
+              </div>
+              <div class="telkom-spinner telkom-center">
+                <div class="spinner-border spinner-border-sm" role="status" />
+              </div>
+            </button>
           </div>
-          <div>
-            <button type="button" class="btn btn-danger m-auto p-2">{"Delete"}</button>
-
+          {
+          if self.error_api_create.is_some() {
+          html! {
+          <div class="modal-footer">
+            <div class="alert alert-warning" role="alert">
+              <i class="bi bi-exclamation-triangle me-2"></i>
+              { self.error_api_create.clone().unwrap() }
+            </div>
           </div>
+          }
+          } else {
+          html! {}
+          }
+          }
         </div>
-
-
-
-
       </div>
     </div>
 

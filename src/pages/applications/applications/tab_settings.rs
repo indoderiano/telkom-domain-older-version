@@ -298,6 +298,7 @@ impl Component for TabSettings {
               <div class="input-group mb-2">
                 <input type="text" class="form-control bg-input-grey"
                   aria-label="Dollar amount (with dot and two decimal places)" value={name}
+                  oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::Name))
                   />
               </div>
             </div>
@@ -308,7 +309,9 @@ impl Component for TabSettings {
               </p>
               <div class="input-group mb-2">
                 <input type="text" class="form-control bg-input-grey"
-                  aria-label="Dollar amount (with dot and two decimal places)" value={domain}
+                  aria-label="Dollar amount (with dot and two decimal places)"
+                  value={domain}
+                  oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::Domain))
                   />
               </div>
             </div>
@@ -320,6 +323,7 @@ impl Component for TabSettings {
               <div class="input-group mb-2">
                 <input type="text" class="form-control bg-input-grey"
                   aria-label="Dollar amount (with dot and two decimal places)" value={client_id}
+                  oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::ClientId))
                   />
               </div>
             </div>
@@ -331,6 +335,7 @@ impl Component for TabSettings {
               <div class="input-group mb-2">
                 <input type="text" class="form-control bg-input-grey"
                   aria-label="Dollar amount (with dot and two decimal places)" value={client_secret}
+                  oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::ClientSecret))
                   />
               </div>
               <p>
@@ -343,7 +348,10 @@ impl Component for TabSettings {
                 {"Description"}
               </p>
               <div class="input-group mb-2">
-                <textarea class="form-control" rows="4" placeholder="Add a description in less than 140 character">{description}</textarea>
+                <textarea class="form-control" rows="4" placeholder="Add a description in less than 140 character"
+                value={description}
+                oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::Description))
+                ></textarea>
               </div>
               <p class="text-color-disabled">
                 {"A free text description of the application. Max character count is 140."}

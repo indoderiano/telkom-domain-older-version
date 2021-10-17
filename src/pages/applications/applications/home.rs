@@ -375,10 +375,73 @@ impl Component for ApplicationHome {
                                     <label class="form-label text-muted">{"This is your application name"}</label>
                                     </div>
                                     <div class="mb-4">
-                                    <label for="basic-url" class="form-label fw-bold">{"Application type"}</label>
-                                    <div class="input-group mb-2">
-                                        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3" />
+                                    
+                                    
+
+                                    <div class="MuiFormGroup-root"><label class="MuiFormLabel-root">{"Choose an application type"}</label>
+                                        <div class="jss2 jss386" data-cosmos-key="column-layout">
+                                        <div
+                                            class="MuiPaper-root MuiCard-root jss396 jss397 jss387 jss389 jss394 jss391 MuiPaper-outlined MuiPaper-rounded">
+                                            <div class="jss2 jss398" data-cosmos-key="row-layout">
+                                            <div class="jss2 jss399 jss279 jss293 jss288 jss298" data-cosmos-key="avatar"><img
+                                                data-cosmos-key="image"
+                                                src="https://cdn.auth0.com/manhattan/versions/1.3431.0/assets/native.svg" class="jss280"/>
+                                            </div>
+                                            <h6 class="MuiTypography-root MuiTypography-subtitle2" data-cosmos-key="text">{"Native"}</h6>
+                                            <p class="MuiTypography-root MuiTypography-body2" data-cosmos-key="text">{"Mobile, desktop, CLI and
+                                                smart device apps running natively"}</p>
+                                            <p class="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary"
+                                                data-cosmos-key="text">{"e.g.: iOS, Electron, Apple TV apps"}</p>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="MuiPaper-root MuiCard-root jss396 jss400 jss387 jss389 jss391 MuiPaper-outlined MuiPaper-rounded">
+                                            <div class="jss2 jss398" data-cosmos-key="row-layout">
+                                            <div class="jss2 jss402 jss279 jss293 jss288 jss298" data-cosmos-key="avatar"><img
+                                                data-cosmos-key="image" src="https://cdn.auth0.com/manhattan/versions/1.3431.0/assets/spa.svg"
+                                                class="jss280"/></div>
+                                            <h6 class="MuiTypography-root MuiTypography-subtitle2" data-cosmos-key="text">{"Single Page Web
+                                                Applications"}</h6>
+                                            <p class="MuiTypography-root MuiTypography-body2" data-cosmos-key="text">{"A JavaScript front-end
+                                                app that uses an API."}</p>
+                                            <p class="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary"
+                                                data-cosmos-key="text">{"e.g.: Angular, React, Vue"}</p>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="MuiPaper-root MuiCard-root jss396 jss403 jss387 jss389 jss391 MuiPaper-outlined MuiPaper-rounded">
+                                            <div class="jss2 jss398" data-cosmos-key="row-layout">
+                                            <div class="jss2 jss405 jss279 jss293 jss288 jss298" data-cosmos-key="avatar"><img
+                                                data-cosmos-key="image"
+                                                src="https://cdn.auth0.com/manhattan/versions/1.3431.0/assets/regular_web.svg" class="jss280"/>
+                                            </div>
+                                            <h6 class="MuiTypography-root MuiTypography-subtitle2" data-cosmos-key="text">{"Regular Web
+                                                Applications"}</h6>
+                                            <p class="MuiTypography-root MuiTypography-body2" data-cosmos-key="text">{"Traditional web app using
+                                                redirects."}</p>
+                                            <p class="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary"
+                                                data-cosmos-key="text">{"e.g.: Node.js Express, ASP.NET, Java, PHP"}</p>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="MuiPaper-root MuiCard-root jss396 jss406 jss387 jss389 jss391 MuiPaper-outlined MuiPaper-rounded">
+                                            <div class="jss2 jss398" data-cosmos-key="row-layout">
+                                            <div class="jss2 jss408 jss279 jss293 jss288 jss298" data-cosmos-key="avatar"><img
+                                                data-cosmos-key="image"
+                                                src="https://cdn.auth0.com/manhattan/versions/1.3431.0/assets/non_interactive.svg"
+                                                class="jss280"/></div>
+                                            <h6 class="MuiTypography-root MuiTypography-subtitle2" data-cosmos-key="text">{"Machine to Machine
+                                                Applications"}</h6>
+                                            <p class="MuiTypography-root MuiTypography-body2" data-cosmos-key="text">{"CLIs, daemons or services
+                                                running on your backend."}</p>
+                                            <p class="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary"
+                                                data-cosmos-key="text">{"e.g.: Shell script"}</p>
+                                            </div>
+                                        </div>
+                                        </div>
                                     </div>
+
+
                                     <label class="form-label text-muted">{"Ex: Web Application"}</label>
                                     </div>
                                 </div>
