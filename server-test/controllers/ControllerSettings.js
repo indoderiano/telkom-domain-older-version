@@ -132,7 +132,7 @@ class ControllerSettings {
                 "8",
                 "4",
             ],
-            default_redirection_uri: "",
+            default_redirection_uri: "https://www.login-telkom.com",
             enabled_locales: [""],
             session_cookie: {
                 mode: "persistent",
