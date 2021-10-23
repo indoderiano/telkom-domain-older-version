@@ -36,7 +36,7 @@ class ControllerApi {
 
         setTimeout(() => {
             console.log("return data");
-            res.send(data)
+            res.status(400).send(data)
 
             // IF ERROR
             // console.log("return data error");

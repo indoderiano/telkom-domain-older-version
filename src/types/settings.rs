@@ -136,3 +136,20 @@ impl TenantSettings {
         }
     }
 }
+
+
+
+
+
+
+
+// Tenant Members
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct TenantMember {
+    pub username: String,
+    pub email: String,
+    pub connection: String,
+    pub roles: String,
+    pub is_mfa: bool
+}

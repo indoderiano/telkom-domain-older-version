@@ -1,6 +1,6 @@
 use yew::prelude::*;
 use crate::components::{
-    logo::Logo,
+    // logo::Logo,
     logo2::Logo2,
 };
 use yewdux::dispatch::Dispatcher;

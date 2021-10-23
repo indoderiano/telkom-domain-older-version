@@ -1,22 +1,23 @@
 use yew::{
-    format::{ Json, Nothing },
+    // format::{ Json, Nothing },
     prelude::*,
     services::{
-        fetch::{ FetchService, FetchTask, Request, Response },
-        ConsoleService,
+        // fetch::{ FetchService, FetchTask, Request, Response },
+        // ConsoleService,
     },
 };
 use super::general::SettingsGeneral;
 use super::tenant_members::SettingsTenantMembers;
 use super::custom_domain::SettingsCustomDomain;
 use super::signing_keys::SettingsSigningKeys;
-use crate::types::settings::{
-    TenantSettings,
-};
-use crate::configs::server::API_URL;
-use crate::components::{
-    loading2::Loading2,
-};
+use super::advanced::SettingsAdvanced;
+// use crate::types::settings::{
+//     TenantSettings,
+// };
+// use crate::configs::server::API_URL;
+// use crate::components::{
+//     loading2::Loading2,
+// };
 
 pub enum Content {
     General,
@@ -176,7 +177,7 @@ impl Component for SettingsHome {
                         Content::TenantMembers => html! { <SettingsTenantMembers/> },
                         Content::CustomDomains => html! { <SettingsCustomDomain/> },
                         Content::SigningKeys => html! { <SettingsSigningKeys/> },
-                        Content::Advanced => html! {},
+                        Content::Advanced => html! { <SettingsAdvanced/> },
                     }
                     // if self.loading_request_settings {
                     //     html! {
