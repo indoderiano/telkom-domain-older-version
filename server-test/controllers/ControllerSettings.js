@@ -145,6 +145,19 @@ class ControllerSettings {
         }, 3000)
     }
 
+    static deleteTenant(req, res, next) {
+
+        console.log("delete tenant")
+
+        setTimeout(() => {
+            console.log("return status");
+            res.send({
+                message: "Tenant deleted",
+                data: "",
+            })
+        }, 3000)
+    }
+
     static getMembers (req, res, next) {
         console.log(req.params)
 
