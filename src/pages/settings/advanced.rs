@@ -13,6 +13,8 @@ use crate::types::settings::{
     TenantSettings,
     Flags,
 };
+use crate::types::ResponseMessage;
+use yew_router::service::RouteService;
 use crate::configs::server::API_URL;
 use crate::components::{
     loading2::Loading2,
@@ -26,6 +28,7 @@ pub enum StateError {
     UpdateLoginSession,
     UpdateDeviceFlow,
     UpdateSettings,
+    DeleteTenant,
 }
 
 pub enum Data {
@@ -67,6 +70,7 @@ pub struct SettingsAdvanced {
     error_update_extensibility: Option<String>,
     error_delete: Option<String>,
     fetch_task: Option<FetchTask>,
+    route_service: RouteService,
 }
 
 pub enum Msg {
@@ -81,8 +85,9 @@ pub enum Msg {
     UpdateSettings,
     // UpdateExtensibility,
     // // UpdateMigrations,
-    // DeleteTenant,
+    DeleteTenant,
     ResponseError(String, StateError),
+    RedirectToGettingStarted,
 }
 
 impl Component for SettingsAdvanced {
@@ -108,6 +113,7 @@ impl Component for SettingsAdvanced {
             error_update_extensibility: None,
             error_delete: None,
             fetch_task: None,
+            route_service: RouteService::new(),
         }
     }
     fn rendered(&mut self, first_render: bool) {
@@ -177,10 +183,18 @@ impl Component for SettingsAdvanced {
                         self.tenant_settings.session_cookie.mode = value;
                     }
                     Data::IdleSessionLifetime => {
-                        self.tenant_settings.idle_session_lifetime = value.parse::<u64>().unwrap();
+                        if value.is_empty() {
+                            self.tenant_settings.idle_session_lifetime = 0;
+                        } else {
+                            self.tenant_settings.idle_session_lifetime = value.parse::<u64>().unwrap();
+                        }
                     }
                     Data::SessionLifetime => {
-                        self.tenant_settings.session_lifetime = value.parse::<u64>().unwrap();
+                        if value.is_empty() {
+                            self.tenant_settings.session_lifetime = 0;
+                        } else {
+                            self.tenant_settings.session_lifetime = value.parse::<u64>().unwrap();
+                        }
                     }
                     Data::DeviceFlowCharset => {
                         self.tenant_settings.device_flow.charset = value;
@@ -298,7 +312,7 @@ impl Component for SettingsAdvanced {
                 true
             }
             Msg::UpdateDeviceFlow => {
-                let data_device_flow = self.tenant_settings.device_flow;
+                let data_device_flow = self.tenant_settings.device_flow.clone();
                 let request = Request::patch(format!("{}/tenant/v2/settings", API_URL))
                     .header("Content-Type", "application/json")
                     .header("access_token", "tokennotfromreducer")
@@ -324,7 +338,7 @@ impl Component for SettingsAdvanced {
             }
             Msg::UpdateSettings => {
                 
-                let data_settings = self.tenant_settings.flags;
+                let data_settings = self.tenant_settings.flags.clone();
                 let request = Request::patch(format!("{}/tenant/v2/settings", API_URL))
                     .header("Content-Type", "application/json")
                     .header("access_token", "tokennotfromreducer")
@@ -346,6 +360,30 @@ impl Component for SettingsAdvanced {
                 let task = FetchService::fetch(request, callback).expect("failed to start request");
                 self.loading_update_settings = true;
                 self.fetch_task = Some(task);
+                true
+            }
+            Msg::DeleteTenant => {
+                let request = Request::delete(format!("{}/tenant/v2/settings", API_URL))
+                    .header("access_token", "tokennotfromreducer")
+                    .body(Nothing)
+                    .expect("Could not build request.");
+                let callback = 
+                    self.link.callback(|response: Response<Json<Result<ResponseMessage, anyhow::Error>>>| {
+                        let Json(data) = response.into_body();
+                        match data {
+                            Ok(dataok) => {
+                                ConsoleService::info(&format!("{:?}", dataok));
+                                Msg::RedirectToGettingStarted
+                            }
+                            Err(error) => {
+                                Msg::ResponseError(error.to_string(), StateError::DeleteTenant)
+                            }
+                        }
+                    });
+                let task = FetchService::fetch(request, callback).expect("failed to start request");
+                self.fetch_task = Some(task);
+                self.error_delete = None;
+                self.loading_delete = true;
                 true
             }
             Msg::ResponseError(message, state) => {
@@ -371,7 +409,17 @@ impl Component for SettingsAdvanced {
                         self.loading_update_settings = false;
                         self.error_update_settings = Some(message);
                     }
+                    StateError::DeleteTenant => {
+                        self.loading_delete = false;
+                        self.error_delete = Some(message);
+                    }
                 }
+                true
+            }
+            Msg::RedirectToGettingStarted => {
+                self.loading_delete = false;
+                self.fetch_task = None;
+                self.route_service.set_route("/getting-started", ());
                 true
             }
         }
@@ -464,6 +512,7 @@ impl SettingsAdvanced {
                                         placeholder="https://mycompany.org/logoutCallback"
                                         value={allowed_logout_urls[0].clone()}
                                         oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::AllowedLogoutUrls))
+                                        disabled={ self.loading_update_login_logout }
                                     ></textarea>
                                 </div>
                                 <p
@@ -487,6 +536,7 @@ impl SettingsAdvanced {
                                         placeholder="https://mycompany.org/login"
                                         value={ default_redirection_uri.clone() }
                                         oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::DefaultRedirectionUri))
+                                        disabled={ self.loading_update_login_logout }    
                                     />
                                 </div>
                                 <p
@@ -503,7 +553,7 @@ impl SettingsAdvanced {
                                     type="button"
                                     class=format!("btn {} btn-primary position-relative", if self.loading_update_login_logout {"loading"} else {""} )
                                     onclick=self.link.callback(|_| Msg::UpdateLoginLogout)
-                                    disabled={ if self.loading_update_login_logout {true} else {false} }
+                                    disabled={ self.loading_update_login_logout }
                                 >
                                     <div class="telkom-label">
                                         {"Save"}
@@ -567,7 +617,7 @@ impl SettingsAdvanced {
                                         <div
                                             class=format!("card {}", if session_cookie.mode == String::from("persistent") {"border border-primary border-2"} else {""} )
                                             onclick=self.link.callback(|_| Msg::InputString(String::from("persistent"), Data::SessionCookieMode))
-                                            style="cursor: pointer;"
+                                            style=format!("cursor: pointer; {}", if self.loading_update_login_session {"pointer-events: none;"} else {""} )
                                         >
                                             <div class="card-body">
                                             <p class="card-title mb-2 fw-bold">{"Persistent Session"}</p>
@@ -581,7 +631,7 @@ impl SettingsAdvanced {
                                     <div
                                         class=format!("card {}", if session_cookie.mode == String::from("non-persistent") {"border border-primary border-2"} else {""} )
                                         onclick=self.link.callback(|_| Msg::InputString(String::from("non-persistent"), Data::SessionCookieMode))
-                                        style="cursor: pointer;"
+                                        style=format!("cursor: pointer; {}", if self.loading_update_login_session {"pointer-events: none;"} else {""} )
                                     >
                                     <div class="card-body">
                                             <p class="card-title mb-2 fw-bold">{"Non-Persistent Session"}</p>
@@ -610,6 +660,7 @@ impl SettingsAdvanced {
                                         aria-label="Timeout"
                                         value={idle_session_lifetime.to_string().clone()}
                                         oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::IdleSessionLifetime))
+                                        disabled={ self.loading_update_login_session }
                                     />
                                     <span
                                         class="input-group-text"
@@ -636,6 +687,7 @@ impl SettingsAdvanced {
                                         class="form-control"
                                         value={session_lifetime.to_string().clone()}
                                         oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::SessionLifetime))
+                                        disabled={ self.loading_update_login_session }
                                     />
                                     <span class="input-group-text" id="basic-addon2">{"minutes"}</span>
                                     </div>
@@ -717,6 +769,7 @@ impl SettingsAdvanced {
                                             Msg::InputString(String::from("no value"), Data::DeviceFlowCharset)
                                         }
                                     })
+                                    disabled={ self.loading_update_device_flow }
                                 >
                                     <option
                                         value="base20"
@@ -752,6 +805,7 @@ impl SettingsAdvanced {
                                         aria-describedby="basic-addon2"
                                         value={device_flow.mask.clone()}
                                         oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::DeviceFlowMask))
+                                        disabled={ self.loading_update_device_flow }
                                     />
                                     <span class="input-group-text" id="basic-addon2">{"e.g BCDF-GHJK"}</span>
                                     </div>
@@ -769,7 +823,7 @@ impl SettingsAdvanced {
                                     type="button"
                                     class=format!("btn {} btn-primary position-relative", if self.loading_update_device_flow {"loading"} else {""} )
                                     onclick=self.link.callback(|_| Msg::UpdateDeviceFlow)
-                                    disabled={ if self.loading_update_device_flow {true} else {false} }
+                                    disabled={ self.loading_update_device_flow }
                                 >
                                     <div class="telkom-label">
                                         {"Save"}
@@ -781,12 +835,12 @@ impl SettingsAdvanced {
 
                                 {
                                     if self.error_update_device_flow.is_some() {
-                                    html! {
-                                        <div class="alert alert-warning mt-3" role="alert">
-                                            <i class="bi bi-exclamation-triangle me-2"></i>
-                                            { self.error_update_device_flow.clone().unwrap() }
-                                        </div>
-                                    }
+                                        html! {
+                                            <div class="alert alert-warning mt-3" role="alert">
+                                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                                { self.error_update_device_flow.clone().unwrap() }
+                                            </div>
+                                        }
                                     } else {
                                         html! {}
                                     }
@@ -1068,6 +1122,7 @@ impl SettingsAdvanced {
                                     //         Msg::InputString(String::from("no value"), Data::De)
                                     //     }
                                     // })
+                                    disabled={ self.loading_update_device_flow }
                                 >
                                     <option
                                         value="Node"
@@ -1088,7 +1143,7 @@ impl SettingsAdvanced {
                                     type="button"
                                     class=format!("btn {} btn-primary position-relative", if self.loading_update_device_flow {"loading"} else {""} )
                                     onclick=self.link.callback(|_| Msg::UpdateDeviceFlow)
-                                    disabled={ if self.loading_update_device_flow {true} else {false} }
+                                    disabled={ self.loading_update_device_flow }
                                 >
                                     <div class="telkom-label">
                                         {"Save"}
@@ -1152,6 +1207,7 @@ impl SettingsAdvanced {
                                         id="flexSwitchCheckChecked"
                                         checked={ flags.disable_clickjack_protection_headers.clone() }
                                         onclick=self.link.callback(|_| Msg::InputString(String::from(""), Data::FlagsDisableClickjackProtectionHeaders))
+                                        disabled={ self.loading_update_settings }
                                     />
                                 </div>
                                 <p
@@ -1199,11 +1255,36 @@ impl SettingsAdvanced {
                             </p>
                             {"Once confirmed, this operation can't be undone!"}
                         </div>
-                        <div>
+                        <div
+                            class="mb-5 mt-3"
+                        >
                             <button
                                 type="button"
-                                class="btn btn-danger"
-                            >{"Delete"}</button>
+                                class=format!("btn {} btn-danger position-relative", if self.loading_delete {"loading"} else {""} )
+                                onclick=self.link.callback(|_| Msg::DeleteTenant)
+                                disabled={ if self.loading_delete {true} else {false} }
+                            >
+                                <div class="telkom-label">
+                                    {"Delete"}
+                                </div>
+                                <div class="telkom-spinner telkom-center">
+                                    <div class="spinner-border spinner-border-sm" role="status"/>
+                                </div>
+                            </button>
+
+                            {
+                                if self.error_delete.is_some() {
+                                html! {
+                                    <div class="alert alert-warning mt-3" role="alert">
+                                        <i class="bi bi-exclamation-triangle me-2"></i>
+                                        { self.error_delete.clone().unwrap() }
+                                    </div>
+                                }
+                                } else {
+                                    html! {}
+                                }
+                            }
+
                         </div>
                     </div>
                 </div>
