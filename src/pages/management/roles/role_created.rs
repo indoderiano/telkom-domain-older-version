@@ -26,76 +26,76 @@ impl Component for RolesCreated {
         type Anchor = RouterAnchor<AppRoute>;
         html! {
             <>
-            <div class="mx-auto pt-5 pb-5 px-4" style="max-width: 1048px;">
+                <div class="mx-auto pt-5 pb-5 px-4" style="max-width: 1048px;">
 
-                <div class="row">
-                    <div class="col-9">
-                        <h1 class="fw-bold">{"Roles"}</h1>
+                    <div class="row">
+                        <div class="col-9">
+                            <h1 class="fw-bold">{"Roles"}</h1>
+                        </div>
+                        <div class="col-3 d-flex justify-content-end">
+                            <button type="button" data-bs-toggle="modal" data-bs-target="#addRoleModal" class="btn btn-primary text-center">
+                                <i class="bi bi-plus me-2" style="margin-left: -5px;"></i>
+                                <span>{"Create Role"}</span>
+                            </button>
+                        </div>
                     </div>
-                    <div class="col-3">
-                        <button type="button" data-bs-toggle="modal" data-bs-target="#addRoleModal" class="btn btn-primary text-center">
-                            <i class="bi bi-plus me-2" style="margin-left: -5px;"></i>
-                            <span>{"Create Role"}</span>
-                         </button>
+            
+                    <div class="mt-3">
+                        <p class="text-muted fs-6">{"Create and manage Roles for your applications. Roles contain collections of Permissions and can be assigned to Users."} </p>
                     </div>
-                </div>
-        
-                <div class="mt-3">
-                    <p class="text-muted fs-6">{"Create and manage Roles for your applications. Roles contain collections of Permissions and can be assigned to Users."} </p>
-                </div>
-        
-                <div class="mt-5">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">{"Name"}</th>
-                                <th scope="col">{"Description"}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><a href="" class="text-decoration-none">{"Yeska"}</a></td>
-                                <td>
-                                    <div class="row">
-                                        <div class="col-10">
-                                            <p>{"Frontend Developer"}</p>
+            
+                    <div class="mt-5">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">{"Name"}</th>
+                                    <th scope="col">{"Description"}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><a href="" class="text-decoration-none">{"Yeska"}</a></td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="col-10">
+                                                <p>{"Frontend Developer"}</p>
+                                            </div>
+                                            <div class="col-2 d-flex justify-content-center">
+                                                <button
+                                                type="button"
+                                                style="flex: 0 0 auto; width: 30px; height: 30px;"
+                                                class="btn d-flex justify-content-center align-items-center rounded border"
+                                                role="button"
+                                                id="dropdownMenuButton1"
+                                                data-bs-toggle="dropdown"
+                                                aria-expanded="false"
+                                                >
+                                                <i class="bi bi-three-dots"></i>
+                                                </button>
+                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                    <li>
+                                                        <Anchor route=AppRoute::ViewDetail classes="dropdown-item fs-7">
+                                                            {"View Details"}
+                                                        </Anchor>
+                                                    </li>
+                                                    <li>
+                                                        <Anchor route=AppRoute::ApisSettings{tenant_id: String::from("temp_tenant_id"), api_id: String::from("api_id")} classes="dropdown-item fs-7">
+                                                            {"Assign To Users"}
+                                                        </Anchor>
+                                                    </li>
+                                                    <li>
+                                                        <Anchor route=AppRoute::ApisSettings{tenant_id: String::from("temp_tenant_id"), api_id: String::from("api_id")} classes="dropdown-item fs-7">
+                                                            {"Delete Role"}
+                                                        </Anchor>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         </div>
-                                        <div class="col-2">
-                                            <button
-                                            type="button"
-                                            style="flex: 0 0 auto; width: 30px; height: 30px;"
-                                            class="btn d-flex justify-content-center align-items-center rounded border"
-                                            role="button"
-                                            id="dropdownMenuButton1"
-                                            data-bs-toggle="dropdown"
-                                            aria-expanded="false"
-                                            >
-                                            <i class="bi bi-three-dots"></i>
-                                            </button>
-                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                                 <li>
-                                                    <Anchor route=AppRoute::ViewDetail classes="dropdown-item fs-7">
-                                                        {"View Details"}
-                                                    </Anchor>
-                                                </li>
-                                                <li>
-                                                    <Anchor route=AppRoute::ApisSettings{tenant_id: String::from("temp_tenant_id"), api_id: String::from("api_id")} classes="dropdown-item fs-7">
-                                                        {"Assign To Users"}
-                                                    </Anchor>
-                                                </li>
-                                                <li>
-                                                    <Anchor route=AppRoute::ApisSettings{tenant_id: String::from("temp_tenant_id"), api_id: String::from("api_id")} classes="dropdown-item fs-7">
-                                                        {"Delete Role"}
-                                                    </Anchor>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
     
             </div>
 
