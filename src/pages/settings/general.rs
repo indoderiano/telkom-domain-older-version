@@ -6,8 +6,13 @@ use yew::{
         fetch::{FetchService, FetchTask, Request, Response},
     }
 };
+use serde::{
+    // Deserialize,
+    Serialize,
+};
 use crate::types::settings::{
     TenantSettings,
+    ErrorPage,
 };
 use crate::configs::server::API_URL;
 use crate::components::{
@@ -42,11 +47,34 @@ pub enum Data {
 
 }
 
+#[derive(Serialize, Debug, Clone)]
+struct DataSettings {
+    friendly_name: String,
+    picture_url: String,
+    support_email: String,
+    support_url: String,
+}
+// Data environment
+#[derive(Serialize, Debug, Clone)]
+struct DataAuthorization {
+    default_audience: String,
+    default_directory: String,
+}
+#[derive(Serialize, Debug, Clone)]
+struct DataErrorPage {
+    error_page: ErrorPage
+}
+// #[derive(Serialize, Debug, Clone)]
+// struct DataLanguage {
+//     default_language: String,
+//     supported_language: String,
+// }
+
 pub struct SettingsGeneral {
     tenant_settings: TenantSettings,
+    link: ComponentLink<Self>,
     loading_request_settings: bool,
     error_request_settings: Option<String>,
-    link: ComponentLink<Self>,
     fetch_task: Option<FetchTask>,
     loading_update_settings: bool,
     loading_update_environment_tag: bool,
@@ -168,9 +196,9 @@ impl Component for SettingsGeneral {
                         self.tenant_settings.error_page.url = value;
                         true
                     }
-                    _ => {
-                        false
-                    }
+                    // _ => {
+                    //     false
+                    // }
                 }
             }
             Msg::InputBool(value, data) => {
@@ -185,11 +213,17 @@ impl Component for SettingsGeneral {
                 }
             }
             Msg::UpdateSettings => {
-                ConsoleService::info(&format!("{:?}", self.tenant_settings));
+                let data_settings = DataSettings {
+                    friendly_name: self.tenant_settings.friendly_name.clone(),
+                    picture_url: self.tenant_settings.picture_url.clone(),
+                    support_email: self.tenant_settings.support_email.clone(),
+                    support_url: self.tenant_settings.support_url.clone(),
+                };
+                ConsoleService::info(&format!("data settings = {:?}", data_settings));
                 let request = Request::patch(format!("{}/tenant/v2/settings", API_URL))
                     .header("Content-Type", "application/json")
                     .header("access_token", "tokennotfromreducer")
-                    .body(Json(&self.tenant_settings))
+                    .body(Json(&data_settings))
                     .expect("Could not build request.");
                 let callback = self.link.callback(|response: Response<Json<Result<TenantSettings, anyhow::Error>>>| {
                     let Json(data) = response.into_body();
@@ -209,15 +243,72 @@ impl Component for SettingsGeneral {
                 self.fetch_task = Some(task);
                 true
             }
+            Msg::UpdateAuthorization => {
+                let data_authorization = DataAuthorization {
+                    default_audience: self.tenant_settings.default_audience.clone(),
+                    default_directory: self.tenant_settings.default_directory.clone(),
+                };
+                ConsoleService::info(&format!("data authorization = {:?}", data_authorization));
+                let request = Request::patch(format!("{}/tenant/v2/settings", API_URL))
+                    .header("Content-Type", "application/json")
+                    .header("access_token", "tokennotfromreducer")
+                    .body(Json(&data_authorization))
+                    .expect("Could not build request.");
+                let callback = self.link.callback(|response: Response<Json<Result<TenantSettings, anyhow::Error>>>| {
+                    let Json(data) = response.into_body();
+                    match data {
+                        Ok(dataok) => {
+                            ConsoleService::info(&format!("{:?}", dataok));
+                            Msg::GetTenantSettings(dataok)
+                        }
+                        Err(error) => {
+                            ConsoleService::info(&error.to_string());
+                            Msg::ResponseError(error.to_string(), StateError::UpdateAuthorization)
+                        }
+                    }
+                });
+                let task = FetchService::fetch(request, callback).expect("failed to start request");
+                self.loading_update_authorization = true;
+                self.fetch_task = Some(task);
+                true
+            }
+            Msg::UpdateErrorPage => {
+                let data_error_page = DataErrorPage {
+                    error_page: self.tenant_settings.error_page.clone()
+                };
+                ConsoleService::info(&format!("data error page = {:?}", data_error_page));
+                let request = Request::patch(format!("{}/tenant/v2/settings", API_URL))
+                    .header("Content-Type", "application/json")
+                    .header("access_token", "tokennotfromreducer")
+                    .body(Json(&data_error_page))
+                    .expect("Could not build request.");
+                let callback = self.link.callback(|response: Response<Json<Result<TenantSettings, anyhow::Error>>>| {
+                    let Json(data) = response.into_body();
+                    match data {
+                        Ok(dataok) => {
+                            ConsoleService::info(&format!("{:?}", dataok));
+                            Msg::GetTenantSettings(dataok)
+                        }
+                        Err(error) => {
+                            ConsoleService::info(&error.to_string());
+                            Msg::ResponseError(error.to_string(), StateError::UpdateErrorPage)
+                        }
+                    }
+                });
+                let task = FetchService::fetch(request, callback).expect("failed to start request");
+                self.loading_update_error_page = true;
+                self.fetch_task = Some(task);
+                true
+            }
             Msg::GetTenantSettings(data) => {
                 self.fetch_task = None;
                 self.loading_update_settings = false;
+                self.loading_update_authorization = false;
+                self.loading_update_error_page = false;
                 self.error_update_settings = None;
                 self.tenant_settings = data;
                 true
             }
-
-
             Msg::ResponseError(message, state) => {
                 match state {
                     StateError::GetSettings => {
@@ -294,25 +385,25 @@ impl Component for SettingsGeneral {
 impl SettingsGeneral {
     fn view_content (&self) -> Html {
         let TenantSettings {
-            change_password,
-            guardian_mfa_page,
+            change_password: _,
+            guardian_mfa_page: _,
             default_audience,
             default_directory,
             error_page,
-            device_flow,
-            flags,
+            device_flow: _,
+            flags: _,
             friendly_name,
             picture_url,
             support_email,
             support_url,
-            allowed_logout_urls,
-            session_lifetime,
-            idle_session_lifetime,
-            sandbox_version,
-            sandbox_versions_available,
-            default_redirection_uri,
-            enabled_locales,
-            session_cookie,
+            allowed_logout_urls: _,
+            session_lifetime: _,
+            idle_session_lifetime: _,
+            sandbox_version: _,
+            sandbox_versions_available: _,
+            default_redirection_uri: _,
+            enabled_locales: _,
+            session_cookie: _,
         } = self.tenant_settings.clone();
         html! {
             <div>
@@ -503,6 +594,7 @@ impl SettingsGeneral {
                                     type="button"
                                     class=format!("btn {} btn-primary position-relative", if self.loading_update_settings {"loading"} else {""} )
                                     onclick=self.link.callback(|_| Msg::UpdateSettings)
+                                    disabled={ if self.loading_update_settings {true} else {false} }
                                 >
                                     <div class="telkom-label">
                                         {"Save"}
@@ -752,7 +844,8 @@ impl SettingsGeneral {
                                         placeholder="https://your-default-endpoint/"
                                         value={default_audience}
                                         oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::DefaultAudience))
-                                    />   
+                                        disabled={ if self.loading_update_authorization {true} else {false} }
+                                    />
                                 </div>
                                 <p>
                                     {"API Audience to use by default for API Authorization flows . Note: This setting is equivalent to appending the audience to every authorization request made to the tenant for every application. This will cause new behavior that might result in breaking changes for some of your applications. If you require assistance, contact support."}
@@ -772,7 +865,8 @@ impl SettingsGeneral {
                                         placeholder="Connection Name"
                                         value={default_directory}
                                         oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::DefaultDirectory))
-                                    />   
+                                        disabled={ if self.loading_update_authorization {true} else {false} }
+                                    />
                                 </div>
                                 <p>
                                     {"Name of the connection to be use for Password Grant exchanges. The default_directory value should be the exact name of an existing connections of one of the following strategies: ad, auth0, email, sms, waad, adfs"}
@@ -786,6 +880,7 @@ impl SettingsGeneral {
                                     type="button"
                                     class=format!("btn {} btn-primary position-relative", if self.loading_update_authorization {"loading"} else {""} )
                                     onclick=self.link.callback(|_| Msg::UpdateAuthorization)
+                                    disabled={ if self.loading_update_authorization {true} else {false} }
                                 >
                                     <div class="telkom-label">
                                         {"Save"}
@@ -837,7 +932,7 @@ impl SettingsGeneral {
                                 </p>
                                 <div
                                     class="card card-hover mb-2"
-                                    style="cursor: pointer;"
+                                    style=format!("cursor: pointer; {}", if self.loading_update_error_page {"pointer-events: none;"} else {""} )
                                     onclick=self.link.callback(|_| Msg::InputBool(false, Data::ErrorPage))
                                 >
                                     <div class="card-body p-3">
@@ -884,7 +979,7 @@ impl SettingsGeneral {
                                 </div>
                                 <div
                                     class="card card-hover mb-4"
-                                    style="cursor: pointer;"
+                                    style=format!("cursor: pointer; {}", if self.loading_update_error_page {"pointer-events: none;"} else {""} )
                                     onclick=self.link.callback(|_| Msg::InputBool(true, Data::ErrorPage))
                                 >
                                     <div class="card-body p-3">
@@ -947,7 +1042,8 @@ impl SettingsGeneral {
                                                         placeholder="http://mycompany.com/error/"
                                                         value={error_page.url}
                                                         oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::ErrorPage))
-                                                    />   
+                                                        disabled={ if self.loading_update_error_page {true} else {false} }
+                                                    />
                                                 </div>
                                             </div>
                                         }
@@ -965,6 +1061,7 @@ impl SettingsGeneral {
                                     type="button"
                                     class=format!("btn {} btn-primary position-relative", if self.loading_update_error_page {"loading"} else {""} )
                                     onclick=self.link.callback(|_| Msg::UpdateErrorPage)
+                                    disabled={ if self.loading_update_error_page {true} else {false} }
                                 >
                                     <div class="telkom-label">
                                         {"Save"}

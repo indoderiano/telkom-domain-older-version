@@ -20,11 +20,13 @@ pub struct AppList {
 // pub allowed_logout_urls: String,
 // pub grant_types: String,
 
-#[derive(Deserialize, Debug, Clone)]
-pub struct ResponseAppList {
-    pub message: String,
-    pub data: Vec<AppList>
-}
+// #[derive(Deserialize, Debug, Clone)]
+// pub struct ResponseAppList {
+//     pub message: String,
+//     pub data: Vec<AppList>
+// }
+
+
 
 // #[derive(Deserialize, Debug, Clone)]
 // pub struct ResponseAppList {

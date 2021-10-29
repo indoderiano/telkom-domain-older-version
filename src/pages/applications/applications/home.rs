@@ -6,7 +6,7 @@ use yew::{
 
 use crate::app::AppRoute;
 use crate::types::{
-    application::{AppList, ResponseAppList},
+    application::{AppList},
     ResponseMessage,
 };
 use yew::services::ConsoleService;
@@ -231,17 +231,20 @@ impl Component for ApplicationHome {
                 true
             }
             Msg::RequestAppList => {
-                let request = Request::get("http://localhost:3000/applications/tenantid")
-                    .header("access_token", "tokenidtelkomdomain")
+                let request = Request::get("http://127.0.0.1:8080/api/v1/1/clients")
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzNDQxNzM1fQ.sg7AxL4IK9tleVV13V_eRUqCo75g-oOAkhMSqWxuVQw")
+                    .header("Content-Type", "application/json")
                     .body(Nothing)
                     .expect("Could not build request.");
                 let callback = self.link.callback(
-                    |response: Response<Json<Result<ResponseAppList, anyhow::Error>>>| {
+                    |response: Response<Json<Result<Vec<AppList>, anyhow::Error>>>| {
                         let Json(data) = response.into_body();
+                        // ConsoleService::info(&format!("{:?}", &data.unwrap()));
+                        // Msg::GetAppList(data.unwrap())
                         match data {
                             Ok(dataok) => {
-                                ConsoleService::info(&format!("{:?}", dataok));
-                                Msg::GetAppList(dataok.data)
+                                ConsoleService::info(&format!("{:?}", &dataok));
+                                Msg::GetAppList(dataok)
                             } 
                             Err(error) => {
                                 Msg::ResponseError(error.to_string(), StateError::AppList)

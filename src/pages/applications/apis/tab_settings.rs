@@ -214,17 +214,17 @@ impl Component for TabSettings {
         let ApiDetails {
             id,
             name,
-            is_system,
+            is_system: _,
             identifier,
             scopes: _,
             signing_alg,
-            signing_secret,
+            signing_secret: _,
             allow_offline_access,
             skip_consent_for_verifiable_first_party_clients,
             token_lifetime,
             token_lifetime_for_web,
             enforce_policies,
-            token_dialect,
+            token_dialect: _,
             client: _,
         } = self.api_details.clone();
         html! {

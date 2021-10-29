@@ -74,6 +74,7 @@ class ControllerSettings {
 
     static update (req, res, next) {
         console.log(req.params)
+        console.log(req.body)
 
         let data = {
             change_password: {
@@ -131,7 +132,7 @@ class ControllerSettings {
                 "8",
                 "4",
             ],
-            default_redirection_uri: "",
+            default_redirection_uri: "https://www.login-telkom.com",
             enabled_locales: [""],
             session_cookie: {
                 mode: "persistent",
@@ -142,6 +143,50 @@ class ControllerSettings {
             console.log("return data settings");
             res.send(data)
         }, 3000)
+    }
+
+    static deleteTenant(req, res, next) {
+
+        console.log("delete tenant")
+
+        setTimeout(() => {
+            console.log("return status");
+            res.send({
+                message: "Tenant deleted",
+                data: "",
+            })
+        }, 3000)
+    }
+
+    static getMembers (req, res, next) {
+        console.log(req.params)
+
+        let data = [
+            {
+                username: "batman",
+                email: "batman@mail.com",
+                connection: "google-oauth2",
+                roles: "admin",
+                is_mfa: false,
+            }
+        ]
+
+        setTimeout(() => {
+            console.log("return data members")
+            res.send(data)
+        }, 3000);
+    }
+
+    static createMember (req, res, next) {
+        console.log(req.body)
+
+        let data = {
+            message: "Create member succesful"
+        }
+
+        setTimeout(() => {
+            res.send(data)
+        }, 3000);
     }
 
     

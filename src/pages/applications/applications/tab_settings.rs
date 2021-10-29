@@ -373,10 +373,11 @@ impl Component for TabSettings {
                 {"Application Logo"}
               </p>
               <div class="col-md-12 p-2 text-center border rounded p-5"><img height="65px" width="60px"
-                  src="https://cdn.auth0.com/manhattan/versions/1.3431.0/assets/./badge.png"/></div>
+                  src={app_logo.clone()}/></div>
               <div class="input-group mb-2">
                 <input type="text" class="form-control bg-input-grey"
                   aria-label="logo-path" value={app_logo}
+                  oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::AppLogo))
                   />
               </div>
               <p>
@@ -390,11 +391,12 @@ impl Component for TabSettings {
                 {"Application Type"}
               </p>
               <div class="input-group mb-3">
-                <select class="form-select" id="application_type">
+                <select class="form-select" id="application_type"
+                oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::AppType))>
                   <option selected=true>{app_type}</option>
-                  <option value="1">{"Single Web Application"}</option>
-                  <option value="2">{"Machine to Machine"}</option>
-                  <option value="3">{"Native"}</option>
+                  <option value="Single Web Application">{"Single Web Application"}</option>
+                  <option value="Machine to Machine">{"Machine to Machine"}</option>
+                  <option value="Native">{"Native"}</option>
                 </select>
               </div>
               <p>
@@ -435,6 +437,7 @@ impl Component for TabSettings {
                 <input type="text" class="form-control bg-input-grey"
                   aria-label="Dollar amount (with dot and two decimal places)" 
                   value={login_url}
+                  oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::LoginUrl))
                   />
               </div>
               <p>
@@ -449,7 +452,9 @@ impl Component for TabSettings {
                 {"Allowed Callback URLs"}
               </p>
               <div class="input-group mb-2">
-                <textarea class="form-control" rows="4">{allowed_urls}</textarea>
+                <textarea class="form-control" rows="4" value={allowed_urls}
+                oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::AllowedUrls))
+                ></textarea>
               </div>
               <p class="text-color-disabled">
                 {"After the user authenticates we will only call back to any of these URLs. You can specify multiple
@@ -466,7 +471,10 @@ impl Component for TabSettings {
               </p>
               <div class="input-group mb-2">
                 <textarea class="form-control" rows="4"
-                  placeholder="Add a description in less than 140 character">{allowed_logout_urls}</textarea>
+                  placeholder="Add a description in less than 140 character"
+                  value={allowed_logout_urls}
+                  oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::AllowedLogoutUrls))
+                  ></textarea>
               </div>
               <p class="text-color-disabled">
                 {"A set of URLs that are valid to redirect to after logout from Auth0. After a user logs out from Auth0
@@ -483,7 +491,10 @@ impl Component for TabSettings {
               </p>
               <div class="input-group mb-2">
                 <textarea class="form-control" rows="4"
-                  placeholder="Add a description in less than 140 character">{allowed_web_origins}</textarea>
+                  placeholder="Add a description in less than 140 character"
+                  value={allowed_web_origins}
+                  oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::AllowedWebOrigins))
+                  ></textarea>
               </div>
               <p class="text-color-disabled">
                 {"Comma-separated list of allowed origins for use with Cross-Origin Authentication, Device Flow, and web
@@ -500,7 +511,10 @@ impl Component for TabSettings {
               </p>
               <div class="input-group mb-2">
                 <textarea class="form-control" rows="4"
-                  placeholder="Add a description in less than 140 character">{allowed_origins}</textarea>
+                  placeholder="Add a description in less than 140 character"
+                  value={allowed_origins}
+                  oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::AllowedOrigins))
+                  ></textarea>
               </div>
               <p class="text-color-disabled">
                 {"Allowed Origins are URLs that will be allowed to make requests from JavaScript to Auth0 API (typically
@@ -524,7 +538,9 @@ impl Component for TabSettings {
               <p class="mb-2 fw-bold">
                 {"ID Token Expiration "}
               </p>
-              <input type="number" class="form-control" min="1" value={token_exp.to_string()}width="50px" />
+              <input type="number" class="form-control" min="1" value={token_exp.to_string()}width="50px" 
+              oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::TokenExp))
+              />
               <p class="text-color-disabled">
                 {"This setting allows you to set the lifetime of the id_token (in seconds)"}
               </p>
@@ -545,6 +561,7 @@ impl Component for TabSettings {
               <div class="form-check form-switch fs-3 mb-4">
                 <input class="form-check-input" type="checkbox" 
                 checked={refresh_token_rotation}
+                onclick=self.link.callback(|_| Msg::InputText(String::from("none"), Data::RefreshTokenRotation))
                 />
               </div>
               <p class="text-color-disabled">
@@ -558,7 +575,9 @@ impl Component for TabSettings {
               <p class="mb-2 fw-bold">
                 {"Reuse Interval"}
               </p>
-              <input type="number" class="form-control" min="1" value={refresh_token_rotation_interval.to_string()} width="50px" />
+              <input type="number" class="form-control" min="1" value={refresh_token_rotation_interval.to_string()} width="50px" 
+              oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::RefreshTokenRotationInterval))
+              />
               <p class="text-color-disabled">
                 {"The allowable leeway time that the same refresh_token can be used to request an access_token without
                 triggering automatic reuse detection."}
@@ -578,7 +597,9 @@ impl Component for TabSettings {
                 {"Absolute Expiration"}
               </p>
               <div class="form-check form-switch fs-3 mb-4">
-                <input class="form-check-input" type="checkbox" checked={refesh_token_absolute_expiration}/>
+                <input class="form-check-input" type="checkbox" checked={refesh_token_absolute_expiration}
+                onclick=self.link.callback(|_| Msg::InputText(String::from("none"), Data::RefeshTokenAbsoluteExpiration))
+                />
               </div>
               <p class="text-color-disabled">
                 {"When enabled, a refresh_token will expire based on an absolute lifetime, after which the token can no
@@ -590,7 +611,9 @@ impl Component for TabSettings {
               <p class="mb-2 fw-bold">
                 {"Absolute Lifetime"}
               </p>
-              <input type="number" class="form-control col-lg-8" min="1" value={refesh_token_absolute_expiration_lifetime.to_string()} width="50px" />
+              <input type="number" class="form-control col-lg-8" min="1" value={refesh_token_absolute_expiration_lifetime.to_string()} width="50px" 
+              oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::RefeshTokenAbsoluteExpirationLifetime))
+              />
               <p class="text-color-disabled">
                 {"Sets the absolute lifetime of a refresh_token (in seconds)."}
               </p>
@@ -601,7 +624,9 @@ impl Component for TabSettings {
                 {"Inactivity Expiration"}
               </p>
               <div class="form-check form-switch fs-3 mb-4">
-                <input class="form-check-input" type="checkbox" checked={refesh_token_inactivity_expiration} />
+                <input class="form-check-input" type="checkbox" checked={refesh_token_inactivity_expiration} 
+                onclick=self.link.callback(|_| Msg::InputText(String::from("none"), Data::RefeshTokenInactivityExpiration))
+                />
               </div>
               <p class="text-color-disabled">
                 {"When enabled, a refresh_token will expire based on a specified inactivity lifetime, after which the
@@ -613,7 +638,9 @@ impl Component for TabSettings {
               <p class="mb-2 fw-bold">
                 {"Inactivity Lifetime"}
               </p>
-              <input type="number" class="form-control col-lg-8" min="1" value={refesh_token_inactivity_expiration_lifetime.to_string()} width="50px" />
+              <input type="number" class="form-control col-lg-8" min="1" value={refesh_token_inactivity_expiration_lifetime.to_string()} width="50px" 
+              oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::RefeshTokenInactivityExpirationLifetime))
+              />
               <p class="text-color-disabled">
                 {"Sets the inactivity lifetime of a refresh_token (in seconds)."}
               </p>
