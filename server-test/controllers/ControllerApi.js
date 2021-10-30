@@ -20,7 +20,16 @@ class ControllerApi {
                     name: "Auth0 Management API",
                     is_system: true,
                     identifier: "https://dev-r5y8heyf.au.auth0.com/api/v2/",
-                    scopes: [],
+                    scopes: [
+                        {
+                            permission: "read:client_grants",
+                            description: "Read Client Grants",
+                        },
+                        {
+                            permission: "create:client_grants",
+                            description: "Create Client Grants",
+                        },
+                    ],
                     signing_alg: "RS256",
                     signing_secret: "HS256",
                     allow_offline_access: true,
@@ -70,7 +79,16 @@ class ControllerApi {
                 name: "Auth0 Management API",
                 is_system: true,
                 identifier: "https://dev-r5y8heyf.au.auth0.com/api/v2/",
-                scopes: [],
+                scopes: [
+                    {
+                        permission: "read:client_grants",
+                        description: "Read Client Grants",
+                    },
+                    {
+                        permission: "create:client_grants",
+                        description: "Create Client Grants",
+                    },
+                ],
                 signing_alg: "RS256",
                 signing_secret: "HS256",
                 allow_offline_access: true,
@@ -116,7 +134,16 @@ class ControllerApi {
                 name: "Auth0 Management API edited",
                 is_system: true,
                 identifier: "https://dev-r5y8heyf.au.auth0.com/api/v2/ edited",
-                scopes: [],
+                scopes: [
+                    {
+                        permission: "read:client_grants",
+                        description: "Read Client Grants",
+                    },
+                    {
+                        permission: "create:client_grants",
+                        description: "Create Client Grants",
+                    },
+                ],
                 signing_alg: "RS256",
                 signing_secret: "HS256",
                 allow_offline_access: true,
