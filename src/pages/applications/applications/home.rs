@@ -59,7 +59,7 @@ impl ApplicationHome {
                                     class="d-flex justify-content-center align-items-center rounded me-3"
                                 >
                                     <img
-                                        src={app.logo_uri.clone()} style=" color: transparent;
+                                        src={"https://cdn.auth0.com/manhattan/versions/1.3226.0/assets/non_interactive.svg"} style=" color: transparent;
                                         width: 100%;
                                         height: 100%;
                                         object-fit: cover;
@@ -232,7 +232,7 @@ impl Component for ApplicationHome {
             }
             Msg::RequestAppList => {
                 let request = Request::get("http://127.0.0.1:8080/api/v1/1/clients")
-                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzNDQxNzM1fQ.sg7AxL4IK9tleVV13V_eRUqCo75g-oOAkhMSqWxuVQw")
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjM4ODU3NjA5fQ.cNg7AgVWGD9QzjupjDxdumgUaKPbngRUyoPfetEMWCE")
                     .header("Content-Type", "application/json")
                     .body(Nothing)
                     .expect("Could not build request.");

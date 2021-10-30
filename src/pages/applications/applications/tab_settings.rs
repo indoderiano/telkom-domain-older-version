@@ -9,7 +9,7 @@ use yew::{
 use crate::app::AppRoute;
 use yew_router::service::RouteService;
 use crate::types::{
-	application::{ AppDetails, ResponseAppDetails },
+	application::{ AppDetails, RefreshToken, SigningKeys, JwtConfiguration  },
 	ResponseMessage,
 };
 
@@ -29,7 +29,6 @@ pub enum Data {
     Domain,
     ClientId,
     ClientSecret,
-    Description,
     AppLogo,
     AppType,
     AuthenticationMethod,
@@ -95,7 +94,7 @@ impl Component for TabSettings {
                 self.app_details.name = input;
             }
             Data::Domain => {
-                self.app_details.domain = input;
+                self.app_details.tenant = input;
             }
             Data::ClientId => {
                 self.app_details.client_id = input;
@@ -103,68 +102,65 @@ impl Component for TabSettings {
             Data::ClientSecret => {
                 self.app_details.client_secret = input;
             }
-            Data::Description => {
-                self.app_details.description = input;
-            }
-            Data::AppLogo => {
-                self.app_details.app_logo = input;
-            }
+            // Data::AppLogo => {
+            //     self.app_details.app_logo = input;
+            // }
             Data::AppType => {
                 self.app_details.app_type = input;
             }
             Data::AuthenticationMethod => {
-                self.app_details.authentication_method = input;
+                self.app_details.token_endpoint_auth_method = input;
             }
             Data::LoginUrl => {
-                self.app_details.login_url = input;
+                self.app_details.callbacks = input;
             }
-            Data::AllowedUrls => {
-                self.app_details.allowed_urls = input;
-            }
-            Data::AllowedLogoutUrls => {
-                self.app_details.allowed_logout_urls = input;
-            }
-            Data::AllowedWebOrigins => {
-                self.app_details.allowed_web_origins = input;
-            }
-            Data::AllowedOrigins => {
-                self.app_details.allowed_origins = input;
-            }
+            // Data::AllowedUrls => {
+            //     self.app_details.callbacks = input;
+            // }
+            // Data::AllowedLogoutUrls => {
+            //     self.app_details.callbacks = input;
+            // }
+            // Data::AllowedWebOrigins => {
+            //     self.app_details.callbacks = input;
+            // }
+            // Data::AllowedOrigins => {
+            //     self.app_details.allowed_origins = input;
+            // }
             Data::TokenExp => {
                 if input.is_empty() {
-                    self.app_details.token_exp = 36000;
+                    self.app_details.refresh_token.token_lifetime = 0;
                 } else {
-                    self.app_details.token_exp = input.parse::<u32>().unwrap();
+                    self.app_details.refresh_token.token_lifetime = input.parse::<u32>().unwrap();
                 }
             }
-            Data::RefreshTokenRotation => {
-                self.app_details.refresh_token_rotation = !self.app_details.refresh_token_rotation;
-            }
-            Data::RefreshTokenRotationInterval => {
-                if input.is_empty() {
-                    self.app_details.refresh_token_rotation_interval = 0;
-                } else {
-                    self.app_details.refresh_token_rotation_interval = input.parse::<i32>().unwrap();
-                }
-            }
+            // Data::RefreshTokenRotation => {
+            //     self.app_details.refresh_token_rotation = !self.app_details.refresh_token_rotation;
+            // }
+            // Data::RefreshTokenRotationInterval => {
+            //     if input.is_empty() {
+            //         self.app_details.refresh_token_rotation_interval = 0;
+            //     } else {
+            //         self.app_details.refresh_token_rotation_interval = input.parse::<i32>().unwrap();
+            //     }
+            // }
             Data::RefeshTokenAbsoluteExpiration => {
-                self.app_details.refesh_token_absolute_expiration = !self.app_details.refesh_token_absolute_expiration;
+                self.app_details.refresh_token.infinite_token_lifetime = !self.app_details.refresh_token.infinite_token_lifetime;
             }
             Data::RefeshTokenAbsoluteExpirationLifetime => {
                 if input.is_empty() {
-                    self.app_details.refesh_token_absolute_expiration_lifetime = 2592000;
+                    self.app_details.refresh_token.token_lifetime = 0;
                 } else {
-                    self.app_details.refesh_token_absolute_expiration_lifetime = input.parse::<i32>().unwrap();
+                    self.app_details.refresh_token.token_lifetime = input.parse::<i32>().unwrap();
                 }
             }
             Data::RefeshTokenInactivityExpiration => {
-                self.app_details.refesh_token_inactivity_expiration = !self.app_details.refesh_token_inactivity_expiration;
+                self.app_details.refresh_token.infinite_idle_token_lifetime = !self.app_details.refresh_token.infinite_idle_token_lifetime;
             }
             Data::RefeshTokenInactivityExpirationLifetime => {
                 if input.is_empty() {
-                    self.app_details.refesh_token_inactivity_expiration_lifetime = 1296000;
+                    self.app_details.refresh_token.idle_token_lifetime = 0;
                 } else {
-                    self.app_details.refesh_token_inactivity_expiration_lifetime = input.parse::<i32>().unwrap();
+                    self.app_details.refresh_token.idle_token_lifetime = input.parse::<i32>().unwrap();
                 }
             }
             _ => {
@@ -175,17 +171,17 @@ impl Component for TabSettings {
         }
         Msg::Save => {
           ConsoleService::info(&format!("{:?}", self.app_details));
-          let request = Request::put("http://localhost:3000/applications/tenantid/applications/dev-1wj84p4q")
+          let request = Request::patch("http://127.0.0.1:8080/api/v1/1/clients/6153699da4277a57cb20b75d")
               .header("Content-Type", "application/json")
-              .header("access_token", "tokenidtelkomdomain")
+              .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjM4ODU3NjA5fQ.cNg7AgVWGD9QzjupjDxdumgUaKPbngRUyoPfetEMWCE")
               .body(Json(&self.app_details))
               .expect("Could not build request.");
-          let callback = self.link.callback(|response: Response<Json<Result<ResponseAppDetails, anyhow::Error>>>| {
+          let callback = self.link.callback(|response: Response<Json<Result<AppDetails, anyhow::Error>>>| {
           let Json(data) = response.into_body();
           match data {
               Ok(dataok) => {
                   ConsoleService::info(&format!("{:?}", dataok));
-                  Msg::GetAppDetails(dataok.data)
+                  Msg::GetAppDetails(dataok)
               }
               Err(error) => {
                   ConsoleService::info(&error.to_string());
@@ -259,28 +255,30 @@ impl Component for TabSettings {
 
     fn view(&self) -> Html {
       let AppDetails {
-            tenant: _,
+            tenant,
+            global,
+            is_token_endpoint_ip_header_trusted,
             name,
-            domain,
+            is_first_party,
+            oidc_conformant,
+            sso_disabled,
+            cross_origin_auth,
+            refresh_token,
+            encrypted,
+            allowed_clients,
+            callbacks,
+            signing_keys,
             client_id,
+            callback_url_template,
             client_secret,
-            description,
-            app_logo,
+            jwt_configuration,
+            client_aliases,
+            token_endpoint_auth_method,
             app_type,
-            authentication_method: _,
-            login_url,
-            allowed_urls,
-            allowed_logout_urls,
-            allowed_web_origins,
-            allowed_origins,
-            token_exp,
-            refresh_token_rotation,
-            refresh_token_rotation_interval,
-            refesh_token_absolute_expiration,
-            refesh_token_absolute_expiration_lifetime,
-            refesh_token_inactivity_expiration,
-            refesh_token_inactivity_expiration_lifetime,
+            grant_types,
+            custom_login_page_on,
         } = self.app_details.clone();
+
         html! {
             <>
                 <div>
@@ -349,19 +347,16 @@ impl Component for TabSettings {
               </p>
               <div class="input-group mb-2">
                 <textarea class="form-control" rows="4" placeholder="Add a description in less than 140 character"
-                value={description}
-                oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::Description))
+                value={"Ini description"}
+                // oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::Description))
                 ></textarea>
               </div>
               <p class="text-color-disabled">
                 {"A free text description of the application. Max character count is 140."}
               </p>
             </div>
-
           </div>
         </div>
-
-
 
         <div class="row border-bottom mt-5">
           <div class="col-lg-6 text-color-primary fw-bold mb-4">
@@ -373,11 +368,11 @@ impl Component for TabSettings {
                 {"Application Logo"}
               </p>
               <div class="col-md-12 p-2 text-center border rounded p-5"><img height="65px" width="60px"
-                  src={app_logo.clone()}/></div>
+                  src={"https://cdn.auth0.com/manhattan/versions/1.3226.0/assets/non_interactive.svg"}/></div>
               <div class="input-group mb-2">
                 <input type="text" class="form-control bg-input-grey"
-                  aria-label="logo-path" value={app_logo}
-                  oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::AppLogo))
+                  aria-label="logo-path" value={"https://cdn.auth0.com/manhattan/versions/1.3226.0/assets/non_interactive.svg"}
+                  // oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::AppLogo))
                   />
               </div>
               <p>
