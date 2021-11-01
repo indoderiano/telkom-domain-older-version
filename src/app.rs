@@ -468,15 +468,15 @@ impl Component for App {
 
                 
                 // OTHER ROUTES
-                _ => {
-                    if is_logged_in {
-                        route_service.set_route("/manage", ());
-                        html! {<GettingStarted/>}
-                    } else {
-                        route_service.set_route("/", ());
-                        html! {<HomePage/>}
-                    }
-                },
+                // _ => {
+                //     if is_logged_in {
+                //         route_service.set_route("/manage", ());
+                //         html! {<GettingStarted/>}
+                //     } else {
+                //         route_service.set_route("/", ());
+                //         html! {<HomePage/>}
+                //     }
+                // },
             }
 
             // if is_logged_in {

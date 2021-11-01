@@ -210,7 +210,7 @@ impl ApisHome {
 
 impl Component for ApisHome {
     type Message = Msg;
-    type Properties = ApisProps;  
+    type Properties = ApisProps;
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
         ConsoleService::info(&format!("Apis home props, tenant id = {}", props.tenant_id));

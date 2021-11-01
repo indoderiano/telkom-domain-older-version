@@ -5,6 +5,7 @@ const { RouterUser } = require('./RouterUser')
     // const {RouterBanner} = require('./RouterBanner')
     // const {RouterTransaction} = require('./RouterTransaction')
     // const {RouterWishlist} = require('./RouterWishlist')
+const { RouterSettings } = require('./RouterSettings')
 
 const router = express.Router()
 
@@ -15,6 +16,7 @@ router.use('/users', RouterUser)
     // router.use('/banner', RouterBanner)
     // router.use('/transaction', RouterTransaction)
     // router.use('/wishlist', RouterWishlist)
+router.use('/tenant', RouterSettings)
 
 module.exports = {
     router

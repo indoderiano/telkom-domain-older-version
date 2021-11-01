@@ -21,7 +21,6 @@ use yew_router::components::RouterAnchor;
 pub struct UserSettingsProps {
     pub tenant_id: String,
     pub user_id: String,
-    
 }
 
 pub enum Content {

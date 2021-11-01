@@ -118,6 +118,123 @@ class ControllerUsers {
             res.send(data);
         }, 3000);
     }
+
+
+    static getLogEvent(req, res, next) {
+        console.log(req.params.id)
+
+        let data = [{
+                date: "2011-10-30T01:48:00.000Z",
+                type: "s",
+                description: "Successful Login",
+                connection: "google-oauth2",
+                connection_id: "con_mZOXCcKwOs7V0MGq",
+                client_id: "XMyKpNTUzI1izvSPY8JJ8ZIIO5izaJnH",
+                client_name: "My NextJs App",
+                ip: "190.257.209.19",
+                hostname: "190.257.209.19",
+                user_id: "google-oauth2|114519841297346872283",
+                user_name: "Yeska Haganta",
+                audience: "",
+                scope: "",
+                strategy: "",
+                strategy_type: "",
+                log_id: "90020211030011805058892884646997415862276415694263287810",
+                is_mobile: false,
+                details: {},
+                user_agent: "",
+                location_info: {
+                    country_code: "ID",
+                    country_code3: "IDN",
+                    country_name: "Indonesia",
+                    city_name: "Tangerang",
+                    latitude: "",
+                    longitude: "",
+                    time_zone: "",
+                    continent_code: "AS",
+                },
+            },
+            {
+                date: "2011-10-30T01:50:00.000Z",
+                type_detail: "slo",
+                description: "Successful Logout",
+                connection: "google-oauth2",
+                connection_id: "con_mZOXCcKwOs7V0MGq",
+                client_id: "XMyKpNTUzI1izvSPY8JJ8ZIIO5izaJnH",
+                client_name: "My NextJs App",
+                ip: "190.257.209.19",
+                hostname: "190.257.209.19",
+                user_id: "google-oauth2|114519841297346872283",
+                user_name: "Yeska Haganta",
+                audience: "",
+                scope: "",
+                strategy: "",
+                strategy_type: "",
+                log_id: "90020211030011824658252733388425069519077906452486029330",
+                isMobile: false,
+                details: {},
+                user_agent: "",
+                location_info: {
+                    country_code: "ID",
+                    country_code3: "IDN",
+                    country_name: "Indonesia",
+                    city_name: "Tangerang",
+                    latitude: "",
+                    longitude: "",
+                    time_zone: "",
+                    continent_code: "AS",
+                },
+            }
+        ];
+
+        setTimeout(() => {
+            console.log("return log data details");
+            res.send(data);
+        }, 1000);
+
+    }
+
+    static getRoles(req, res, next) {
+        console.log(req.params.id)
+        let data = {
+            id: "rol_mIPAEs3z2jA4QnEz",
+            name: "admin",
+            description: "Admin role for my app"
+        }
+
+
+        setTimeout(() => {
+            console.log("return log role details");
+            res.send(data);
+        }, 1000)
+    }
+
+    static getUserPermissions(req, res, next) {
+        console.log(req.params.id)
+
+        let data = [{
+                resource_server_identifier: "https://jsonplaceholder.typicode.com/albums",
+                permission_name: "read:client_grants",
+                resource_server_name: "Example API",
+                description: "Read API"
+            },
+            {
+                resource_server_identifier: "https://jsonplaceholder.typicode.com/albums",
+                permission_name: "update:client_grants",
+                resource_server_name: "Example API",
+                description: "Update Data"
+            }
+        ]
+
+        setTimeout(() => {
+            console.log("return log role details");
+            res.send(data);
+        }, 1000)
+
+
+    }
+
+
 }
 
 module.exports = {
