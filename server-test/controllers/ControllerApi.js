@@ -189,6 +189,58 @@ class ControllerApi {
             })
         }, 3000)
     }
+
+
+
+
+
+    // Machine to machine applications
+    static getApplications (req, res, next) {
+        console.log('get applications')
+
+        let apps = [
+            {
+                name: "API Explorer Application",
+                client_id: "LxwFV2r6xSzuyXvkcjcEBIxpnJdvTkNs",
+                status: true,
+            },
+            {
+                name: "Test",
+                client_id: "6XbLBxnKtMOeFfPpcqVJj6e8CmxvBgMb",
+                status: false,
+            },
+        ]
+
+        setTimeout(() => {
+            console.log("return data apps");
+            res.send(apps)
+        }, 3000)
+    }
+
+    static updateApplicationStatus (req, res, next) {
+        console.log('update application status')
+
+        console.log(req.params)
+        console.log(req.body)
+
+        let apps = [
+            {
+                name: "API Explorer Application edited",
+                client_id: "LxwFV2r6xSzuyXvkcjcEBIxpnJdvTkNs",
+                status: false,
+            },
+            {
+                name: "Test edited",
+                client_id: "6XbLBxnKtMOeFfPpcqVJj6e8CmxvBgMb",
+                status: true,
+            },
+        ]
+
+        setTimeout(() => {
+            console.log("return data apps");
+            res.send(apps)
+        }, 3000)
+    }
     
 }
 

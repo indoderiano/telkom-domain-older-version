@@ -8,6 +8,7 @@ use crate::app::AppRoute;
 use super::quickstart::Quickstart;
 use super::tab_settings::TabSettings;
 use super::permissions::Permissions;
+use super::machinetomachineapplications::MachineToMachineApplications;
 use yew::services::ConsoleService;
 use crate::types::api::{ ApiDetails, ResponseApiDetails };
 use crate::configs::server::API_URL;
@@ -25,6 +26,7 @@ pub enum Content {
     Quickstart,
     Settings,
     Permissions,
+    MachineToMachineApplications,
 }
 
 pub struct ApisSettings {
@@ -279,8 +281,18 @@ impl ApisSettings {
                             }
                             href="#">{"Permissions"}</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">{"Machine to Machine Applications"}</a>
+                        <li
+                            onclick=self.link.callback(|_| Msg::ChangeContent(Content::MachineToMachineApplications))
+                            class="nav-item">
+                        <a
+                            // class="nav-link"
+                            class={
+                                match self.content {
+                                    Content::MachineToMachineApplications => "nav-link active",
+                                    _ => "nav-link"
+                                }
+                            }
+                            href="#">{"Machine to Machine Applications"}</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">{"Test"}</a>
@@ -293,6 +305,7 @@ impl ApisSettings {
                         Content::Quickstart => html! { <Quickstart/> },
                         Content::Settings => html! { <TabSettings api_details=self.api_details.clone() /> },
                         Content::Permissions => html! { <Permissions api_details=self.api_details.clone() /> },
+                        Content::MachineToMachineApplications => html! { <MachineToMachineApplications/> },
                     }
                 }
 

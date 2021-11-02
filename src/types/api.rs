@@ -143,3 +143,11 @@ pub struct ResponseApiDetails {
     pub data: ApiDetails
 }
 
+
+
+#[derive(Deserialize, Debug, Clone)]
+pub struct Application {
+    pub name: String,
+    pub client_id: String,
+    pub status: bool,
+}
