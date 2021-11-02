@@ -423,7 +423,7 @@ class ControllerApp {
     static updateDetails(req, res, next) {
 
         console.log(req.params)
-
+        console.log(req.body)
         let data = {
             message: "App loaded",
             data: {                

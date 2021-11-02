@@ -4,12 +4,16 @@ use yew::{
     services::{
         ConsoleService,
         fetch::{FetchService, FetchTask, Request, Response},
-    }
+    },
+    agent::Bridged,
+    Bridge,
 };
 use crate::app::AppRoute;
-use yew_router::service::RouteService;
+use yew_router::{agent::RouteRequest::ChangeRoute, service::RouteService, prelude::*};
 use crate::types::{
-	application::{ AppDetails, RefreshToken, SigningKeys, JwtConfiguration  },
+	application::{ AppDetails, RefreshToken,
+    //  SigningKeys,
+    JwtConfiguration  },
 	ResponseMessage,
 };
 
@@ -55,6 +59,7 @@ pub struct TabSettings {
   loading_delete_app: bool,
   error_delete_app: Option<String>,
   route_service: RouteService,
+  router_agent: Box<dyn Bridge<RouteAgent>>,
 }
 
 pub enum Msg {
@@ -64,6 +69,7 @@ pub enum Msg {
   ResponseError(String, StateError),
   Delete,
   RedirectToApp,
+  Ignore
 }
 
 impl Component for TabSettings {
@@ -80,6 +86,7 @@ impl Component for TabSettings {
           loading_delete_app: false,
           error_delete_app: None,
           route_service: RouteService::new(),
+          router_agent: RouteAgent::bridge(link.callback(|_| Msg::Ignore)),
         }
     }
 
@@ -107,6 +114,7 @@ impl Component for TabSettings {
             // }
             Data::AppType => {
                 self.app_details.app_type = input;
+                ConsoleService::info(&format!("{:?}", self.app_details.app_type.clone()));
             }
             Data::AuthenticationMethod => {
                 self.app_details.token_endpoint_auth_method = input;
@@ -130,7 +138,7 @@ impl Component for TabSettings {
                 if input.is_empty() {
                     self.app_details.refresh_token.token_lifetime = 0;
                 } else {
-                    self.app_details.refresh_token.token_lifetime = input.parse::<u32>().unwrap();
+                    self.app_details.refresh_token.token_lifetime = input.parse::<i32>().unwrap();
                 }
             }
             // Data::RefreshTokenRotation => {
@@ -171,9 +179,9 @@ impl Component for TabSettings {
         }
         Msg::Save => {
           ConsoleService::info(&format!("{:?}", self.app_details));
-          let request = Request::patch("http://127.0.0.1:8080/api/v1/1/clients/6153699da4277a57cb20b75d")
+          let request = Request::patch(format!("http://127.0.0.1:8080/api/v1/1/clients/{}", self.app_details.client_id))
               .header("Content-Type", "application/json")
-              .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjM4ODU3NjA5fQ.cNg7AgVWGD9QzjupjDxdumgUaKPbngRUyoPfetEMWCE")
+              .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
               .body(Json(&self.app_details))
               .expect("Could not build request.");
           let callback = self.link.callback(|response: Response<Json<Result<AppDetails, anyhow::Error>>>| {
@@ -216,16 +224,17 @@ impl Component for TabSettings {
           true
         }
         Msg::Delete => {
-          let request = Request::delete("http://localhost:3000/applications/tenantid/applications/dev-1wj84p4q")
+          let request = Request::delete(format!("http://127.0.0.1:8080/api/v1/1/clients/{}", self.app_details.client_id))
               .header("Content-Type", "application/json")
-              .header("access_token", "tokenidtelkomdomain")
+              .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
               .body(Nothing)
               .expect("Could not build request.");
-          let callback = self.link.callback(|response: Response<Json<Result<ResponseMessage, anyhow::Error>>>| {
+          let callback = self.link.callback(|response: Response<Json<Result<(), anyhow::Error>>>| {
           let Json(data) = response.into_body();
           match data {
               Ok(dataok) => {
                   ConsoleService::info(&format!("{:?}", dataok));
+                  self.router_agent.send(ChangeRoute(AppRoute::ApplicationHome {"kmzway87aa"}.into()));
                   Msg::RedirectToApp
               }
               Err(error) => {
@@ -245,6 +254,7 @@ impl Component for TabSettings {
           self.route_service.set_route(&format!("/{}/apis", self.app_details.tenant), ());
           true
         }
+        Msg::Ignore => {}
       }
     }
         
@@ -267,7 +277,7 @@ impl Component for TabSettings {
             encrypted,
             allowed_clients,
             callbacks,
-            signing_keys,
+            // signing_keys,
             client_id,
             callback_url_template,
             client_secret,
@@ -308,8 +318,8 @@ impl Component for TabSettings {
               <div class="input-group mb-2">
                 <input type="text" class="form-control bg-input-grey"
                   aria-label="Dollar amount (with dot and two decimal places)"
-                  value={domain}
-                  oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::Domain))
+                  value={tenant}
+                  oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::Tenant))
                   />
               </div>
             </div>
@@ -431,7 +441,7 @@ impl Component for TabSettings {
               <div class="input-group mb-2">
                 <input type="text" class="form-control bg-input-grey"
                   aria-label="Dollar amount (with dot and two decimal places)" 
-                  value={login_url}
+                  value={"for login url"}
                   oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::LoginUrl))
                   />
               </div>
@@ -447,8 +457,8 @@ impl Component for TabSettings {
                 {"Allowed Callback URLs"}
               </p>
               <div class="input-group mb-2">
-                <textarea class="form-control" rows="4" value={allowed_urls}
-                oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::AllowedUrls))
+                <textarea class="form-control" rows="4" value={"allowed url.."}
+                // oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::AllowedUrls))
                 ></textarea>
               </div>
               <p class="text-color-disabled">
@@ -467,8 +477,8 @@ impl Component for TabSettings {
               <div class="input-group mb-2">
                 <textarea class="form-control" rows="4"
                   placeholder="Add a description in less than 140 character"
-                  value={allowed_logout_urls}
-                  oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::AllowedLogoutUrls))
+                  value={"allowed logout url"}
+                  // oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::AllowedLogoutUrls))
                   ></textarea>
               </div>
               <p class="text-color-disabled">
@@ -487,8 +497,8 @@ impl Component for TabSettings {
               <div class="input-group mb-2">
                 <textarea class="form-control" rows="4"
                   placeholder="Add a description in less than 140 character"
-                  value={allowed_web_origins}
-                  oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::AllowedWebOrigins))
+                  value={"allowed web origin"}
+                  // oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::AllowedWebOrigins))
                   ></textarea>
               </div>
               <p class="text-color-disabled">
@@ -507,8 +517,8 @@ impl Component for TabSettings {
               <div class="input-group mb-2">
                 <textarea class="form-control" rows="4"
                   placeholder="Add a description in less than 140 character"
-                  value={allowed_origins}
-                  oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::AllowedOrigins))
+                  value={"allowed origin"}
+                  // oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::AllowedOrigins))
                   ></textarea>
               </div>
               <p class="text-color-disabled">
@@ -533,7 +543,7 @@ impl Component for TabSettings {
               <p class="mb-2 fw-bold">
                 {"ID Token Expiration "}
               </p>
-              <input type="number" class="form-control" min="1" value={token_exp.to_string()}width="50px" 
+              <input type="number" class="form-control" min="1" value={refresh_token.token_lifetime.to_string()}width="50px" 
               oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::TokenExp))
               />
               <p class="text-color-disabled">
@@ -555,8 +565,8 @@ impl Component for TabSettings {
               </p>
               <div class="form-check form-switch fs-3 mb-4">
                 <input class="form-check-input" type="checkbox" 
-                checked={refresh_token_rotation}
-                onclick=self.link.callback(|_| Msg::InputText(String::from("none"), Data::RefreshTokenRotation))
+                // checked={refresh_token_rotation}
+                // onclick=self.link.callback(|_| Msg::InputText(String::from("none"), Data::RefreshTokenRotation))
                 />
               </div>
               <p class="text-color-disabled">
@@ -570,8 +580,10 @@ impl Component for TabSettings {
               <p class="mb-2 fw-bold">
                 {"Reuse Interval"}
               </p>
-              <input type="number" class="form-control" min="1" value={refresh_token_rotation_interval.to_string()} width="50px" 
-              oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::RefreshTokenRotationInterval))
+              <input type="number" class="form-control" min="1" 
+              // value={refresh_token_rotation_interval.to_string()}
+               width="50px" 
+              // oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::RefreshTokenRotationInterval))
               />
               <p class="text-color-disabled">
                 {"The allowable leeway time that the same refresh_token can be used to request an access_token without
@@ -592,7 +604,7 @@ impl Component for TabSettings {
                 {"Absolute Expiration"}
               </p>
               <div class="form-check form-switch fs-3 mb-4">
-                <input class="form-check-input" type="checkbox" checked={refesh_token_absolute_expiration}
+                <input class="form-check-input" type="checkbox" checked={refresh_token.infinite_idle_token_lifetime}
                 onclick=self.link.callback(|_| Msg::InputText(String::from("none"), Data::RefeshTokenAbsoluteExpiration))
                 />
               </div>
@@ -606,7 +618,7 @@ impl Component for TabSettings {
               <p class="mb-2 fw-bold">
                 {"Absolute Lifetime"}
               </p>
-              <input type="number" class="form-control col-lg-8" min="1" value={refesh_token_absolute_expiration_lifetime.to_string()} width="50px" 
+              <input type="number" class="form-control col-lg-8" min="1" value={refresh_token.token_lifetime.to_string()} width="50px" 
               oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::RefeshTokenAbsoluteExpirationLifetime))
               />
               <p class="text-color-disabled">
@@ -619,7 +631,7 @@ impl Component for TabSettings {
                 {"Inactivity Expiration"}
               </p>
               <div class="form-check form-switch fs-3 mb-4">
-                <input class="form-check-input" type="checkbox" checked={refesh_token_inactivity_expiration} 
+                <input class="form-check-input" type="checkbox" checked={refresh_token.infinite_idle_token_lifetime} 
                 onclick=self.link.callback(|_| Msg::InputText(String::from("none"), Data::RefeshTokenInactivityExpiration))
                 />
               </div>
@@ -633,7 +645,7 @@ impl Component for TabSettings {
               <p class="mb-2 fw-bold">
                 {"Inactivity Lifetime"}
               </p>
-              <input type="number" class="form-control col-lg-8" min="1" value={refesh_token_inactivity_expiration_lifetime.to_string()} width="50px" 
+              <input type="number" class="form-control col-lg-8" min="1" value={refresh_token.idle_token_lifetime.to_string()} width="50px" 
               oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::RefeshTokenInactivityExpirationLifetime))
               />
               <p class="text-color-disabled">

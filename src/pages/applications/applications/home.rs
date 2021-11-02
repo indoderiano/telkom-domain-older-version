@@ -232,7 +232,7 @@ impl Component for ApplicationHome {
             }
             Msg::RequestAppList => {
                 let request = Request::get("http://127.0.0.1:8080/api/v1/1/clients")
-                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjM4ODU3NjA5fQ.cNg7AgVWGD9QzjupjDxdumgUaKPbngRUyoPfetEMWCE")
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
                     .header("Content-Type", "application/json")
                     .body(Nothing)
                     .expect("Could not build request.");

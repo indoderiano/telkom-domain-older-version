@@ -8,7 +8,9 @@ use crate::app::AppRoute;
 use super::tab_connection::ConnectionTab;
 use super::tab_settings::TabSettings;
 use yew::services::ConsoleService;
-use crate::types::application::{ AppDetails, RefreshToken, SigningKeys, JwtConfiguration };
+use crate::types::application::{ AppDetails, RefreshToken, 
+    // SigningKeys,
+    JwtConfiguration };
 use crate::components::loading2::Loading2;
 
 
@@ -29,6 +31,8 @@ pub struct ApplicationSettings {
     fetch_task: Option<FetchTask>,
     error: Option<String>,
     app_details: AppDetails,
+    app_id: String,
+    tenant_id: String,
 }
 
 pub enum Msg {
@@ -74,11 +78,11 @@ impl Component for ApplicationSettings {
             encrypted: false,
             allowed_clients: String::from("default"),
             callbacks: String::from("default"),
-            signing_keys: SigningKeys {
-                cert: String::from("default"),
-                pkcs7: String::from("default"),
-                subject: String::from("default"),
-            },
+            // signing_keys: SigningKeys {
+            //     cert: String::from("default"),
+            //     pkcs7: String::from("default"),
+            //     subject: String::from("default"),
+            // },
             client_id: String::from("default"),
             callback_url_template: false,
             client_secret: String::from("default"),
@@ -98,7 +102,9 @@ impl Component for ApplicationSettings {
             link,
             fetch_task: None,
             error: None,
-            app_details
+            app_details,
+            app_id: props.app_id,
+            tenant_id: props.tenant_id
         }
     }
 
@@ -120,9 +126,9 @@ impl Component for ApplicationSettings {
                 true
             }
             Msg::RequestAppDetails => {
-                let request = Request::get("http://127.0.0.1:8080/api/v1/1/clients/6153699da4277a57cb20b75d")
+                let request = Request::get(format!("http://127.0.0.1:8080/api/v1/1/clients/{}", self.app_id))
                     // .header("Content-Type", "application/json")
-                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjM4ODU3NjA5fQ.cNg7AgVWGD9QzjupjDxdumgUaKPbngRUyoPfetEMWCE")
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
                     .body(Nothing)
                     .expect("Could not build request.");
                 let callback = 
@@ -216,11 +222,11 @@ impl ApplicationSettings {
             encrypted,
             allowed_clients,
             callbacks,
-            signing_keys: SigningKeys {
-                cert,
-                pkcs7,
-                subject,
-            },
+            // signing_keys: SigningKeys {
+            //     cert,
+            //     pkcs7,
+            //     subject,
+            // },
             client_id,
             callback_url_template,
             client_secret,
@@ -327,7 +333,7 @@ impl ApplicationSettings {
                 {
                     match self.content {
                         Content::Connection => html! { <ConnectionTab/> },
-                        Content::Settings => html! { <TabSettings app_details=self.app_details.clone()/> }
+                        Content::Settings => html! { <TabSettings app_details=self.app_details.clone() { tenant_id }/> }
                     }
                 }
 

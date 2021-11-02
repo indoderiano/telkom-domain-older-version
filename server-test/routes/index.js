@@ -6,7 +6,7 @@ const { RouterSettings } = require('./RouterSettings')
 const router = express.Router()
 
 router.use('/api', RouterApi)
-router.use('/applications', RouterApp)
+router.use('/api/v1/1/clients', RouterApp)
 router.use('/tenant', RouterSettings)
 
 module.exports={

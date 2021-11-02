@@ -22,12 +22,12 @@ pub struct RefreshToken {
     pub rotation_type: String,
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone, Eq, PartialEq)]
-pub struct SigningKeys {
-    pub cert: String,
-    pub pkcs7: String,
-    pub subject: String,
-}
+// #[derive(Deserialize, Serialize, Debug, Clone, Eq, PartialEq)]
+// pub struct SigningKeys {
+//     pub cert: String,
+//     pub pkcs7: String,
+//     pub subject: String,
+// }
 
 #[derive(Deserialize, Serialize, Debug, Clone, Eq, PartialEq)]
 pub struct JwtConfiguration {
@@ -50,7 +50,7 @@ pub struct AppDetails {
     pub encrypted: bool,
     pub allowed_clients: String,
     pub callbacks: String,
-    pub signing_keys: SigningKeys,
+    // pub signing_keys: SigningKeys,
     pub client_id: String,
     pub callback_url_template: bool,
     pub client_secret: String,
