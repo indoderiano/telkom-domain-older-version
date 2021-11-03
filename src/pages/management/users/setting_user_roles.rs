@@ -1,12 +1,12 @@
+use crate::components::loading2::Loading2;
+use crate::configs::server::API_URL;
+use crate::types::users::UserRoles;
+use yew::services::ConsoleService;
 use yew::{
     format::{Json, Nothing},
     prelude::*,
     services::fetch::{FetchService, FetchTask, Request, Response},
 };
-use yew::services::ConsoleService;
-use crate::configs::server::API_URL;
-use crate::types::users::{UserRoles};
-use crate::components::loading2::Loading2;
 
 pub struct UserTabRoles {
     link: ComponentLink<Self>,
@@ -24,24 +24,23 @@ impl Component for UserTabRoles {
     type Properties = ();
 
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
-        
-        let user_roles= UserRoles::new();
+        let user_roles = UserRoles::new();
 
         UserTabRoles {
             link,
             fetch_task: None,
-            user_roles
+            user_roles,
         }
     }
 
-    fn rendered(&mut self, first_render: bool){
+    fn rendered(&mut self, first_render: bool) {
         if first_render {
             self.link.send_message(Msg::RequestUserRoles)
         }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
-        match msg{
+        match msg {
             Msg::RequestUserRoles => {
                 let request = Request::get(format!("{}/users/tenant_id/users/:id/roles", API_URL))
                     .header("access_token", "telkomidtelkomdomain")
@@ -51,7 +50,8 @@ impl Component for UserTabRoles {
                     |response: Response<Json<Result<UserRoles, anyhow::Error>>>| {
                         let Json(data) = response.into_body();
                         Msg::GetUserRoles(data)
-                    });
+                    },
+                );
                 let task = FetchService::fetch(request, callback).expect("failed to start request");
                 self.fetch_task = Some(task);
                 true
@@ -110,9 +110,9 @@ impl Component for UserTabRoles {
                             }
                         } else {
                             html! {
-                        
+
                                 {self.view_content()}
-                                
+
                             }
                         }
                     }
@@ -175,5 +175,4 @@ impl UserTabRoles {
             </>
         }
     }
-
 }

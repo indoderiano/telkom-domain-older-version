@@ -122,10 +122,11 @@ class ControllerUsers {
 
     static getLogEvent(req, res, next) {
         console.log(req.params.id)
+        console.log("get log event")
 
         let data = [{
                 date: "2011-10-30T01:48:00.000Z",
-                type: "s",
+                type_detail: "s",
                 description: "Successful Login",
                 connection: "google-oauth2",
                 connection_id: "con_mZOXCcKwOs7V0MGq",
@@ -145,7 +146,7 @@ class ControllerUsers {
                 user_agent: "",
                 location_info: {
                     country_code: "ID",
-                    country_code3: "IDN",
+                    country_code_3: "IDN",
                     country_name: "Indonesia",
                     city_name: "Tangerang",
                     latitude: "",
@@ -171,12 +172,12 @@ class ControllerUsers {
                 strategy: "",
                 strategy_type: "",
                 log_id: "90020211030011824658252733388425069519077906452486029330",
-                isMobile: false,
+                is_mobile: false,
                 details: {},
                 user_agent: "",
                 location_info: {
                     country_code: "ID",
-                    country_code3: "IDN",
+                    country_code_3: "IDN",
                     country_name: "Indonesia",
                     city_name: "Tangerang",
                     latitude: "",

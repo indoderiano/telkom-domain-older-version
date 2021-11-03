@@ -150,6 +150,12 @@ pub struct UserIdentity {
 }
 
 #[derive(Deserialize, Debug, Clone)]
+pub struct ResponseUserLogLists {
+    pub data: Vec<UserLogDetails>,
+}
+
+
+#[derive(Deserialize, Debug, Clone)]
 pub struct UserLogDetails {
     pub date: String,
     pub type_detail: String,
