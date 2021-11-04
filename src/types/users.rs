@@ -254,3 +254,14 @@ pub struct UserPermissions{
     pub resource_server_name: String,
     pub description: String
 }
+
+impl UserPermissions{
+    pub fn new() -> UserPermissions {
+        UserPermissions{
+            resource_server_identifier: String::from(""),
+            permission_name: String::from(""),
+            resource_server_name: String::from(""),
+            description: String::from(""),
+        }
+    }
+}
