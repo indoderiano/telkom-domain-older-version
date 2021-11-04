@@ -22,6 +22,12 @@ pub struct AppsTabSettingsProps {
     pub app_details: AppDetails,
 }
 
+// #[derive(Clone, Debug, Eq, PartialEq, Properties)]
+// pub struct ApisSettingsProps {
+//     pub tenant_id: String,
+//     // api_title: ApiTitle,
+// }
+
 pub enum StateError {
     Update,
     Delete,
@@ -59,7 +65,8 @@ pub struct TabSettings {
   loading_delete_app: bool,
   error_delete_app: Option<String>,
   route_service: RouteService,
-  router_agent: Box<dyn Bridge<RouteAgent>>,
+  // router_agent: Box<dyn Bridge<RouteAgent>>,
+  // tenant_id: String,
 }
 
 pub enum Msg {
@@ -86,7 +93,8 @@ impl Component for TabSettings {
           loading_delete_app: false,
           error_delete_app: None,
           route_service: RouteService::new(),
-          router_agent: RouteAgent::bridge(link.callback(|_| Msg::Ignore)),
+          // router_agent: RouteAgent::bridge(link.callback(|_| Msg::Ignore)),
+          // tenant_id: "kmzway87aa".to_string()
         }
     }
 
@@ -234,7 +242,7 @@ impl Component for TabSettings {
           match data {
               Ok(dataok) => {
                   ConsoleService::info(&format!("{:?}", dataok));
-                  self.router_agent.send(ChangeRoute(AppRoute::ApplicationHome {"kmzway87aa"}.into()));
+                  // self.router_agent.send(ChangeRoute(<yew_router::route::Route<_> as Trait>::ApplicationHome {self.tenant_id}));
                   Msg::RedirectToApp
               }
               Err(error) => {
@@ -254,7 +262,7 @@ impl Component for TabSettings {
           self.route_service.set_route(&format!("/{}/apis", self.app_details.tenant), ());
           true
         }
-        Msg::Ignore => {}
+        Msg::Ignore => {true}
       }
     }
         

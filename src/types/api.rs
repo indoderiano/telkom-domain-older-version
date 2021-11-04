@@ -10,11 +10,13 @@ use serde::{
 //     pub api_type: String,
 //     pub identifier: String,
 // }
+
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct GetResourceServersResponseClient {}
+
 #[derive(Deserialize, Debug, Clone)]
 pub struct ApiTitle {
-    pub id: String,
+    pub id: u32,
     pub name: String,
     pub is_system: bool,
     pub identifier: String,
@@ -28,13 +30,15 @@ pub struct ApiTitle {
     pub enforce_policies: bool,
     pub token_dialect: String,
     pub client: GetResourceServersResponseClient, // unidentified data type
+    pub resource_server_id: String,
+    pub tenant_id: u32
 }
 
-#[derive(Deserialize, Debug, Clone)]
-pub struct ResponseApiList {
-    pub message: String,
-    pub data: Vec<ApiTitle>
-}
+// #[derive(Deserialize, Debug, Clone)]
+// pub struct ResponseApiList {
+//     pub message: String,
+//     pub data: Vec<ApiTitle>
+// }
 
 // #[derive(Serialize, Debug, Clone)]
 // pub struct ApiCreate {
@@ -92,6 +96,7 @@ impl ApiCreate {
 // }
 #[derive(Deserialize, Serialize, Debug, Clone, Eq, PartialEq)]
 pub struct GetResourceServersByIdResponseClient {}
+
 #[derive(Deserialize, Serialize, Debug, Clone, Eq, PartialEq)]
 pub struct ApiDetails {
     pub id: String,

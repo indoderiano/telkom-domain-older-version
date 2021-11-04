@@ -333,7 +333,7 @@ impl ApplicationSettings {
                 {
                     match self.content {
                         Content::Connection => html! { <ConnectionTab/> },
-                        Content::Settings => html! { <TabSettings app_details=self.app_details.clone() { tenant_id }/> }
+                        Content::Settings => html! { <TabSettings app_details=self.app_details.clone()/> }
                     }
                 }
 

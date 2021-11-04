@@ -7,7 +7,7 @@ use yew_router::components::RouterAnchor;
 use yew::services::ConsoleService;
 use crate::app::AppRoute;
 use crate::types::{
-    api::{ ApiTitle, ResponseApiList, ApiCreate },
+    api::{ ApiTitle, ApiCreate },
     ResponseMessage,
 };
 use crate::components::{
@@ -91,7 +91,7 @@ impl ApisHome {
                                     "
                                 >
                                     <Anchor
-                                        route=AppRoute::ApisSettings { tenant_id: tenant_id.clone(), api_id: api.id.clone() }
+                                        route=AppRoute::ApisSettings { tenant_id: tenant_id.clone(), api_id: api.id.to_string() }
                                         classes="text-decoration-none fw-bold mb-0"
                                     >
                                             // {"Auth0 Management API"}
@@ -157,7 +157,7 @@ impl ApisHome {
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                 <li>
-                                    <Anchor route=AppRoute::ApisSettings { tenant_id: tenant_id.clone(), api_id: api.id.clone() } classes="dropdown-item fs-7">
+                                    <Anchor route=AppRoute::ApisSettings { tenant_id: tenant_id.clone(), api_id: api.id.to_string() } classes="dropdown-item fs-7">
                                         {"Settings"}
                                     </Anchor>
                                 </li>
@@ -254,19 +254,22 @@ impl Component for ApisHome {
                 true
             }
             Msg::RequestApiList => {
-                let request = Request::get(format!("{}/api/v2/resource-servers/tenantid", API_URL))
+                // let request = Request::get(format!("{}/api/v2/resource-servers/tenantid", API_URL))
+                let request = Request::get("http://127.0.0.1:8080/api/v1/1/resource-server")
                     // .header("Content-Type", "application/json")
-                    .header("access_token", "tokenidtelkomdomain")
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
                     .body(Nothing)
                     .expect("Could not build request.");
                 let callback = 
-                    self.link.callback(|response: Response<Json<Result<ResponseApiList, anyhow::Error>>>| {
+                    self.link.callback(|response: Response<Json<Result<Vec<ApiTitle>, anyhow::Error>>>| {
                         let Json(data) = response.into_body();
                         match data {
                             Ok(dataok) => {
-                                Msg::GetApiList(dataok.data)
+                                ConsoleService::info(&format!("{:?}", &dataok));
+                                Msg::GetApiList(dataok)
                             }
                             Err(error) => {
+                                ConsoleService::info(&format!("{:?}", &error));
                                 Msg::ResponseError(error.to_string(), StateError::ApiList)
                             }
                         }
