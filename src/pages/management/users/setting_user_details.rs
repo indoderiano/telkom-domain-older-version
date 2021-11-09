@@ -6,6 +6,7 @@ use yew::{
         fetch::{FetchService, FetchTask, Request, Response},
     }
 };
+use yew_router::service::RouteService;
 
 
 
@@ -32,15 +33,25 @@ pub enum Data{
     LoginsCount,
 }
 
+pub enum StateError{
+    Delete,
+}
+
 pub struct UserTabDetails {
     user_details: UserDetails,
     link: ComponentLink<Self>,
     fetch_task: Option<FetchTask>,
+    loading_delete_user: bool,
+    error_delete_user: Option<String>,
+    route_service: RouteService,
 }
 
 pub enum Msg {
     InputText(String, Data),
     GetUserDetails(UserDetails),
+    ResponseError(String, StateError),
+    Delete,
+    RedirectToUser
 }
 
 impl Component for UserTabDetails {
@@ -53,6 +64,9 @@ impl Component for UserTabDetails {
             user_details: props.user_details,
             link,
             fetch_task: None,
+            loading_delete_user: false,
+            error_delete_user: None,
+            route_service: RouteService::new(),
         }
     }
 
@@ -99,6 +113,46 @@ impl Component for UserTabDetails {
                 self.user_details = data;
                 true
             },
+            Msg::ResponseError(message, state) => {
+                match state {
+                    StateError::Delete => {
+                        self.fetch_task = None;
+                        self.loading_delete_user = false;
+                        self.error_delete_user = Some(message);
+                    }
+                }
+                true
+            }
+            Msg::Delete => {
+                let request = Request::delete(format!("{}/users/tenant_id/users/auth0|7CYXV0aDAlN0M2MTM3MTIyMTAxY2VmYTAwNzM0NzRmYmI", API_URL))
+                    .header("access_token", "tokenidtelkomdomain")
+                    .body(Nothing)
+                    .expect("Could not build request.");
+                let callback = self.link.callback(|response: Response<Json<Result<ResponseMessage, anyhow::Error>>>| {
+                    let Json(data) = response.into_body();
+                    match data {
+                        Ok(dataok) => {
+                            ConsoleService::info(&format!("{:?}", dataok));
+                            Msg::RedirectToUser
+                        }
+                        Err(error) => {
+                            ConsoleService::info(&error.to_string());
+                            Msg::ResponseError(error.to_string(), StateError::Delete)
+                        }
+                    }
+                });
+                let task = FetchService::fetch(request, callback).expect("failed to start request");
+                self.loading_delete_user = true;
+                self.fetch_task = Some(task);
+                true
+            }
+            Msg::RedirectToUser => {
+                self.loading_delete_user = false;
+                self.fetch_task = None;
+                self.route_service.set_route(&format!("/{}/users", "tenant_id_not_from_reducer"), ());
+                true
+            }
+            
         }
     }
 
@@ -110,23 +164,23 @@ impl Component for UserTabDetails {
         let UserDetails {
             user_id,
             email,
-            email_verified,
-            username,
-            phone_number,
-            phone_verified,
+            email_verified: _,
+            username: _,
+            phone_number: _,
+            phone_verified: _,
             created_at,
             updated_at,
-            identities,
-            app_metadata,
-            user_metadata,
+            identities: _,
+            app_metadata: _,
+            user_metadata: _,
             picture,
-            name,
-            nickname,
-            multifactor,
+            name:_,
+            nickname: _,
+            multifactor: _,
             last_ip,
             last_login,
             logins_count,
-            blocked,
+            blocked: _,
             given_name,
             family_name,
         } = self.user_details.clone();
@@ -139,18 +193,18 @@ impl Component for UserTabDetails {
                             <div class="row">
                                 <div class="col-4 col-md-4 col-lg-4">
                                     <p class="text-muted mb-1">{"Name"}</p>
-                                    <p class="mb-1">{"yeskahaganta3838@gmail.com"}</p>
+                                    <p class="mb-1">{given_name}<span>{family_name}</span></p>
                                     <a href="">{"Edit"}</a>
                                 </div>
                                 <div class="col-4 col-md-4 col-lg-4">
                                     <p class="text-muted mb-1 ">{"Email"}</p>
-                                    <p class="mb-1">{"yeskahaganta3838@gmail.com"}</p>
+                                    <p class="mb-1">{email}</p>
                                     <p class="text-muted mb-1">{"(verified)"}</p>
                                     <a href="">{"Edit"}</a>
                                 </div>
                                 <div class="col-4 col-md-4 col-lg-4">
                                     <p class="text-muted mb-1">{"Signed Up"}</p>
-                                    <p class="mb-1">{"September 7th 2021, 2:17:53 PM"}</p>
+                                    <p class="mb-1">{created_at.clone()}</p>
                                 </div>
                             </div>
                             <div class="row mt-3">
@@ -160,7 +214,7 @@ impl Component for UserTabDetails {
                                 </div>
                                 <div class="col-4 col-md-4 col-lg-4 mb-1">
                                     <p class="text-muted mb-1">{"Latest Login"}</p>
-                                    <p class="mb-1">{"Never"}</p>
+                                    <p class="mb-1">{last_login.clone()}</p>
                                 </div>
                                 <div class="col-4 col-md-4 col-lg-4">
                                     <p class="text-muted mb-1">{"Accounts Associated"}</p>
@@ -227,7 +281,7 @@ impl Component for UserTabDetails {
                             type="text" 
                             class="form-control"
                             aria-label="readonly input example" 
-                            value={created_at}
+                            value={created_at.clone()}
                             readonly=true
                             oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::CreatedAt))
                         />
@@ -283,7 +337,7 @@ impl Component for UserTabDetails {
                         <input 
                             type="text" 
                             class="form-control" 
-                            value={last_login} 
+                            value={last_login.clone()} 
                             aria-label="readonly input example" 
                             readonly=true
                             oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::LastLogin))
@@ -312,7 +366,26 @@ impl Component for UserTabDetails {
                             <p class="p-0 m-0">{"The user will be removed and it will no longer have access to your applications"}</p>
                         </div>
                         <div class="col-2 col-sm-2 p-0 d-flex align-items-center justify-content-center">
-                            <button type="button" class="btn btn-danger">{"Delete"}</button>
+                            <button 
+                                type="button" 
+                                class="btn btn-danger"
+                                onclick=self.link.callback(|_|Msg::Delete)
+                                disabled={ if self.loading_delete_user {true} else {false} }
+                            >
+                            {"Delete"}
+                            </button>
+                            {
+                                if self.error_delete_user.is_some() {
+                                    html! {
+                                        <div class="alert alert-warning" role="alert">
+                                            <i class="bi bi-exclamation-triangle me-2"></i>
+                                            { self.error_delete_user.clone().unwrap() }
+                                        </div>
+                                    }
+                                } else {
+                                    html! {}
+                                }
+                            }
                         </div>
                     </div>
                 </div>

@@ -500,9 +500,11 @@ impl Component for UsersManagement {
                                 {
                                     if self.loading_get_user {
                                         html! {
-                                                <div class="d-flex align-items-center justify-content-center" style="position: relative; margin-top: 8rem;">
-                                                    <Loading2 width=45 />
-                                                </div>
+                                                <tr>
+                                                    <div class="d-flex align-items-center justify-content-center" style="position: relative; margin-top: 8rem;">
+                                                        <Loading2 width=45 />
+                                                    </div>
+                                                </tr>
                                         }
                                     } else if self.error_user_list.is_some() {
                                         html! {

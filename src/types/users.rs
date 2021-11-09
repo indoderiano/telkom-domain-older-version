@@ -6,7 +6,7 @@ pub struct GetUsersByIdResponseAppMetadata {}
 #[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct GetUsersByIdResponseUserMetadata {}
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct UserTitle {
     pub user_id: String,
     pub email: String,
@@ -88,7 +88,7 @@ impl UserCreate {
     }
 }
 
-#[derive(Deserialize, Debug, Clone, Eq, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct UserDetails {
     pub user_id: String,
     pub email: String,
@@ -141,7 +141,7 @@ impl UserDetails {
     }
 }
 
-#[derive(Deserialize, Debug, Clone, Eq, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct UserIdentity {
     pub connection: String,
     pub user_id: String,

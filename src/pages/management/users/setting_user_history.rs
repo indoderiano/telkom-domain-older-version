@@ -58,7 +58,7 @@ impl Component for UserTabHistory {
 
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
         
-        let user_log_events = UserLogDetails::new();
+        // let user_log_events = UserLogDetails::new();
         
         UserTabHistory {
             link,
