@@ -119,7 +119,7 @@ impl Component for TabSettings {
                     self.api_details.enforce_policies = !self.api_details.enforce_policies;
                 }
                 Data::SkipConsent => {
-                    self.api_details.skip_consent_for_verifiable_first_party_clients = !self.api_details.skip_consent_for_verifiable_first_party_clients;
+                    self.api_details.skip_consent_for_variable_first_party_clients = !self.api_details.skip_consent_for_variable_first_party_clients;
                 }
                 Data::AllowOfflineAccess => {
                     self.api_details.allow_offline_access = !self.api_details.allow_offline_access;
@@ -220,7 +220,7 @@ impl Component for TabSettings {
             signing_alg,
             signing_secret: _,
             allow_offline_access,
-            skip_consent_for_verifiable_first_party_clients,
+            skip_consent_for_variable_first_party_clients,
             token_lifetime,
             token_lifetime_for_web,
             enforce_policies,
@@ -499,7 +499,7 @@ impl Component for TabSettings {
                                   <input
                                     class="form-check-input"
                                     type="checkbox"
-                                    checked={skip_consent_for_verifiable_first_party_clients}
+                                    checked={skip_consent_for_variable_first_party_clients}
                                     onclick=self.link.callback(|_| Msg::InputText(String::from("none"), Data::SkipConsent))
                                 />
                               </div>

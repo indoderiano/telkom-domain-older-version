@@ -7,6 +7,8 @@ use yew_router::components::RouterAnchor;
 use crate::app::AppRoute;
 use super::quickstart::Quickstart;
 use super::tab_settings::TabSettings;
+use super::permissions::Permissions;
+use super::machinetomachineapplications::MachineToMachineApplications;
 use yew::services::ConsoleService;
 use crate::types::api::{ ApiDetails, ResponseApiDetails };
 use crate::configs::server::API_URL;
@@ -22,7 +24,9 @@ pub struct ApisSettingsProps {
 
 pub enum Content {
     Quickstart,
-    Settings
+    Settings,
+    Permissions,
+    MachineToMachineApplications,
 }
 
 pub struct ApisSettings {
@@ -177,7 +181,7 @@ impl ApisSettings {
             signing_alg: _,
             signing_secret: _,
             allow_offline_access: _,
-            skip_consent_for_verifiable_first_party_clients: _,
+            skip_consent_for_variable_first_party_clients: _,
             token_lifetime: _,
             token_lifetime_for_web: _,
             enforce_policies: _,
@@ -264,11 +268,31 @@ impl ApisSettings {
                             }
                             href="#">{"Settings"}</a>
                         </li>
-                        <li class="nav-item">
-                        <a class="nav-link" href="#">{"Permissions"}</a>
+                        <li
+                            onclick=self.link.callback(|_| Msg::ChangeContent(Content::Permissions))
+                            class="nav-item">
+                        <a
+                            // class="nav-link"
+                            class={
+                                match self.content {
+                                    Content::Permissions => "nav-link active",
+                                    _ => "nav-link"
+                                }
+                            }
+                            href="#">{"Permissions"}</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">{"Machine to Machine Applications"}</a>
+                        <li
+                            onclick=self.link.callback(|_| Msg::ChangeContent(Content::MachineToMachineApplications))
+                            class="nav-item">
+                        <a
+                            // class="nav-link"
+                            class={
+                                match self.content {
+                                    Content::MachineToMachineApplications => "nav-link active",
+                                    _ => "nav-link"
+                                }
+                            }
+                            href="#">{"Machine to Machine Applications"}</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">{"Test"}</a>
@@ -279,7 +303,9 @@ impl ApisSettings {
                 {
                     match self.content {
                         Content::Quickstart => html! { <Quickstart/> },
-                        Content::Settings => html! { <TabSettings api_details=self.api_details.clone() /> }
+                        Content::Settings => html! { <TabSettings api_details=self.api_details.clone() /> },
+                        Content::Permissions => html! { <Permissions api_details=self.api_details.clone() /> },
+                        Content::MachineToMachineApplications => html! { <MachineToMachineApplications/> },
                     }
                 }
 
