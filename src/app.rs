@@ -127,8 +127,8 @@ pub enum AppRoute {
     SocialSettings,
     #[to = "/social"]
     SocialHome,
-    #[to = "/user-management/roles/settings"]
-    ViewDetail,
+    #[to = "/user-management/{tenant_id}/roles/settings/{role_id}"]
+    RoleSettings { tenant_id: String, role_id: String },
     #[to = "/user-management/roles"]
     RolesCreated,
     #[to="/user-management/users/settings"]
@@ -437,9 +437,9 @@ impl Component for App {
                         html! {<HomePage/>}
                     }
                 },
-                AppRoute::ViewDetail => {
+                AppRoute::RoleSettings{ tenant_id, role_id } => {
                     if is_logged_in {
-                        html! {<ViewDetail/>}
+                        html! {<ViewDetail tenant_id=tenant_id role_id=role_id />}
                     } else {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}

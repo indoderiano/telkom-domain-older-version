@@ -146,7 +146,17 @@
 
 @media (min-width: 1280px) {
   .sidebar {
-    width: 265px;
+    width: 68px;
+  }
+  
+  .text-color-primary {
+    color: #1e212a !important;
+  }
+  .text-color-secondary {
+    color: #635dff !important;
+  }
+  .text-color-disabled {
+    color: #65676e;
   }
 }
 
