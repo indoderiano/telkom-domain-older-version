@@ -20,7 +20,16 @@ class ControllerApi {
                     name: "Auth0 Management API",
                     is_system: true,
                     identifier: "https://dev-r5y8heyf.au.auth0.com/api/v2/",
-                    scopes: [],
+                    scopes: [
+                        {
+                            permission: "read:client_grants",
+                            description: "Read Client Grants",
+                        },
+                        {
+                            permission: "create:client_grants",
+                            description: "Create Client Grants",
+                        },
+                    ],
                     signing_alg: "RS256",
                     signing_secret: "HS256",
                     allow_offline_access: true,
@@ -70,7 +79,16 @@ class ControllerApi {
                 name: "Auth0 Management API",
                 is_system: true,
                 identifier: "https://dev-r5y8heyf.au.auth0.com/api/v2/",
-                scopes: [],
+                scopes: [
+                    {
+                        permission: "read:client_grants",
+                        description: "Read Client Grants",
+                    },
+                    {
+                        permission: "create:client_grants",
+                        description: "Create Client Grants",
+                    },
+                ],
                 signing_alg: "RS256",
                 signing_secret: "HS256",
                 allow_offline_access: true,
@@ -116,7 +134,16 @@ class ControllerApi {
                 name: "Auth0 Management API edited",
                 is_system: true,
                 identifier: "https://dev-r5y8heyf.au.auth0.com/api/v2/ edited",
-                scopes: [],
+                scopes: [
+                    {
+                        permission: "read:client_grants",
+                        description: "Read Client Grants",
+                    },
+                    {
+                        permission: "create:client_grants",
+                        description: "Create Client Grants",
+                    },
+                ],
                 signing_alg: "RS256",
                 signing_secret: "HS256",
                 allow_offline_access: true,
@@ -160,6 +187,58 @@ class ControllerApi {
                 message: "Api deleted",
                 data: "",
             })
+        }, 3000)
+    }
+
+
+
+
+
+    // Machine to machine applications
+    static getApplications (req, res, next) {
+        console.log('get applications')
+
+        let apps = [
+            {
+                name: "API Explorer Application",
+                client_id: "LxwFV2r6xSzuyXvkcjcEBIxpnJdvTkNs",
+                status: true,
+            },
+            {
+                name: "Test",
+                client_id: "6XbLBxnKtMOeFfPpcqVJj6e8CmxvBgMb",
+                status: false,
+            },
+        ]
+
+        setTimeout(() => {
+            console.log("return data apps");
+            res.send(apps)
+        }, 3000)
+    }
+
+    static updateApplicationStatus (req, res, next) {
+        console.log('update application status')
+
+        console.log(req.params)
+        console.log(req.body)
+
+        let apps = [
+            {
+                name: "API Explorer Application edited",
+                client_id: "LxwFV2r6xSzuyXvkcjcEBIxpnJdvTkNs",
+                status: false,
+            },
+            {
+                name: "Test edited",
+                client_id: "6XbLBxnKtMOeFfPpcqVJj6e8CmxvBgMb",
+                status: true,
+            },
+        ]
+
+        setTimeout(() => {
+            console.log("return data apps");
+            res.send(apps)
         }, 3000)
     }
     

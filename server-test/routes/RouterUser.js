@@ -13,6 +13,8 @@ RouterUser.get('/:tenant_id/users/:id/logs', Authentication, ControllerUsers.get
 RouterUser.get('/:tenant_id/users/:id/roles', Authentication, ControllerUsers.getRoles)
 RouterUser.get('/:tenant_id/users/:id/permissions', Authentication, ControllerUsers.getUserPermissions)
 RouterUser.delete('/:tenant_id/users/:id', Authentication, ControllerUsers.deleteUser)
+RouterUser.delete('/:tenant_id/users/:id/roles', Authentication, ControllerUsers.deleteRolesFromUser)
+RouterUser.delete('/:tenant_id/users/:id/permissions', Authentication, ControllerUsers.deletePermissionsFromUser)
 
 
 

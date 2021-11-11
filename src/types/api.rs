@@ -10,6 +10,13 @@ use serde::{
 //     pub api_type: String,
 //     pub identifier: String,
 // }
+
+#[derive(Deserialize, Serialize, Debug, Clone, Eq, PartialEq)]
+pub struct Scope {
+    pub permission: String,
+    pub description: String,
+}
+
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct GetResourceServersResponseClient {}
 #[derive(Deserialize, Debug, Clone)]
@@ -18,7 +25,7 @@ pub struct ApiTitle {
     pub name: String,
     pub is_system: bool,
     pub identifier: String,
-    pub scopes: Vec<String>, // array of unidentified objects, for now use String
+    pub scopes: Vec<Scope>, // array of unidentified objects, for now use String
     pub signing_alg: String,
     pub signing_secret: String,
     pub allow_offline_access: bool,
@@ -46,7 +53,7 @@ pub struct ResponseApiList {
 pub struct ApiCreate {
     pub name: String,
     pub identifier: String,
-    pub scopes: Vec<String>, // array of unidentified objects, for now use String
+    pub scopes: Vec<Scope>, // array of unidentified objects, for now use String
     pub signing_alg: String,
     pub signing_secret: String,
     pub allow_offline_access: bool,
@@ -98,7 +105,7 @@ pub struct ApiDetails {
     pub name: String,
     pub is_system: bool,
     pub identifier: String,
-    pub scopes: Vec<String>, // array of unidentified objects, for now use String
+    pub scopes: Vec<Scope>, // array of unidentified objects, for now use String
     pub signing_alg: String,
     pub signing_secret: String,
     pub allow_offline_access: bool,
@@ -136,3 +143,11 @@ pub struct ResponseApiDetails {
     pub data: ApiDetails
 }
 
+
+
+#[derive(Deserialize, Debug, Clone)]
+pub struct Application {
+    pub name: String,
+    pub client_id: String,
+    pub status: bool,
+}

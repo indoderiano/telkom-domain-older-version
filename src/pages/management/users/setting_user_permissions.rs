@@ -7,18 +7,26 @@ use yew::{
 use yew::services::ConsoleService;
 use crate::components::loading2::Loading2;
 use crate::configs::server::API_URL;
-use crate::types::users::{UserPermissions};
+use crate::types::{
+    users::{UserPermissions},
+    ResponseMessage,
+};
+use yew_router::service::RouteService;
 
 pub struct UserTabPermissions {
     link: ComponentLink<Self>,
     fetch_task: Option<FetchTask>,
     loading_get_user_permission: bool,
     user_permissions: Vec<UserPermissions>,
-    error_user_permission_list: Option<String>
+    error_user_permission_list: Option<String>,
+    loading_delete_permissions: bool,
+    error_delete_permissions: Option<String>,
+    route_service: RouteService,
 }
 
 pub enum StateError{
-    UserPermissionList
+    UserPermissionList,
+    Delete,
 }
 
 pub enum Msg {
@@ -26,6 +34,8 @@ pub enum Msg {
     RequestUserPermissions,
     GetUserPermissions(Vec<UserPermissions>),
     ResponseError(String, StateError),
+    Delete,
+    RedirectToPermissions,  
 }
 
 impl UserTabPermissions {
@@ -62,6 +72,9 @@ impl Component for UserTabPermissions {
             loading_get_user_permission: false,
             user_permissions: Vec::new(),
             error_user_permission_list: None,
+            loading_delete_permissions: false,
+            error_delete_permissions: None,
+            route_service: RouteService::new(),
         }
     }
 
@@ -117,8 +130,42 @@ impl Component for UserTabPermissions {
                         self.loading_get_user_permission = false;
                         self.error_user_permission_list = Some(message);
                     }
+                    StateError::Delete => {
+                        self.fetch_task = None;
+                        self.loading_delete_permissions = false;
+                        self.error_delete_permissions = Some(message);
+                    }
                 }
                 self.fetch_task = None;
+                true
+            }
+            Msg::Delete => {
+                let request = Request::delete(format!("{}/users/tenant_id/users/auth0|7CYXV0aDAlN0M2MTM3MTIyMTAxY2VmYTAwNzM0NzRmYmI/permissions", API_URL))
+                    .header("access_token", "telkomidtelkomdomain")
+                    .body(Nothing)
+                    .expect("could not build request");
+                let callback = self.link.callback(|response: Response<Json<Result<ResponseMessage, anyhow::Error>>>|{
+                    let Json(data) = response.into_body();
+                    match data{
+                        Ok(dataok) => {
+                            ConsoleService::info(&format!("{:?}", dataok));
+                            Msg::RedirectToPermissions
+                        }
+                        Err(error) => {
+                            ConsoleService::info(&error.to_string());
+                            Msg::ResponseError(error.to_string(), StateError::Delete)
+                        }
+                    }
+                });
+                let task = FetchService::fetch(request, callback).expect("failed to start request");
+                self.loading_delete_permissions = true;
+                self.fetch_task = Some(task);
+                true
+            }
+            Msg::RedirectToPermissions => {
+                self.loading_delete_permissions = false;
+                self.fetch_task = None;
+                self.route_service.set_route(&format!("/{}/permissions", "tenant_id_not_from_reducer"), ());
                 true
             }
         }
@@ -249,7 +296,23 @@ impl Component for UserTabPermissions {
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{"Cancel"}</button>
-                                    <button type="button" class="btn btn-danger">{"Yes, remove"}</button>
+                                    <button 
+                                        type="button" 
+                                        class="btn btn-danger"
+                                        onclick=self.link.callback(|_|Msg::Delete)
+                                        >{"Yes, remove"}</button>
+                                        {
+                                            if self.error_delete_permissions.is_some() {
+                                                html! {
+                                                    <div class="alert alert-warning" role="alert">
+                                                        <i class="bi bi-exclamation-triangle me-2"></i>
+                                                        { self.error_delete_permissions.clone().unwrap() }
+                                                    </div>
+                                                }
+                                            } else {
+                                                html! {}
+                                            }
+                                        }
                                 </div>
                             </div>
                         </div>

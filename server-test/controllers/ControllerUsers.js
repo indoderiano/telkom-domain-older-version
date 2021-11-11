@@ -191,7 +191,7 @@ class ControllerUsers {
         setTimeout(() => {
             console.log("return log data details");
             res.send(data);
-        }, 50000);
+        }, 3000);
 
     }
 
@@ -207,7 +207,7 @@ class ControllerUsers {
         setTimeout(() => {
             console.log("return log role details");
             res.send(data);
-        }, 50000)
+        }, 3000)
     }
 
     static getUserPermissions(req, res, next) {
@@ -230,7 +230,7 @@ class ControllerUsers {
         setTimeout(() => {
             console.log("return log role details");
             res.send(data);
-        }, 50000)
+        }, 3000)
 
     }
 
@@ -247,7 +247,33 @@ class ControllerUsers {
             })
         }, 3000)
 
+    }
 
+    static deleteRolesFromUser(req, res) {
+        console.log(req.params)
+        console.log("Roles dari User berhasil di delete")
+
+        setTimeout(() => {
+            console.log("return roles deleted");
+            res.send({
+                message: "Roles User deleted",
+                data: "",
+            })
+        }, 3000)
+
+    }
+
+    static deletePermissionsFromUser(req, res) {
+        console.log(req.params)
+        console.log("Permissions dari User berhasil di delete")
+
+        setTimeout(() => {
+            console.log("return permissions deleted");
+            res.send({
+                message: "Permissions User deleted",
+                data: "",
+            })
+        }, 3000)
     }
 
 }

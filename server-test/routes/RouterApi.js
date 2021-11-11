@@ -8,11 +8,15 @@ const { Authentication } = require('../middlewares/authentication')
 
 const RouterApi = express.Router()
 
+RouterApi.get('/v2/:tenant_id/resource-servers/applications', Authentication, ControllerApi.getApplications)
+RouterApi.put('/v2/:tenant_id/resource-servers/applications/:client_id', Authentication, ControllerApi.updateApplicationStatus)
+
 RouterApi.get('/v2/resource-servers/:tenant_id', Authentication, ControllerApi.get)
 RouterApi.post('/v2/resource-servers/:tenant_id', Authentication, ControllerApi.create)
 RouterApi.get('/v2/:tenant_id/resource-servers/:id', Authentication, ControllerApi.getDetails)
 RouterApi.patch('/v2/:tenant_id/resource-servers/:id', Authentication, ControllerApi.updateDetails)
 RouterApi.delete('/v2/:tenant_id/resource-servers/:id', Authentication, ControllerApi.deleteDetails)
+
 
 module.exports={
     RouterApi
