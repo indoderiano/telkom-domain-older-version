@@ -11,7 +11,7 @@ use yew_router::service::RouteService;
 
 
 use crate::types::{
-    users::{ UserDetails},
+    users::{ UserDetails, ResponseUserDetails},
     ResponseMessage,
 };
 
@@ -34,6 +34,7 @@ pub enum Data{
 }
 
 pub enum StateError{
+    Blocked,
     Delete,
 }
 
@@ -41,6 +42,8 @@ pub struct UserTabDetails {
     user_details: UserDetails,
     link: ComponentLink<Self>,
     fetch_task: Option<FetchTask>,
+    loading_update_user: bool,
+    error_update_user: Option<String>,
     loading_delete_user: bool,
     error_delete_user: Option<String>,
     route_service: RouteService,
@@ -51,7 +54,8 @@ pub enum Msg {
     GetUserDetails(UserDetails),
     ResponseError(String, StateError),
     Delete,
-    RedirectToUser
+    RedirectToUser,
+    Block,
 }
 
 impl Component for UserTabDetails {
@@ -64,6 +68,8 @@ impl Component for UserTabDetails {
             user_details: props.user_details,
             link,
             fetch_task: None,
+            loading_update_user: false,
+            error_update_user: None,
             loading_delete_user: false,
             error_delete_user: None,
             route_service: RouteService::new(),
@@ -115,6 +121,11 @@ impl Component for UserTabDetails {
             },
             Msg::ResponseError(message, state) => {
                 match state {
+                    StateError::Blocked => {
+                        self.fetch_task = None;
+                        self.loading_update_user = false;
+                        self.error_update_user = Some(message);
+                    }
                     StateError::Delete => {
                         self.fetch_task = None;
                         self.loading_delete_user = false;
@@ -151,6 +162,31 @@ impl Component for UserTabDetails {
                 self.fetch_task = None;
                 self.route_service.set_route(&format!("/{}/users", "tenant_id_not_from_reducer"), ());
                 true
+            }
+            Msg::Block => {
+                ConsoleService::info(&format!("{:?}", self.user_details));
+                let request = Request::patch(format!("{}/users/dev-ofzd5p1b/users/auth0|7CYXV0aDAlN0M2MTM3MTIyMTAxY2VmYTAwNzM0NzRmYmI", API_URL))
+                    .header("Content-Type", "application/json")
+                    .header("access_token","tokenidtelkomdomain")
+                    .body(Json(&self.user_details))
+                    .expect("Could not build request.");
+                let callback = self.link.callback(|response: Response<Json<Result<ResponseUserDetails, anyhow::Error>>>| {
+                    let Json(data) = response.into_body();
+                    match data {
+                        Ok(dataok) => {
+                            ConsoleService::info(&format!("{:?}", dataok));
+                            Msg::GetUserDetails(dataok.data)
+                        }
+                        Err(error) => {
+                            Msg::ResponseError(error.to_string(), StateError::Blocked)
+                        }
+                    }
+                });
+                let task = FetchService::fetch(request, callback).expect("failed to start request");
+                self.loading_update_user = true;
+                self.fetch_task = Some(task);
+                true
+
             }
             
         }
@@ -400,7 +436,26 @@ impl Component for UserTabDetails {
                             <p class="p-0 m-0">{"The user will be blocked for logging into your applications."}</p>
                         </div>
                         <div class="col-2 col-sm-2 p-0 d-flex align-items-center justify-content-center">
-                            <button type="button" class="btn btn-danger">{"Block"}</button>
+                            <button 
+                                type="button"
+                                class=format!("btn {} btn-danger", if self.loading_update_user {"loading"} else {""})
+                                onclick=self.link.callback(|_| Msg::Block)
+                            >
+                                // class="btn btn-danger">
+                                {"Block"}
+                                </button>
+                                {
+                                    if self.error_update_user.is_some() {
+                                    html! {
+                                        <div class="alert alert-warning mt-3" role="alert">
+                                            <i class="bi bi-exclamation-triangle me-2"></i>
+                                            { self.error_update_user.clone().unwrap() }
+                                        </div>
+                                    }
+                                    } else {
+                                        html! {}
+                                    }
+                                }
                         </div>
                     </div>
                 </div>

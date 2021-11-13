@@ -30,4 +30,4 @@ pub struct ResponseMessage {
 pub mod api;
 pub mod users;
 pub mod settings;
-
+pub mod roles;

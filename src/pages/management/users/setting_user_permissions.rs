@@ -184,7 +184,7 @@ impl Component for UserTabPermissions {
                             <p>{"List of permissions this user has."}</p>
                         </div>
                         <div class="col d-flex justify-content-end">
-                            <button type="button" class="btn btn-primary">{"Assign Permissions"}</button>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPermissions">{"Assign Permissions"}</button>
                         </div>
                     </div>
                 </div>
@@ -318,6 +318,31 @@ impl Component for UserTabPermissions {
                         </div>
                     </div>
 
+                     
+                    <div class="modal fade" id="addPermissions" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">{"Add Permissions"}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="exampleDataList" class="form-label">{"Select permissions from existing APIs"}</label>
+                                    <input class="form-control" list="listAPIOptions" id="exampleDataList" placeholder="Select an API..."/>
+                                    <datalist id="listAPIOptions">
+                                            <option value="Example API">{"https://jsonplaceholder.typicode.com/albums"}</option>
+                                            // <option value="New York">
+                                            // <option value="Seattle">
+                                            // <option value="Los Angeles">
+                                            // <option value="Chicago">
+                                    </datalist>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary">{"Add Permissions"}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
 
 

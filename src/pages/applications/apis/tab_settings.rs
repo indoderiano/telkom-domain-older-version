@@ -601,18 +601,18 @@ impl Component for TabSettings {
                                 <div class="spinner-border spinner-border-sm" role="status"/>
                             </div>
                         </button>
-                            {
-                                if self.error_delete_api.is_some() {
-                                    html! {
-                                        <div class="alert alert-warning" role="alert">
-                                            <i class="bi bi-exclamation-triangle me-2"></i>
-                                            { self.error_delete_api.clone().unwrap() }
-                                        </div>
-                                    }
-                                } else {
-                                    html! {}
+                        {
+                            if self.error_delete_api.is_some() {
+                                html! {
+                                    <div class="alert alert-warning" role="alert">
+                                        <i class="bi bi-exclamation-triangle me-2"></i>
+                                        { self.error_delete_api.clone().unwrap() }
+                                    </div>
                                 }
+                            } else {
+                                html! {}
                             }
+                        }
                       </div>
                   </div>
               </div>

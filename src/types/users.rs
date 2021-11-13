@@ -113,6 +113,12 @@ pub struct UserDetails {
     pub family_name: String,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq)]
+pub struct ResponseUserDetails{
+    pub message: String,
+    pub data: UserDetails
+}
+
 impl UserDetails {
     pub fn new() -> UserDetails {
         UserDetails {

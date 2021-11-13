@@ -483,49 +483,46 @@ impl Component for UsersManagement {
                             </div>
                         </div>
                     </div>
-
-                    <div class="mt-2 table-responsive-md table-responsive-lg">
-                        <table class="table">
-                            <thead>
+                    {
+                        if self.loading_get_user {
+                            html! {
+                                <div class="d-flex align-items-center justify-content-center" style="position: relative; margin-top: 8rem;">
+                                <Loading2 width=45 />
+                                </div>
+                            }
+                        } else if self.error_user_list.is_some() {
+                            html! {
                                 <tr>
-                                    <th scope="col">{"Name"}</th>
-                                    <th scope="col-auto">{"Connection"}</th>
-                                    <th scope="col-auto">{"Logins"}</th>
-                                    <th scope="col-auto">{"Latest Login"}</th>
-                                    <th></th>
+                                <div class="alert alert-warning mb-5" role="alert">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                { self.error_user_list.clone().unwrap() }
+                                </div>
                                 </tr>
-                            </thead>
-                            <tbody>
-
-                                {
-                                    if self.loading_get_user {
-                                        html! {
+                            }
+                        } else {
+                            html! {
+                                <>
+                                    <div class="mt-2 table-responsive-md table-responsive-lg">
+                                        <table class="table">
+                                            <thead>
                                                 <tr>
-                                                    <div class="d-flex align-items-center justify-content-center" style="position: relative; margin-top: 8rem;">
-                                                        <Loading2 width=45 />
-                                                    </div>
+                                                    <th scope="col">{"Name"}</th>
+                                                    <th scope="col-auto">{"Connection"}</th>
+                                                    <th scope="col-auto">{"Logins"}</th>
+                                                    <th scope="col-auto">{"Latest Login"}</th>
+                                                    <th></th>
                                                 </tr>
-                                        }
-                                    } else if self.error_user_list.is_some() {
-                                        html! {
-                                            <tr>
-                                                <div class="alert alert-warning mb-5" role="alert">
-                                                <i class="bi bi-exclamation-triangle me-2"></i>
-                                                { self.error_user_list.clone().unwrap() }
-                                                </div>
-                                            </tr>
-                                        }
-                                    } else {
-                                        html! {
-                                            <>
+                                            </thead>
+                                        
+                                            <tbody>
                                                 {self.view_user_list()}
-                                            </>
-                                        }
-                                    }
-                                }
-                            </tbody>
-                        </table>
-                    </div>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </>
+                            }
+                        }
+                    }
 
                 </div>
 
