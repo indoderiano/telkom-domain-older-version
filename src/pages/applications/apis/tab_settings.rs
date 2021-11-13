@@ -9,7 +9,6 @@ use yew::{
 use yew_router::service::RouteService;
 use crate::types::{
 	api::{ ApiDetails, ResponseApiDetails },
-	ResponseMessage,
 };
 use crate::configs::server::API_URL;
 
@@ -90,7 +89,7 @@ impl Component for TabSettings {
             Msg::InputText(input, data) => {
               match data {
                 Data::Id => {
-                    self.api_details.id = input;
+                    self.api_details.id = input.parse::<u32>().unwrap();
                 }
                 Data::Name => {
                     self.api_details.name = input;
@@ -129,17 +128,17 @@ impl Component for TabSettings {
             }
             Msg::Save => {
                 ConsoleService::info(&format!("{:?}", self.api_details));
-                let request = Request::patch(format!("{}/api/v2/dev-ofzd5p1b/resource-servers/60daccd6dff9a6003e8ef6ef", API_URL))
+                let request = Request::patch(format!("http://127.0.0.1:8080/api/v1/1/resource-server/{}", self.api_details.id))
                     .header("Content-Type", "application/json")
-                    .header("access_token", "tokenidtelkomdomain")
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
                     .body(Json(&self.api_details))
                     .expect("Could not build request.");
-                let callback = self.link.callback(|response: Response<Json<Result<ResponseApiDetails, anyhow::Error>>>| {
+                let callback = self.link.callback(|response: Response<Json<Result<ApiDetails, anyhow::Error>>>| {
                     let Json(data) = response.into_body();
                     match data {
                         Ok(dataok) => {
                             ConsoleService::info(&format!("{:?}", dataok));
-                            Msg::GetApiDetails(dataok.data)
+                            Msg::GetApiDetails(dataok)
                         }
                         Err(error) => {
                             ConsoleService::info(&error.to_string());
@@ -174,12 +173,12 @@ impl Component for TabSettings {
                 true
             }
             Msg::Delete => {
-                let request = Request::delete(format!("{}/api/v2/dev-ofzd5p1b/resource-servers/60daccd6dff9a6003e8ef6ef", API_URL))
+                let request = Request::delete(format!("http://127.0.0.1:8080/api/v1/1/resource-server/{}", self.api_details.id))
                     // .header("Content-Type", "application/json")
-                    .header("access_token", "tokenidtelkomdomain")
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
                     .body(Nothing)
                     .expect("Could not build request.");
-                let callback = self.link.callback(|response: Response<Json<Result<ResponseMessage, anyhow::Error>>>| {
+                let callback = self.link.callback(|response: Response<Json<Result<(), anyhow::Error>>>| {
                 let Json(data) = response.into_body();
                 match data {
                     Ok(dataok) => {
@@ -256,7 +255,7 @@ impl Component for TabSettings {
                                       type="text"
                                       class="form-control bg-input-grey"
                                       aria-label="Dollar amount (with dot and two decimal places)"
-                                      value={id}
+                                      value={id.to_string()}
                                       oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::Id))
                                   />   
                               </div>

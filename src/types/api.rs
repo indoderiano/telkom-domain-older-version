@@ -105,7 +105,7 @@ pub struct GetResourceServersByIdResponseClient {}
 
 #[derive(Deserialize, Serialize, Debug, Clone, Eq, PartialEq)]
 pub struct ApiDetails {
-    pub id: String,
+    pub id: u32,
     pub name: String,
     pub is_system: bool,
     pub identifier: String,
@@ -123,7 +123,7 @@ pub struct ApiDetails {
 impl ApiDetails {
     pub fn new() -> ApiDetails {
         ApiDetails {
-            id: String::from(""),
+            id: 0,
             name: String::from(""),
             is_system: false,
             identifier: String::from(""),

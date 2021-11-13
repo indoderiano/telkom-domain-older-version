@@ -357,12 +357,12 @@ impl RolesCreated {
                                         </Anchor>
                                     </li>
                                     <li>
-                                        <Anchor route=AppRoute::ApisSettings{tenant_id: String::from("temp_tenant_id"), api_id: String::from("api_id")} classes="dropdown-item fs-7">
+                                        <Anchor route=AppRoute::ApisSettings{tenant_id: String::from("temp_tenant_id"), api_id: 0} classes="dropdown-item fs-7">
                                             {"Assign To Users"}
                                         </Anchor>
                                     </li>
                                     <li>
-                                        <Anchor route=AppRoute::ApisSettings{tenant_id: String::from("temp_tenant_id"), api_id: String::from("api_id")} classes="dropdown-item fs-7">
+                                        <Anchor route=AppRoute::ApisSettings{tenant_id: String::from("temp_tenant_id"), api_id: 0} classes="dropdown-item fs-7">
                                             {"Delete Role"}
                                         </Anchor>
                                     </li>
