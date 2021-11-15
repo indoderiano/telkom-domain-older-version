@@ -42,6 +42,7 @@ impl Component for Loading2 {
                 style=format!("
                     width: {}px;
                     height: {}px;
+                    padding: 0px;
                     position: absolute;
                     top: 50%;
                     left: 50%;
