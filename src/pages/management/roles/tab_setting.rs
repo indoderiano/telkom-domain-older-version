@@ -170,74 +170,80 @@ impl Component for TabSettings {
         } = self.role.clone();
         html! {
             <>
-            <div class="mt-4 p-4">
-                <form>
-                    <div class="mb-3">
-                        <label for="roleName" class="form-label">{"Name"}</label>
-                        <input
-                            type="text"
-                            class="form-control w-50"
-                            id="roleName"
-                            value={ name.clone() }
-                            disabled={ self.loading_update }
-                        />
-                    </div>
-                    <div class="mb-3">
-                        <label for="inputDescription" class="form-label">{"Description"}</label>
-                        <input
-                            type="text"
-                            class="form-control w-50"
-                            id="inputDescription"
-                            value={ description.clone() }
-                            disabled={ self.loading_update }
-                        />
-                    </div>
+                <div class="mt-4 p-4">
+                    <form>
 
-                    <div
-                        // class="mt-3 mb-5"
-                    >
-                        <button
-                            type="button"
-                            class=format!("btn {} btn-primary position-relative", if self.loading_update {"loading"} else {""} )
-                            onclick=self.link.callback(|_| Msg::Update)
-                            disabled={ self.loading_update }
-                        >
-                            <div class="telkom-label">
-                                {"Save"}
-                            </div>
-                            <div class="telkom-spinner telkom-center">
-                                <div class="spinner-border spinner-border-sm" role="status"/>
-                            </div>
-                        </button>
-
-                        {
-                            if self.error_update.is_some() {
-                            html! {
-                                <div class="alert alert-warning mt-3" role="alert">
-                                    <i class="bi bi-exclamation-triangle me-2"></i>
-                                    { self.error_update.clone().unwrap() }
-                                </div>
-                            }
-                            } else {
-                                html! {}
-                            }
-                        }
-                    </div>
-
-                    // <button type="submit" class="btn btn-primary">{"Save"}</button>
-                </form>
-            </div>
-
-            <div class="mt-2 p-4 pt-0">
-                <p class="fw-bold fs-5">{"Danger Zone"}</p>
-                <div class="alert alert-danger" role="alert">
-                    <div class="row">
-                        <div class="col">
-                            <p class="text-danger fw-bold m-0">{"Delete Role"}</p>
-                            <p class="text-danger m-0">{"Once confirmed, this operations can't be undone!"}</p>
+                        <div class="mb-3">
+                            <label for="roleName" class="form-label">{"Name"}</label>
+                            <input
+                                type="text"
+                                class="form-control w-50"
+                                id="roleName"
+                                value={ name.clone() }
+                                disabled={ self.loading_update }
+                            />
                         </div>
-                        <div class="col d-flex justify-content-end">
-                            
+
+
+                        <div class="mb-3">
+                            <label for="inputDescription" class="form-label">{"Description"}</label>
+                            <input
+                                type="text"
+                                class="form-control w-50"
+                                id="inputDescription"
+                                value={ description.clone() }
+                                disabled={ self.loading_update }
+                            />
+                        </div>
+
+
+                        <div
+                            // class="mt-3 mb-5"
+                        >
+                                <button
+                                    type="button"
+                                    class=format!("btn {} btn-primary position-relative", if self.loading_update {"loading"} else {""} )
+                                    onclick=self.link.callback(|_| Msg::Update)
+                                    disabled={ self.loading_update }
+                                >
+                                    <div class="telkom-label">
+                                        {"Save"}
+                                    </div>
+                                    <div class="telkom-spinner telkom-center">
+                                        <div class="spinner-border spinner-border-sm" role="status"/>
+                                    </div>
+                                </button>
+
+                                {
+                                    if self.error_update.is_some() {
+                                    html! {
+                                        <div class="alert alert-warning mt-3" role="alert">
+                                            <i class="bi bi-exclamation-triangle me-2"></i>
+                                            { self.error_update.clone().unwrap() }
+                                        </div>
+                                    }
+                                    } else {
+                                        html! {}
+                                    }
+                                }
+                        </div>
+
+                    //     // <button type="submit" class="btn btn-primary">{"Save"}</button>
+                    </form>
+                </div>
+
+
+                <div class="mt-2 p-4 pt-0">
+                    <p class="fw-bold fs-5">{"Danger Zone"}</p>
+                    
+                    <div class="alert alert-danger" role="alert">
+                        <div class="row">
+                            <div class="col">
+                                <p class="text-danger fw-bold m-0">{"Delete Role"}</p>
+                                <p class="text-danger m-0">{"Once confirmed, this operations can't be undone!"}</p>
+                            </div>
+                            <div class="col d-flex justify-content-end">
+                                
                             <button
                                 type="button"
                                 class=format!("btn {} btn-danger position-relative", if self.loading_delete {"loading"} else {""} )
@@ -263,11 +269,13 @@ impl Component for TabSettings {
                                     html! {}
                                 }
                             }
-                            // <button type="button" class="btn btn-danger">{"Remove this role!"}</button>
+                            </div>
+
+                    //             // <button type="button" class="btn btn-danger">{"Remove this role!"}</button>
+                            </div>
                         </div>
-                    </div>
                 </div>
-            </div>
+
             </>
         }
     }

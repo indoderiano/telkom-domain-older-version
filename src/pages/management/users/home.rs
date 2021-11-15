@@ -1,36 +1,306 @@
 use crate::app::AppRoute;
-use yew::prelude::*;
+use crate::types::{
+    users::{ResponseUsersList, UserCreate, UserTitle},
+    ResponseMessage,
+};
+use yew::services::ConsoleService;
+use yew::{
+    format::{Json, Nothing},
+    prelude::*,
+    services::fetch::{FetchService, FetchTask, Request, Response},
+};
 use yew_router::components::RouterAnchor;
 
+use crate::components::loading2::Loading2;
+use crate::configs::server::API_URL;
+
+#[derive(Clone, Debug, Eq, PartialEq, Properties)]
+pub struct UserProps {
+    pub tenant_id: String,
+}
+
+pub enum StateError {
+    UserList,
+    UserCreate,
+}
+
+pub enum DataUserCreate {
+    Email,
+    Password,
+    Connection,
+}
+
 pub struct UsersManagement {
+    tenant_id: String,
+    fetch_task: Option<FetchTask>,
     learn_more: bool,
     link: ComponentLink<Self>,
+    loading_get_user: bool,
+    user_list: Vec<UserTitle>,
+    error_user_list: Option<String>,
+    show_modal_create: bool,
+    loading_create_user: bool,
+    user_create: UserCreate,
+    error_user_create: Option<String>,
 }
 
 pub enum Msg {
+    DefaultState,
+    RequestUserList,
     LearnMore,
-    HideDetails
+    HideDetails,
+    GetUserList(Vec<UserTitle>),
+    Input(String, DataUserCreate),
+    ShowModalCreate(bool),
+    Create,
+    ResponseError(String, StateError),
+}
+
+impl UsersManagement {
+    fn view_user_list(&self) -> Vec<Html> {
+        type Anchor = RouterAnchor<AppRoute>;
+        let tenant_id = self.tenant_id.clone();
+
+        self.user_list.iter().map(|user| {
+            html! {
+                <tr>
+                    <th scope="row">
+                        <div>
+                            <a href="" class="text-decoration-none">{&user.name}</a>
+                            <p class="text-muted overflow-hidden">{&user.email}</p>
+                        </div>
+                    </th>
+                                    <td>{&user.identities[0].connection}</td>
+                                    <td>{&user.logins_count}</td>
+                                    <td>{&user.last_login}</td>
+                                    <td>
+                                        <button type="button" style="flex: 0 0 auto; width: 30px; height: 30px;" class="btn d-flex justify-content-center align-items-center rounded border" role="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots"></i>
+                                        </button>
+                                        <ul class="dropdown-menu pt-1" aria-labelledby="dropdownMenuButton1">
+                                            <li class="p-1 text-muted" style="font-size:13px;">
+                                                <Anchor route=AppRoute::UserViewDetail {tenant_id: tenant_id.clone(), user_id: user.user_id.clone() } classes="dropdown-item">
+                                                    {"View Details"}
+                                                </Anchor>
+                                            </li>
+                                            <li>
+                                                <hr class="dropdown-divider"/>
+                                            </li>
+                                            <li class="p-1 text-muted">
+                                                        <div class="ms-1 d-flex flex-row inline-block align-items-center" style="font-size:13px;" >
+                                                            <i class="bi bi-person-check"></i>
+                                                            <span data-bs-toggle="modal" data-bs-target="#assignRoles">
+                                                            <a class="dropdown-item" href="#">
+                                                                {"Assign Roles"}
+                                                            </a>
+                                                        </span>
+                                                        </div>
+                                            </li>
+                                            <li class="p-1 text-muted" style="font-size:13px;">
+                                                        <div class="ms-1 d-flex flex-row inline-block align-items-center">
+                                                            <i class="bi bi-check2-square"></i>
+                                                            <span data-bs-toggle="modal" data-bs-target="#assignPermissions">
+                                                                <a class="dropdown-item" href="#" >
+                                                                    {"Assign Permissions"}
+                                                                </a>
+                                                            </span>
+                                                        </div>
+                                            </li>
+                                            <li class="p-1 text-muted" style="font-size:13px;">
+                                                <div class="ms-1 d-flex flex-row inline-block align-items-center">
+                                                    <i class="bi bi-envelope "></i>
+                                                    <span  data-bs-toggle="modal" data-bs-target="#resendConfirmation">
+                                                        <a class="dropdown-item" href="#">
+                                                            {"Send Verification Email "}
+                                                        </a>
+                                                    </span>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <hr class="dropdown-divider"/>
+                                            </li>
+                                            <li class="p-1 text-muted" style="font-size:13px;" data-bs-toggle="modal" data-bs-target="#changeEmail">
+                                                <a class="dropdown-item" href="#" >
+                                                    {"Change Email "}
+                                                </a>
+                                            </li>
+                                            <li class="p-1 text-muted" style="font-size:13px;" data-bs-toggle="modal" data-bs-target="#changePassword">
+                                                <a class="dropdown-item" href="#">
+                                                    {"Change Password "}
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <hr class="dropdown-divider" />
+                                            </li>
+                                            <li class="p-1" style="font-size:13px;">
+                                                <div class="ms-1 d-flex flex-row text-muted inline-block align-items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg " width="13" height="13" viewBox="0 0 24 24 " fill="none " stroke="currentColor " stroke-width="2 " stroke-linecap="round " stroke-linejoin="round"><circle cx="12 " cy="12 " r="10 "></circle><line x1="4.93 " y1="4.93 " x2="19.07 " y2="19.07 "></line></svg>
+                                                    <span>
+                                                        <a class="dropdown-item" href="#">
+                                                            {"Block "}
+                                                        </a>
+                                                    </span>
+                                                </div>
+                                            </li>
+                                            <li class="p-1 text-danger " style="font-size:13px;">
+                                                <div class="ms-1 d-flex flex-row">
+                                                    <i class="bi bi-trash "></i>
+                                                    <span data-bs-toggle="modal" data-bs-target="#deleteUsers">
+                                                        <a class="dropdown-item fs-7" href="#">
+                                                            {"Delete "}
+                                                        </a>
+                                                    </span>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+            }
+        })
+        .collect()
+    }
 }
 
 impl Component for UsersManagement {
     type Message = Msg;
-    type Properties = ();
+    type Properties = UserProps;
 
-    fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
-        UsersManagement { 
-            learn_more: false, 
+    fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
+        // ConsoleService::info(&format!("User home props, tenant id= {}", props.tenant_id));
+
+        let user_create = UserCreate::new();
+
+        UsersManagement {
+            tenant_id: props.tenant_id,
+            fetch_task: None,
+            learn_more: false,
             link,
+            loading_get_user: false,
+            user_list: Vec::new(),
+            error_user_list: None,
+            show_modal_create: false,
+            loading_create_user: false,
+            user_create,
+            error_user_create: None,
+        }
+    }
+
+    fn rendered(&mut self, first_render: bool) {
+        if first_render {
+            // ConsoleService::info("This is first render in user");
+            self.link.send_message(Msg::RequestUserList);
         }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
+            Msg::DefaultState => {
+                self.show_modal_create = false;
+                self.loading_get_user = false;
+                self.loading_create_user = false;
+                self.user_create.email = String::from("");
+                self.user_create.password = String::from("");
+                self.user_create.connection = String::from("");
+                true
+            }
+            Msg::RequestUserList => {
+                let request = Request::get(format!("{}/users/tenantid", API_URL))
+                    .header("access_token", "tokenidtelkomdomain")
+                    .body(Nothing)
+                    .expect("Could not build request.");
+
+                let callback = self.link.callback(
+                    |response: Response<Json<Result<ResponseUsersList, anyhow::Error>>>| {
+                        let Json(data) = response.into_body();
+                        match data {
+                            Ok(dataok) => Msg::GetUserList(dataok.data),
+                            Err(error) => {
+                                Msg::ResponseError(error.to_string(), StateError::UserList)
+                            }
+                        }
+                    },
+                );
+                let task = FetchService::fetch(request, callback).expect("failed to start request");
+                self.fetch_task = Some(task);
+                self.error_user_list = None;
+                self.loading_get_user = true;
+                true
+            }
             Msg::LearnMore => {
                 self.learn_more = true;
                 true
             }
             Msg::HideDetails => {
                 self.learn_more = false;
+                true
+            }
+            Msg::GetUserList(data) => {
+                // ConsoleService::info(&format!("{:?}", data));
+                self.user_list = data;
+                self.loading_get_user = false;
+                self.fetch_task = None;
+                true
+            }
+            Msg::Input(input, data) => {
+                match data {
+                    DataUserCreate::Email => {
+                        self.user_create.email = input;
+                    }
+                    DataUserCreate::Password => {
+                        self.user_create.password = input;
+                    }
+                    DataUserCreate::Connection => {
+                        self.user_create.connection = input;
+                    }
+                }
+                true
+            }
+            Msg::ShowModalCreate(state) => {
+                self.show_modal_create = state;
+                true
+            }
+            Msg::Create => {
+                ConsoleService::info(&format!("{:?}", self.user_create));
+                let request = Request::post(format!("{}/users/tenantid", API_URL))
+                    .header("Content-Type", "application/json")
+                    .header("access_token", "tokenidtelkomdomain")
+                    .body(Json(&self.user_create))
+                    .expect("Could not build request.");
+                let callback = self.link.batch_callback(
+                    |response: Response<Json<Result<ResponseMessage, anyhow::Error>>>| {
+                        let Json(data) = response.into_body();
+                        match data {
+                            Ok(response) => {
+                                // ConsoleService::info(&format!("{:?}", response));
+                                vec![Msg::DefaultState, Msg::RequestUserList]
+                            }
+                            Err(error) => {
+                                // ConsoleService::info(&error.to_string());
+                                vec![Msg::ResponseError(
+                                    error.to_string(),
+                                    StateError::UserCreate,
+                                )]
+                            }
+                        }
+                    },
+                );
+                let task = FetchService::fetch(request, callback).expect("failed to start request");
+                self.loading_create_user = true;
+                self.fetch_task = Some(task);
+                true
+            }
+            Msg::ResponseError(message, state) => {
+                match state {
+                    StateError::UserList => {
+                        self.loading_get_user = false;
+                        self.error_user_list = Some(message);
+                    }
+                    StateError::UserCreate => {
+                        self.loading_create_user = false;
+                        self.error_user_create = Some(message);
+                    }
+                }
+                self.fetch_task = None;
                 true
             }
         }
@@ -41,10 +311,10 @@ impl Component for UsersManagement {
     }
 
     fn view(&self) -> Html {
+        let tenant_id = self.tenant_id.clone();
         type Anchor = RouterAnchor<AppRoute>;
         html! {
             <div>
-
                 <div class="container mx-auto pt-5 pb-5 px-4" style="max-width: 1048px;">
 
                     <div class=" d-flex row align-center">
@@ -52,7 +322,13 @@ impl Component for UsersManagement {
                             <p class="fs-2 fw-bold">{"Users"}</p>
                         </div>
                         <div class="col d-flex justify-content-end">
-                            <button type="button" class="btn btn-primary ms-3 mt-3 mb-3" data-bs-toggle="modal" data-bs-target="#createNewUser">
+                            <button
+                                type="button"
+                                class="btn btn-primary ms-3 mt-3 mb-3"
+                                data-bs-toggle="modal"
+                                data-bs-target="#createNewUser"
+                            >
+
                                 <i class="bi bi-plus"></i>
                                 <span>{"Create User"}</span>
                             </button>
@@ -65,9 +341,9 @@ impl Component for UsersManagement {
                             {
                                 if self.learn_more == true {
                                     html!{
-                                        <a 
-                                            href="javascript: void(0);" 
-                                            class="text-decoration-none" 
+                                        <a
+                                            href="javascript: void(0);"
+                                            class="text-decoration-none"
                                             onclick=self.link.callback(|_| Msg::HideDetails)
                                         >
                                             <span
@@ -207,119 +483,51 @@ impl Component for UsersManagement {
                             </div>
                         </div>
                     </div>
-
-                    <div class="mt-2 table-responsive-md table-responsive-lg">
-                        <table class="table">
-                            <thead>
+                    {
+                        if self.loading_get_user {
+                            html! {
+                                <div class="d-flex align-items-center justify-content-center" style="position: relative; margin-top: 8rem;">
+                                <Loading2 width=45 />
+                                </div>
+                            }
+                        } else if self.error_user_list.is_some() {
+                            html! {
                                 <tr>
-                                    <th scope="col">{"Name"}</th>
-                                    <th scope="col-auto">{"Connection"}</th>
-                                    <th scope="col-auto">{"Logins"}</th>
-                                    <th scope="col-auto">{"Latest Login"}</th>
-                                    <th></th>
+                                <div class="alert alert-warning mb-5" role="alert">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                { self.error_user_list.clone().unwrap() }
+                                </div>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th scope="row">
-                                        <div>
-                                            <a href="" class="text-decoration-none">{"yeskahaganta3838@gmail.com"}</a>
-                                            <p class="text-muted overflow-hidden">{"yeskahaganta3838@gmail.com"}</p>
-                                        </div>
-                                    </th>
-                                    <td>{"User Database"}</td>
-                                    <td>{"0"}</td>
-                                    <td>{"never"}</td>
-                                    <td>
-                                        <button type="button" style="flex: 0 0 auto; width: 30px; height: 30px;" class="btn d-flex justify-content-center align-items-center rounded border" role="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="bi bi-three-dots"></i>
-                                        </button>
-                                        <ul class="dropdown-menu pt-1" aria-labelledby="dropdownMenuButton1">
-                                            <li class="p-1 text-muted" style="font-size:13px;">
-                                                <Anchor route=AppRoute::UserViewDetail classes="dropdown-item">
-                                                    {"View Details"}
-                                                </Anchor>
-                                            </li>
-                                            <li>
-                                                <hr class="dropdown-divider"/>
-                                            </li>
-                                            <li class="p-1 text-muted">
-                                                        <div class="ms-1 d-flex flex-row inline-block align-items-center" style="font-size:13px;" >
-                                                            <i class="bi bi-person-check"></i>
-                                                            <span data-bs-toggle="modal" data-bs-target="#assignRoles">
-                                                            <a class="dropdown-item" href="#">
-                                                                {"Assign Roles"}
-                                                            </a>
-                                                        </span>
-                                                        </div>
-                                            </li>
-                                            <li class="p-1 text-muted" style="font-size:13px;">
-                                                        <div class="ms-1 d-flex flex-row inline-block align-items-center">
-                                                            <i class="bi bi-check2-square"></i>
-                                                            <span data-bs-toggle="modal" data-bs-target="#assignPermissions">
-                                                                <a class="dropdown-item" href="#" >
-                                                                    {"Assign Permissions"}
-                                                                </a>
-                                                            </span>
-                                                        </div>
-                                            </li>
-                                            <li class="p-1 text-muted" style="font-size:13px;">
-                                                <div class="ms-1 d-flex flex-row inline-block align-items-center">
-                                                    <i class="bi bi-envelope "></i>
-                                                    <span  data-bs-toggle="modal" data-bs-target="#resendConfirmation">
-                                                        <a class="dropdown-item" href="#">
-                                                            {"Send Verification Email "}
-                                                        </a>
-                                                    </span>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <hr class="dropdown-divider"/>
-                                            </li>
-                                            <li class="p-1 text-muted" style="font-size:13px;" data-bs-toggle="modal" data-bs-target="#changeEmail">
-                                                <a class="dropdown-item" href="#" >
-                                                    {"Change Email "}
-                                                </a>
-                                            </li>
-                                            <li class="p-1 text-muted" style="font-size:13px;" data-bs-toggle="modal" data-bs-target="#changePassword">
-                                                <a class="dropdown-item" href="#">
-                                                    {"Change Password "}
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <hr class="dropdown-divider" />
-                                            </li>
-                                            <li class="p-1" style="font-size:13px;">
-                                                <div class="ms-1 d-flex flex-row text-muted inline-block align-items-center">
-                                                    <svg xmlns="http://www.w3.org/2000/svg " width="13" height="13" viewBox="0 0 24 24 " fill="none " stroke="currentColor " stroke-width="2 " stroke-linecap="round " stroke-linejoin="round"><circle cx="12 " cy="12 " r="10 "></circle><line x1="4.93 " y1="4.93 " x2="19.07 " y2="19.07 "></line></svg>
-                                                    <span>
-                                                        <a class="dropdown-item" href="#">
-                                                            {"Block "}
-                                                        </a>
-                                                    </span>
-                                                </div>
-                                            </li>
-                                            <li class="p-1 text-danger " style="font-size:13px;">
-                                                <div class="ms-1 d-flex flex-row">
-                                                    <i class="bi bi-trash "></i>
-                                                    <span data-bs-toggle="modal" data-bs-target="#deleteUsers">
-                                                        <a class="dropdown-item fs-7" href="#">
-                                                            {"Delete "}
-                                                        </a>
-                                                    </span>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                            }
+                        } else {
+                            html! {
+                                <>
+                                    <div class="mt-2 table-responsive-md table-responsive-lg">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">{"Name"}</th>
+                                                    <th scope="col-auto">{"Connection"}</th>
+                                                    <th scope="col-auto">{"Logins"}</th>
+                                                    <th scope="col-auto">{"Latest Login"}</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                        
+                                            <tbody>
+                                                {self.view_user_list()}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </>
+                            }
+                        }
+                    }
 
                 </div>
 
 
-
+        // MODALCREATE USERS
         <div class="modal fade" id="createNewUser" tabindex="-1" aria-labelledby="createNewUserLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">

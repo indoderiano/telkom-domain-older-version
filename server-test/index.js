@@ -3,30 +3,30 @@ const cors = require("cors")
 const app = express()
 const port = 3000
 
-app.use(express.urlencoded({extended: true}))
+app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(cors())
 
 
 app.get('/', (req, res) => {
-  console.log('fake api')
-  setTimeout(() => {
-    res.status(200).json("Fake Api Telkom Domain")
-  }, 3000);
-  // res.send('Fake Api Telkom Domain')
+    console.log('fake api')
+    setTimeout(() => {
+        res.status(200).json("Fake Api Telkom Domain")
+    }, 3000);
+    // res.send('Fake Api Telkom Domain')
 })
 
 app.post('/user', (req, res) => {
-  console.log(req.body)
-  setTimeout(() => {
-    res.send({
-      username: "batman",
-      email: "batman@mail.com",
-      token: "asdfasdf",
-        // name: "Batman",
-        // age: 33
-    })
-  }, 2000)
+    console.log(req.body)
+    setTimeout(() => {
+        res.send({
+            username: "batman",
+            email: "batman@mail.com",
+            token: "asdfasdf",
+            // name: "Batman",
+            // age: 33
+        })
+    }, 2000)
 })
 
 // app.get('/user', (req, res) => {
@@ -38,5 +38,5 @@ const { router } = require('./routes')
 app.use(router)
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
+    console.log(`Example app listening at http://localhost:${port}`)
 })

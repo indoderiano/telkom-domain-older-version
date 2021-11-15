@@ -126,10 +126,10 @@ pub enum AppRoute {
     RoleSettings { tenant_id: String, role_id: String },
     #[to = "/user-management/roles"]
     RolesCreated,
-    #[to="/user-management/users/settings"]
-    UserViewDetail,
-    #[to = "/user-management/users"]
-    UsersManagement,
+    #[to="/{tenant_id}/users/{user_id}"]
+    UserViewDetail {tenant_id: String, user_id: String},
+    #[to = "/{tenant_id}/users"]
+    UsersManagement {tenant_id: String},
     #[to = "/enterprise/google-app/create"]
     EnterpriseGoogleCreate,
     #[to = "/enterprise/google-app"]
@@ -381,17 +381,17 @@ impl Component for App {
                         html! {<HomePage/>}
                     }
                 },
-                AppRoute::UsersManagement => {
+                AppRoute::UsersManagement{tenant_id} => {
                     if is_logged_in {
-                        html! {<UsersManagement/>}
+                        html! {<UsersManagement tenant_id=tenant_id/>}
                     } else {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
                     }
                 },
-                AppRoute::UserViewDetail => {
+                AppRoute::UserViewDetail{tenant_id, user_id} => {
                     if is_logged_in {
-                        html! {<UserViewDetail/>}
+                        html! {<UserViewDetail tenant_id=tenant_id user_id=user_id/>}
                     } else {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
