@@ -238,31 +238,31 @@ impl Component for TabSettings {
                         </div>
                         <div class="col d-flex justify-content-end">
                             
-                        <button
-                            type="button"
-                            class=format!("btn {} btn-danger position-relative", if self.loading_delete {"loading"} else {""} )
-                            onclick=self.link.callback(|_| Msg::Delete)
-                            disabled={ self.loading_delete }
-                        >
-                            <div class="telkom-label">
-                                {"Delete"}
-                            </div>
-                            <div class="telkom-spinner telkom-center">
-                                <div class="spinner-border spinner-border-sm" role="status"/>
-                            </div>
-                        </button>
-                        {
-                            if self.error_delete.is_some() {
-                                html! {
-                                    <div class="alert alert-warning" role="alert">
-                                        <i class="bi bi-exclamation-triangle me-2"></i>
-                                        { self.error_delete.clone().unwrap() }
-                                    </div>
+                            <button
+                                type="button"
+                                class=format!("btn {} btn-danger position-relative", if self.loading_delete {"loading"} else {""} )
+                                onclick=self.link.callback(|_| Msg::Delete)
+                                disabled={ self.loading_delete }
+                            >
+                                <div class="telkom-label">
+                                    {"Delete"}
+                                </div>
+                                <div class="telkom-spinner telkom-center">
+                                    <div class="spinner-border spinner-border-sm" role="status"/>
+                                </div>
+                            </button>
+                            {
+                                if self.error_delete.is_some() {
+                                    html! {
+                                        <div class="alert alert-warning" role="alert">
+                                            <i class="bi bi-exclamation-triangle me-2"></i>
+                                            { self.error_delete.clone().unwrap() }
+                                        </div>
+                                    }
+                                } else {
+                                    html! {}
                                 }
-                            } else {
-                                html! {}
                             }
-                        }
                             // <button type="button" class="btn btn-danger">{"Remove this role!"}</button>
                         </div>
                     </div>
