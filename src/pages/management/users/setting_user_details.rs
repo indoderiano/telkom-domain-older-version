@@ -117,6 +117,8 @@ impl Component for UserTabDetails {
                 ConsoleService::info(&format!("{:?}", data));
                 self.fetch_task = None;
                 self.user_details = data;
+                self.loading_update_user = false;
+                self.error_update_user = None;
                 true
             },
             Msg::ResponseError(message, state) => {
@@ -170,12 +172,12 @@ impl Component for UserTabDetails {
                     .header("access_token","tokenidtelkomdomain")
                     .body(Json(&self.user_details))
                     .expect("Could not build request.");
-                let callback = self.link.callback(|response: Response<Json<Result<ResponseUserDetails, anyhow::Error>>>| {
+                let callback = self.link.callback(|response: Response<Json<Result<UserDetails, anyhow::Error>>>| {
                     let Json(data) = response.into_body();
                     match data {
                         Ok(dataok) => {
                             ConsoleService::info(&format!("{:?}", dataok));
-                            Msg::GetUserDetails(dataok.data)
+                            Msg::GetUserDetails(dataok)
                         }
                         Err(error) => {
                             Msg::ResponseError(error.to_string(), StateError::Blocked)
@@ -402,13 +404,19 @@ impl Component for UserTabDetails {
                             <p class="p-0 m-0">{"The user will be removed and it will no longer have access to your applications"}</p>
                         </div>
                         <div class="col-2 col-sm-2 p-0 d-flex align-items-center justify-content-center">
-                            <button 
-                                type="button" 
-                                class="btn btn-danger"
+                            
+                            <button
+                                type="button"
+                                class=format!("btn {} btn-danger position-relative", if self.loading_delete_user {"loading"} else {""} )
                                 onclick=self.link.callback(|_|Msg::Delete)
-                                disabled={ if self.loading_delete_user {true} else {false} }
+                                disabled={ self.loading_delete_user }
                             >
-                            {"Delete"}
+                                <div class="telkom-label">
+                                    {"Delete"}
+                                </div>
+                                <div class="telkom-spinner telkom-center">
+                                    <div class="spinner-border spinner-border-sm" role="status"/>
+                                </div>
                             </button>
                             {
                                 if self.error_delete_user.is_some() {
@@ -436,14 +444,20 @@ impl Component for UserTabDetails {
                             <p class="p-0 m-0">{"The user will be blocked for logging into your applications."}</p>
                         </div>
                         <div class="col-2 col-sm-2 p-0 d-flex align-items-center justify-content-center">
-                            <button 
+                            
+                            <button
                                 type="button"
-                                class=format!("btn {} btn-danger", if self.loading_update_user {"loading"} else {""})
+                                class=format!("btn {} btn-danger position-relative", if self.loading_update_user {"loading"} else {""} )
                                 onclick=self.link.callback(|_| Msg::Block)
+                                disabled={ self.loading_update_user }
                             >
-                                // class="btn btn-danger">
-                                {"Block"}
-                                </button>
+                                <div class="telkom-label">
+                                    {"Block"}
+                                </div>
+                                <div class="telkom-spinner telkom-center">
+                                    <div class="spinner-border spinner-border-sm" role="status"/>
+                                </div>
+                            </button>
                                 {
                                     if self.error_update_user.is_some() {
                                     html! {
