@@ -1,12 +1,13 @@
 class ControllerUsers {
     static get(req, res, next) {
+        console.log("get user list")
         console.log(req.params.tenant_id);
 
         let data = {
             message: "Ok",
             data: [{
                     user_id: "auth0|YXV0aDAlN0M2MTM3MTIyMTAxY2VmYTAwNzM0NzRmYmI",
-                    email: "yeskahaganta3838@gmail.com",
+                    email: "yeskahaganta3838@gmail.comedited",
                     email_verified: false,
                     username: "abangyeska",
                     phone_number: "+6281239675121",
@@ -66,7 +67,7 @@ class ControllerUsers {
         setTimeout(() => {
             console.log("return users data");
             res.send(data);
-        }, 1000);
+        }, 3000);
     }
 
     static create(req, res, next) {
@@ -78,7 +79,7 @@ class ControllerUsers {
                 message: "create succesful",
                 data: "",
             });
-        });
+        }, 3000);
     }
 
     static getDetails(req, res, next) {
@@ -116,7 +117,7 @@ class ControllerUsers {
         setTimeout(() => {
             console.log("return data user details");
             res.send(data);
-        }, 1000);
+        }, 3000);
     }
 
     static updateUsers(req, res, next) {

@@ -56,111 +56,6 @@ pub enum Msg {
     ResponseError(String, StateError),
 }
 
-impl UsersManagement {
-    fn view_user_list(&self) -> Vec<Html> {
-        type Anchor = RouterAnchor<AppRoute>;
-        let tenant_id = self.tenant_id.clone();
-
-        self.user_list.iter().map(|user| {
-            html! {
-                <tr>
-                    <th scope="row">
-                        <div>
-                            <a href="" class="text-decoration-none">{&user.name}</a>
-                            <p class="text-muted overflow-hidden">{&user.email}</p>
-                        </div>
-                    </th>
-                                    <td>{&user.identities[0].connection}</td>
-                                    <td>{&user.logins_count}</td>
-                                    <td>{&user.last_login}</td>
-                                    <td>
-                                        <button type="button" style="flex: 0 0 auto; width: 30px; height: 30px;" class="btn d-flex justify-content-center align-items-center rounded border" role="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="bi bi-three-dots"></i>
-                                        </button>
-                                        <ul class="dropdown-menu pt-1" aria-labelledby="dropdownMenuButton1">
-                                            <li class="p-1 text-muted" style="font-size:13px;">
-                                                <Anchor route=AppRoute::UserViewDetail {tenant_id: tenant_id.clone(), user_id: user.user_id.clone() } classes="dropdown-item">
-                                                    {"View Details"}
-                                                </Anchor>
-                                            </li>
-                                            <li>
-                                                <hr class="dropdown-divider"/>
-                                            </li>
-                                            <li class="p-1 text-muted">
-                                                        <div class="ms-1 d-flex flex-row inline-block align-items-center" style="font-size:13px;" >
-                                                            <i class="bi bi-person-check"></i>
-                                                            <span data-bs-toggle="modal" data-bs-target="#assignRoles">
-                                                            <a class="dropdown-item" href="#">
-                                                                {"Assign Roles"}
-                                                            </a>
-                                                        </span>
-                                                        </div>
-                                            </li>
-                                            <li class="p-1 text-muted" style="font-size:13px;">
-                                                        <div class="ms-1 d-flex flex-row inline-block align-items-center">
-                                                            <i class="bi bi-check2-square"></i>
-                                                            <span data-bs-toggle="modal" data-bs-target="#assignPermissions">
-                                                                <a class="dropdown-item" href="#" >
-                                                                    {"Assign Permissions"}
-                                                                </a>
-                                                            </span>
-                                                        </div>
-                                            </li>
-                                            <li class="p-1 text-muted" style="font-size:13px;">
-                                                <div class="ms-1 d-flex flex-row inline-block align-items-center">
-                                                    <i class="bi bi-envelope "></i>
-                                                    <span  data-bs-toggle="modal" data-bs-target="#resendConfirmation">
-                                                        <a class="dropdown-item" href="#">
-                                                            {"Send Verification Email "}
-                                                        </a>
-                                                    </span>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <hr class="dropdown-divider"/>
-                                            </li>
-                                            <li class="p-1 text-muted" style="font-size:13px;" data-bs-toggle="modal" data-bs-target="#changeEmail">
-                                                <a class="dropdown-item" href="#" >
-                                                    {"Change Email "}
-                                                </a>
-                                            </li>
-                                            <li class="p-1 text-muted" style="font-size:13px;" data-bs-toggle="modal" data-bs-target="#changePassword">
-                                                <a class="dropdown-item" href="#">
-                                                    {"Change Password "}
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <hr class="dropdown-divider" />
-                                            </li>
-                                            <li class="p-1" style="font-size:13px;">
-                                                <div class="ms-1 d-flex flex-row text-muted inline-block align-items-center">
-                                                    <svg xmlns="http://www.w3.org/2000/svg " width="13" height="13" viewBox="0 0 24 24 " fill="none " stroke="currentColor " stroke-width="2 " stroke-linecap="round " stroke-linejoin="round"><circle cx="12 " cy="12 " r="10 "></circle><line x1="4.93 " y1="4.93 " x2="19.07 " y2="19.07 "></line></svg>
-                                                    <span>
-                                                        <a class="dropdown-item" href="#">
-                                                            {"Block "}
-                                                        </a>
-                                                    </span>
-                                                </div>
-                                            </li>
-                                            <li class="p-1 text-danger " style="font-size:13px;">
-                                                <div class="ms-1 d-flex flex-row">
-                                                    <i class="bi bi-trash "></i>
-                                                    <span data-bs-toggle="modal" data-bs-target="#deleteUsers">
-                                                        <a class="dropdown-item fs-7" href="#">
-                                                            {"Delete "}
-                                                        </a>
-                                                    </span>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </td>
-                                </tr>
-            }
-        })
-        .collect()
-    }
-}
-
 impl Component for UsersManagement {
     type Message = Msg;
     type Properties = UserProps;
@@ -198,6 +93,8 @@ impl Component for UsersManagement {
                 self.show_modal_create = false;
                 self.loading_get_user = false;
                 self.loading_create_user = false;
+                self.error_user_list = None;
+                self.error_user_create = None;
                 self.user_create.email = String::from("");
                 self.user_create.password = String::from("");
                 self.user_create.connection = String::from("");
@@ -486,17 +383,20 @@ impl Component for UsersManagement {
                     {
                         if self.loading_get_user {
                             html! {
-                                <div class="d-flex align-items-center justify-content-center" style="position: relative; margin-top: 8rem;">
-                                <Loading2 width=45 />
+                                <div
+                                    // class="d-flex align-items-center justify-content-center"
+                                    style="position: relative; margin-top: 4rem;"
+                                >
+                                    <Loading2 width=45 />
                                 </div>
                             }
                         } else if self.error_user_list.is_some() {
                             html! {
                                 <tr>
-                                <div class="alert alert-warning mb-5" role="alert">
-                                <i class="bi bi-exclamation-triangle me-2"></i>
-                                { self.error_user_list.clone().unwrap() }
-                                </div>
+                                    <div class="alert alert-warning mb-5" role="alert">
+                                        <i class="bi bi-exclamation-triangle me-2"></i>
+                                        { self.error_user_list.clone().unwrap() }
+                                    </div>
                                 </tr>
                             }
                         } else {
@@ -539,29 +439,87 @@ impl Component for UsersManagement {
                         <form>
                             <div class="mb-3">
                                 <label for="recipient-name" class="col-form-label">{"Email"} <span class="text-danger">{"*"}</span></label>
-                                <input type="text" class="form-control" id="recipient-name" />
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    value={ self.user_create.email.clone() }
+                                    oninput=self.link.callback(|data: InputData| Msg::Input(data.value, DataUserCreate::Email))
+                                />
                             </div>
                             <div class="mb-3">
                                 <label for="recipient-name" class="col-form-label">{"Password"} <span class="text-danger">{"*"}</span> </label>
-                                <input type="password" class="form-control" id="recipient-name" />
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    value={ self.user_create.password.clone() }
+                                    oninput=self.link.callback(|data: InputData| Msg::Input(data.value, DataUserCreate::Password))
+                                />
                             </div>
-                            <div class="mb-3">
-                                <label for="recipient-name" class="col-form-label">{"Repeat Password"} <span class="text-danger">{"*"}</span></label>
-                                <input type="password" class="form-control" id="recipient-name" />
-                            </div>
+                            // <div class="mb-3">
+                            //     <label for="recipient-name" class="col-form-label">{"Repeat Password"} <span class="text-danger">{"*"}</span></label>
+                            //     <input
+                            //         type="password"
+                            //         class="form-control"
+                            //         // oninput=self.link.callback(|data: InputData| Msg::Input(data.value, DataUserCreate::Connection))
+                            //     />
+                            // </div>
                             <div class="mb-3">
                                 <label for="recipient-name" class="col-form-label">{"Connection"} <span class="text-danger">{"*"}</span></label>
-                                <select class="form-select" aria-label="Default select example">
-                                    <option selected=true>{"User Database"}</option>
-                                  </select>
+                                <select
+                                    class="form-select"
+                                    aria-label="Default select example"
+                                    onchange=self.link.callback(|e| {
+                                        if let ChangeData::Select(select) = e {
+                                            let value = select.value();
+                                            Msg::Input(value, DataUserCreate::Connection)
+                                        } else {
+                                            Msg::Input(String::from("no value"), DataUserCreate::Connection)
+                                        }
+                                    })
+                                >
+                                    <option>
+                                        {"Select"}
+                                    </option>
+                                    <option
+                                        selected={ if self.user_create.connection == String::from("User Database") {true} else {false} }
+                                    >
+                                        {"User Database"}
+                                    </option>
+                                </select>
                             </div>
 
                         </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{"Cancel"}</button>
-                        <button type="button" class="btn btn-primary">{"Create"}</button>
+                        <button
+                            type="button"
+                            class=format!("btn {} btn-primary position-relative", if self.loading_create_user {"loading"} else {""} )
+                            onclick=self.link.callback(|_| Msg::Create)
+                            disabled={ self.loading_create_user }
+                        >
+                            <div class="telkom-label">
+                                {"Create"}
+                            </div>
+                            <div class="telkom-spinner telkom-center">
+                                <div class="spinner-border spinner-border-sm" role="status"/>
+                            </div>
+                        </button>
                     </div>
+                    {
+                        if self.error_user_create.is_some() {
+                            html! {
+                                <div class="modal-footer">
+                                    <div class="alert alert-warning mt-3" role="alert">
+                                        <i class="bi bi-exclamation-triangle me-2"></i>
+                                        { self.error_user_create.clone().unwrap() }
+                                    </div>
+                                </div>
+                            }
+                        } else {
+                            html! {}
+                        }
+                    }
                 </div>
             </div>
         </div>
@@ -735,5 +693,127 @@ impl Component for UsersManagement {
 
             </div>
         }
+    }
+}
+
+
+impl UsersManagement {
+    fn view_user_list(&self) -> Vec<Html> {
+        type Anchor = RouterAnchor<AppRoute>;
+        let tenant_id = self.tenant_id.clone();
+
+        self.user_list.iter().map(|user| {
+            html! {
+                <tr>
+                    <th scope="row">
+                        <div>
+                            <p
+                                class="m-0"
+                                style="
+                                    white-space: nowrap;
+                                    text-overflow: ellipsis;
+                                    overflow: hidden;
+                                    font-size: 14px;
+                                    text-decoration: none;
+                                "
+                            >
+                                <Anchor
+                                    route=AppRoute::UserViewDetail {tenant_id: tenant_id.clone(), user_id: user.user_id.clone() }
+                                    classes="text-decoration-none fw-bold mb-0"
+                                >
+                                    { &user.name }
+                                </Anchor>
+                            </p>
+                            <p class="text-muted overflow-hidden">{&user.email}</p>
+                        </div>
+                    </th>
+                                    <td>{&user.identities[0].connection}</td>
+                                    <td>{&user.logins_count}</td>
+                                    <td>{&user.last_login}</td>
+                                    <td>
+                                        <button type="button" style="flex: 0 0 auto; width: 30px; height: 30px;" class="btn d-flex justify-content-center align-items-center rounded border" role="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots"></i>
+                                        </button>
+                                        <ul class="dropdown-menu pt-1" aria-labelledby="dropdownMenuButton1">
+                                            <li class="p-1 text-muted" style="font-size:13px;">
+                                                <Anchor route=AppRoute::UserViewDetail {tenant_id: tenant_id.clone(), user_id: user.user_id.clone() } classes="dropdown-item">
+                                                    {"View Details"}
+                                                </Anchor>
+                                            </li>
+                                            <li>
+                                                <hr class="dropdown-divider"/>
+                                            </li>
+                                            <li class="p-1 text-muted">
+                                                        <div class="ms-1 d-flex flex-row inline-block align-items-center" style="font-size:13px;" >
+                                                            <i class="bi bi-person-check"></i>
+                                                            <span data-bs-toggle="modal" data-bs-target="#assignRoles">
+                                                            <a class="dropdown-item" href="#">
+                                                                {"Assign Roles"}
+                                                            </a>
+                                                        </span>
+                                                        </div>
+                                            </li>
+                                            <li class="p-1 text-muted" style="font-size:13px;">
+                                                        <div class="ms-1 d-flex flex-row inline-block align-items-center">
+                                                            <i class="bi bi-check2-square"></i>
+                                                            <span data-bs-toggle="modal" data-bs-target="#assignPermissions">
+                                                                <a class="dropdown-item" href="#" >
+                                                                    {"Assign Permissions"}
+                                                                </a>
+                                                            </span>
+                                                        </div>
+                                            </li>
+                                            <li class="p-1 text-muted" style="font-size:13px;">
+                                                <div class="ms-1 d-flex flex-row inline-block align-items-center">
+                                                    <i class="bi bi-envelope "></i>
+                                                    <span  data-bs-toggle="modal" data-bs-target="#resendConfirmation">
+                                                        <a class="dropdown-item" href="#">
+                                                            {"Send Verification Email "}
+                                                        </a>
+                                                    </span>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <hr class="dropdown-divider"/>
+                                            </li>
+                                            <li class="p-1 text-muted" style="font-size:13px;" data-bs-toggle="modal" data-bs-target="#changeEmail">
+                                                <a class="dropdown-item" href="#" >
+                                                    {"Change Email "}
+                                                </a>
+                                            </li>
+                                            <li class="p-1 text-muted" style="font-size:13px;" data-bs-toggle="modal" data-bs-target="#changePassword">
+                                                <a class="dropdown-item" href="#">
+                                                    {"Change Password "}
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <hr class="dropdown-divider" />
+                                            </li>
+                                            <li class="p-1" style="font-size:13px;">
+                                                <div class="ms-1 d-flex flex-row text-muted inline-block align-items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg " width="13" height="13" viewBox="0 0 24 24 " fill="none " stroke="currentColor " stroke-width="2 " stroke-linecap="round " stroke-linejoin="round"><circle cx="12 " cy="12 " r="10 "></circle><line x1="4.93 " y1="4.93 " x2="19.07 " y2="19.07 "></line></svg>
+                                                    <span>
+                                                        <a class="dropdown-item" href="#">
+                                                            {"Block "}
+                                                        </a>
+                                                    </span>
+                                                </div>
+                                            </li>
+                                            <li class="p-1 text-danger " style="font-size:13px;">
+                                                <div class="ms-1 d-flex flex-row">
+                                                    <i class="bi bi-trash "></i>
+                                                    <span data-bs-toggle="modal" data-bs-target="#deleteUsers">
+                                                        <a class="dropdown-item fs-7" href="#">
+                                                            {"Delete "}
+                                                        </a>
+                                                    </span>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+            }
+        })
+        .collect()
     }
 }
