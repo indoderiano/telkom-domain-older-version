@@ -10,6 +10,10 @@ pub struct Role {
     pub description: String,
 }
 
+#[derive(Deserialize, Serialize, Debug, Clone, Eq, PartialEq)]
+pub struct ResponseRoleDelete {
+}
+
 impl Role {
     pub fn new() -> Role {
         Role {
@@ -19,3 +23,4 @@ impl Role {
         }
     }
 }
+
