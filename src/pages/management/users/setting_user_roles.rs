@@ -1,7 +1,7 @@
 use crate::components::loading2::Loading2;
 use crate::configs::server::API_URL;
 use crate::types::{
-    users::{UserRoles},
+    users::{UserRole},
     ResponseMessage,
 };
 use yew::services::ConsoleService;
@@ -14,7 +14,7 @@ use yew_router::service::RouteService;
 pub struct UserTabRoles {
     link: ComponentLink<Self>,
     fetch_task: Option<FetchTask>,
-    user_roles: UserRoles,
+    user_roles: Vec<UserRole>,
     loading_get_user_roles: bool,
     error_get_user_roles: Option<String>,
     loading_delete_roles: bool,
@@ -24,7 +24,7 @@ pub struct UserTabRoles {
 
 pub enum Msg {
     RequestUserRoles,
-    GetUserRoles(UserRoles),
+    GetUserRoles(Vec<UserRole>),
     Delete,
     ResponseError(String, StateError),
     RedirectToRoles,
@@ -40,12 +40,12 @@ impl Component for UserTabRoles {
     type Properties = ();
 
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
-        let user_roles = UserRoles::new();
+        // let user_roles = UserRoles::new();
 
         UserTabRoles {
             link,
             fetch_task: None,
-            user_roles,
+            user_roles: vec![],
             loading_get_user_roles: false,
             error_get_user_roles: None,
             loading_delete_roles: false,
@@ -68,7 +68,7 @@ impl Component for UserTabRoles {
                     .body(Nothing)
                     .expect("Could not build request.");
                 let callback = self.link.callback(
-                    |response: Response<Json<Result<UserRoles, anyhow::Error>>>| {
+                    |response: Response<Json<Result<Vec<UserRole>, anyhow::Error>>>| {
                         let Json(data) = response.into_body();
                         match data {
                             Ok(dataok) => Msg::GetUserRoles(dataok),
@@ -168,7 +168,9 @@ impl Component for UserTabRoles {
                         {
                             if !self.loading_get_user_roles && !self.error_get_user_roles.is_some() {
                                 html! { 
-                                    { self.view_content() }
+                                    <>
+                                        { self.view_content() }
+                                    </>
                                 }
                             } else {
                                 html! {}
@@ -240,33 +242,38 @@ impl Component for UserTabRoles {
 }
 
 impl UserTabRoles {
-    fn view_content(&self) -> Html {
-        let UserRoles {
-            id: _,
-            name,
-            description,
-        } = self.user_roles.clone();
+    fn view_content(&self) -> Vec<Html> {
+        self.user_roles.iter().map(|role| {
+            let UserRole {
+                id: _,
+                name,
+                description,
+            } = role.clone();
 
-        html! {
-            <tr>
-                <th scope="row" class="align-middle">
-                    <a href="">{name}</a>
-                </th>
-                <td class="align-middle">{description}</td>
-                <td class="align-middle">{"Direct"}</td>
-                <td class="text-end">
-                    <button 
-                    type="button" 
-                    class="btn btn-outline-secondary px-2 py-1" 
-                    data-bs-toggle="modal" 
-                    data-bs-target="#exampleModal">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                        </svg>
-                    </button>
-                </td>
-            </tr>
-        }
+            html! {
+                <tr>
+                    <th scope="row" class="align-middle">
+                        <a href="">{name}</a>
+                    </th>
+                    <td class="align-middle">{description}</td>
+                    <td class="align-middle">{"Direct"}</td>
+                    <td class="text-end">
+                        <button 
+                        type="button" 
+                        class="btn btn-outline-secondary px-2 py-1" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#exampleModal">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                            </svg>
+                        </button>
+                    </td>
+                </tr>
+            }
+
+
+        }).collect()
+
     }
 }

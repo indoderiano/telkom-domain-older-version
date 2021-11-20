@@ -134,6 +134,23 @@ impl Component for UserTabPermissions {
                 true
             }
             Msg::Delete => {
+                // remove permission from vector
+                let new_permissions: Vec<UserPermissions> = self.user_permissions
+                .iter()
+                .enumerate()
+                .filter(|(i, e)| {
+                    if self.index_permission_delete.is_some() {
+                        *i != self.index_permission_delete.unwrap()
+                    } else {
+                        true
+                    }
+                })
+                .map(|(_s, x)| {
+                    x.clone()
+                })
+                .collect();
+                ConsoleService::info(&format!("new permissions = {:?}", new_permissions));
+
                 let request = Request::delete(format!("{}/users/tenant_id/users/auth0|7CYXV0aDAlN0M2MTM3MTIyMTAxY2VmYTAwNzM0NzRmYmI/permissions", API_URL))
                     .header("access_token", "telkomidtelkomdomain")
                     .body(Nothing)

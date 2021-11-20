@@ -236,21 +236,21 @@ pub struct GetLogsByUserLocationInfo {
 
 
 #[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq)]
-pub struct UserRoles{
+pub struct UserRole{
     pub id: String,
     pub name: String,
     pub description: String,
 }
 
-impl UserRoles {
-    pub fn new() -> UserRoles {
-        UserRoles {
-            id: String::from(""),
-            name: String::from(""),
-            description: String::from(""),
-        }
-    }
-}
+// impl UserRoles {
+//     pub fn new() -> UserRoles {
+//         UserRoles {
+//             id: String::from(""),
+//             name: String::from(""),
+//             description: String::from(""),
+//         }
+//     }
+// }
 
 
 #[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq)]
