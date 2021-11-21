@@ -171,47 +171,54 @@ impl Component for RolesCreated {
     fn view(&self) -> Html {
         html! {
             <>
-            <div class="mx-auto pt-5 pb-5 px-4" style="max-width: 1048px;">
 
-                <div class="row">
-                    <div class="col-9">
-                        <h1 class="fw-bold">{"Roles"}</h1>
+                <div class="mx-auto pt-5 pb-5 px-4" style="max-width: 1048px;">
+
+                    <div class="row">
+                        
+                        <div class="col-9">
+                            <h1 class="fw-bold">{"Roles"}</h1>
+                        </div>
+                        
+                        <div class="col-3 d-flex justify-content-end">
+                            <button type="button" data-bs-toggle="modal" data-bs-target="#addRoleModal" class="btn btn-primary text-center">
+                                <i class="bi bi-plus me-2" style="margin-left: -5px;"></i>
+                                <span>{"Create Role"}</span>
+                            </button>
+                        </div>
                     </div>
-                    <div class="col-3">
-                        <button type="button" data-bs-toggle="modal" data-bs-target="#addRoleModal" class="btn btn-primary text-center">
-                            <i class="bi bi-plus me-2" style="margin-left: -5px;"></i>
-                            <span>{"Create Role"}</span>
-                         </button>
+            
+                    <div class="mt-3">
+                        <p class="text-muted fs-6">{"Create and manage Roles for your applications. Roles contain collections of Permissions and can be assigned to Users."} </p>
                     </div>
-                </div>
         
-                <div class="mt-3">
-                    <p class="text-muted fs-6">{"Create and manage Roles for your applications. Roles contain collections of Permissions and can be assigned to Users."} </p>
-                </div>
+                    <div class="mt-3">
+                        <p class="text-muted fs-6">{"Create and manage Roles for your applications. Roles contain collections of Permissions and can be assigned to Users."} </p>
+                    </div>
         
-                {
-                    if self.loading_request_roles {
-                        html! {
-                            <div
-                                style="
-                                    position: relative;
-                                    margin-top: 8rem;
-                                "
-                            >
-                                <Loading2 width=45 />
-                            </div>
+                    {
+                        if self.loading_request_roles {
+                            html! {
+                                <div
+                                    style="
+                                        position: relative;
+                                        margin-top: 8rem;
+                                    "
+                                >
+                                    <Loading2 width=45 />
+                                </div>
+                            }
+                        } else if self.error_request_roles.is_some() {
+                            html! {
+                                <div class="alert alert-warning mb-5" role="alert">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                    { self.error_request_roles.clone().unwrap() }
+                                </div>
+                            }
+                        } else {
+                            html! { self.view_content() }
                         }
-                    } else if self.error_request_roles.is_some() {
-                        html! {
-                            <div class="alert alert-warning mb-5" role="alert">
-                                <i class="bi bi-exclamation-triangle me-2"></i>
-                                { self.error_request_roles.clone().unwrap() }
-                            </div>
-                        }
-                    } else {
-                        html! { self.view_content() }
                     }
-                }
     
             </div>
 
