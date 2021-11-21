@@ -93,6 +93,7 @@
   }
 
   .modal.fade {
+    display: block;
     visibility: hidden;
     transition: visibility 0s linear .15s, opacity .15s linear;
   }

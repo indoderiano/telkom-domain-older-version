@@ -238,11 +238,23 @@ class ControllerUsers {
 
     static getRoles(req, res, next) {
         console.log(req.params.id)
-        let data = {
-            id: "rol_mIPAEs3z2jA4QnEz",
-            name: "admin",
-            description: "Admin role for my app"
-        }
+        let data = [
+            {
+                id: "rol_mIPAEs3z2jA4QnEz",
+                name: "admin",
+                description: "Admin role for my app"
+            },
+            {
+                id: "rol_mIPAEsasdfaseadd",
+                name: "agent",
+                description: "Agent role for my app"
+            },
+            {
+                id: "rol_mIPAE4QnEz",
+                name: "client",
+                description: "Client role for my app"
+            },
+        ]
 
 
         setTimeout(() => {
@@ -254,7 +266,8 @@ class ControllerUsers {
     static getUserPermissions(req, res, next) {
         console.log(req.params.id)
 
-        let data = [{
+        let data = [
+            {
                 resource_server_identifier: "https://jsonplaceholder.typicode.com/albums",
                 permission_name: "read:client_grants",
                 resource_server_name: "Example API",
@@ -265,7 +278,13 @@ class ControllerUsers {
                 permission_name: "update:client_grants",
                 resource_server_name: "Example API",
                 description: "Update Data"
-            }
+            },
+            {
+                resource_server_identifier: "https://jsonplaceholder.typicode.com/albums",
+                permission_name: "delete:client_grants",
+                resource_server_name: "Example API",
+                description: "Delete API"
+            },
         ]
 
         setTimeout(() => {
@@ -278,6 +297,7 @@ class ControllerUsers {
 
     static deleteUser(req, res) {
         console.log(req.params)
+        console.log(req.body)
         console.log("User berhasil di delete")
 
         setTimeout(() => {
@@ -292,6 +312,7 @@ class ControllerUsers {
 
     static deleteRolesFromUser(req, res) {
         console.log(req.params)
+        console.log(req.body)
         console.log("Roles dari User berhasil di delete")
 
         setTimeout(() => {
@@ -306,6 +327,7 @@ class ControllerUsers {
 
     static deletePermissionsFromUser(req, res) {
         console.log(req.params)
+        console.log(req.body)
         console.log("Permissions dari User berhasil di delete")
 
         setTimeout(() => {
