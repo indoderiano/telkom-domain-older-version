@@ -1,7 +1,7 @@
 use crate::components::loading2::Loading2;
 use crate::configs::server::API_URL;
 use crate::types::{
-    users::{UserRole},
+    users::{ UserRole, UserDetails },
     ResponseMessage,
 };
 use yew::services::ConsoleService;
@@ -11,12 +11,22 @@ use yew::{
     services::fetch::{FetchService, FetchTask, Request, Response},
 };  
 use yew_router::service::RouteService;
+
+
+#[derive(Clone, Debug, Eq, PartialEq, Properties)]
+pub struct UserTabRolesProps {
+    pub user_details: UserDetails,
+}
+
 pub struct UserTabRoles {
+    user_details: UserDetails,
     link: ComponentLink<Self>,
     fetch_task: Option<FetchTask>,
     user_roles: Vec<UserRole>,
     loading_get_user_roles: bool,
     error_get_user_roles: Option<String>,
+    show_modal_delete_role: bool,
+    index_role_delete: Option<usize>,
     loading_delete_roles: bool,
     error_delete_roles: Option<String>,
     route_service: RouteService,
@@ -25,6 +35,7 @@ pub struct UserTabRoles {
 pub enum Msg {
     RequestUserRoles,
     GetUserRoles(Vec<UserRole>),
+    ShowModalDeleteRole(bool, Option<usize>),
     Delete,
     ResponseError(String, StateError),
     RedirectToRoles,
@@ -37,17 +48,20 @@ pub enum StateError {
 
 impl Component for UserTabRoles {
     type Message = Msg;
-    type Properties = ();
+    type Properties = UserTabRolesProps;
 
-    fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
+    fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
         // let user_roles = UserRoles::new();
 
         UserTabRoles {
+            user_details: props.user_details,
             link,
             fetch_task: None,
             user_roles: vec![],
             loading_get_user_roles: false,
             error_get_user_roles: None,
+            show_modal_delete_role: false,
+            index_role_delete: None,
             loading_delete_roles: false,
             error_delete_roles: None,
             route_service: RouteService::new(),
@@ -63,6 +77,12 @@ impl Component for UserTabRoles {
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
             Msg::RequestUserRoles => {
+                // default state
+                self.loading_delete_roles = false;
+                self.fetch_task = None;
+                self.show_modal_delete_role = false;
+                self.index_role_delete = None;
+
                 let request = Request::get(format!("{}/users/tenant_id/users/:id/roles", API_URL))
                     .header("access_token", "telkomidtelkomdomain")
                     .body(Nothing)
@@ -89,17 +109,40 @@ impl Component for UserTabRoles {
                 self.loading_get_user_roles = false;
                 true
             }
+            Msg::ShowModalDeleteRole(state, index_selected) => {
+                self.show_modal_delete_role = state;
+                self.index_role_delete = index_selected;
+                true
+            }
             Msg::Delete => {
+                // remove role from vector
+                let new_roles: Vec<UserRole> = self.user_roles
+                .iter()
+                .enumerate()
+                .filter(|(i, e)| {
+                    if self.index_role_delete.is_some() {
+                        *i != self.index_role_delete.unwrap()
+                    } else {
+                        true
+                    }
+                })
+                .map(|(_s, x)| {
+                    x.clone()
+                })
+                .collect();
+                ConsoleService::info(&format!("new permissions = {:?}", new_roles));
+
                 let request = Request::delete(format!("{}/users/tenant_id/users/auth0|7CYXV0aDAlN0M2MTM3MTIyMTAxY2VmYTAwNzM0NzRmYmI/roles", API_URL))
                     .header("access_token", "telkomidtelkomdomain")
-                    .body(Nothing)
+                    .header("Content-Type", "application/json")
+                    .body(Json(&new_roles))
                     .expect("Could not build request");
                 let callback = self.link.callback(|response: Response<Json<Result<ResponseMessage, anyhow::Error>>>| {
                     let Json(data) = response.into_body();
                     match data {
                         Ok(dataok) => {
                             ConsoleService::info(&format!("{:?}", dataok));
-                            Msg::RedirectToRoles
+                            Msg::RequestUserRoles
                         }
                         Err(error) => {
                             ConsoleService::info(&error.to_string());
@@ -198,43 +241,94 @@ impl Component for UserTabRoles {
                 }
             </div>
 
-            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div
+                class=format!("modal fade {}", if self.show_modal_delete_role {"show"} else {""})
+                // id="exampleModal"
+                // tabindex="-1"
+                // aria-labelledby="exampleModalLabel"
+                // aria-hidden="true"
+            >
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel">{"Remove from Role?"}</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"
+                                onclick=self.link.callback(move |_| Msg::ShowModalDeleteRole(false, None))
+                            ></button>
                         </div>
                         <div class="modal-body">
-                            {"Are you sure that you want to remove Yeska Haganta from role 'admin'?"}
+                            {
+                                format!(
+                                    "Are you sure that you want to remove {} from role '{}'?",
+                                    self.user_details.name,
+                                    if self.index_role_delete.is_some() { self.user_roles[self.index_role_delete.unwrap()].name.clone() }
+                                    else {"".to_string()}
+                                )
+                            }
+                            // {"Are you sure that you want to remove Yeska Haganta from role '"}
+                            
+                            // {
+                            //     if self.index_role_delete.is_some() {
+                            //         html! {
+                            //             <>
+                            //                 { self.user_roles[self.index_role_delete.unwrap()].name.clone() }
+                            //             </>
+                            //         }
+                            //     } else {
+                            //         html! {}
+                            //     }
+                            // }
+                            // {"'?"}
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{"Cancel"}</button>
+                            <button
+                                type="button"
+                                class="btn btn-outline-secondary"
+                                data-bs-dismiss="modal"
+                                onclick=self.link.callback(move |_| Msg::ShowModalDeleteRole(false, None))
+                            >
+                                {"Cancel"}
+                            </button>
                             <button 
                                 type="button" 
-                                class="btn btn-danger"
+                                class=format!("btn {} btn-danger position-relative", if self.loading_delete_roles {"loading"} else {""} )
                                 onclick=self.link.callback(|_|Msg::Delete)
-                                >{"Yes, remove"}</button>
-                                {
-                                    if self.error_delete_roles.is_some() {
-                                        html! {
-                                            <div class="alert alert-warning" role="alert">
-                                                <i class="bi bi-exclamation-triangle me-2"></i>
-                                                { self.error_delete_roles.clone().unwrap() }
-                                            </div>
-                                        }
-                                    } else {
-                                        html! {}
-                                    }
-                                }
+                                disabled={ self.loading_delete_roles }
+                            >
+                                <div class="telkom-label">
+                                    {"Yes, remove"}
+                                </div>
+                                <div class="telkom-spinner telkom-center">
+                                    <div class="spinner-border spinner-border-sm" role="status"/>
+                                </div>
+                            </button>
                         </div>
+                        {
+                            if self.error_delete_roles.is_some() {
+                                html! {
+                                    <div class="modal-footer">
+                                        <div class="alert alert-warning" role="alert">
+                                            <i class="bi bi-exclamation-triangle me-2"></i>
+                                            { self.error_delete_roles.clone().unwrap() }
+                                        </div>
+                                    </div>
+                                }
+                            } else {
+                                html! {}
+                            }
+                        }
                     </div>
                 </div>
             </div>
-
-
-
         </div>
+        <div
+            class=format!("modal-backdrop fade {}", if self.show_modal_delete_role {"show"} else {""})
+            onclick=self.link.callback(move |_| Msg::ShowModalDeleteRole(false, None))
+        />
             </>
         }
     }
@@ -243,7 +337,10 @@ impl Component for UserTabRoles {
 
 impl UserTabRoles {
     fn view_content(&self) -> Vec<Html> {
-        self.user_roles.iter().map(|role| {
+        self.user_roles
+        .iter()
+        .enumerate()
+        .map(|(i, role)| {
             let UserRole {
                 id: _,
                 name,
@@ -259,10 +356,12 @@ impl UserTabRoles {
                     <td class="align-middle">{"Direct"}</td>
                     <td class="text-end">
                         <button 
-                        type="button" 
-                        class="btn btn-outline-secondary px-2 py-1" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#exampleModal">
+                            type="button" 
+                            class="btn btn-outline-secondary px-2 py-1" 
+                            // data-bs-toggle="modal" 
+                            // data-bs-target="#exampleModal"
+                            onclick=self.link.callback(move |_| Msg::ShowModalDeleteRole(true, Some(i)))
+                        >
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                                 <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
                                 <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>

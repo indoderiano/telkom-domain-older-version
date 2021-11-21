@@ -36,8 +36,8 @@ pub enum Msg {
     RequestUserPermissions,
     GetUserPermissions(Vec<UserPermissions>),
     ShowModalDeletePermission(bool, Option<usize>),
-    ResponseError(String, StateError),
     Delete,
+    ResponseError(String, StateError),
     RedirectToPermissions,  
 }
 
@@ -153,7 +153,8 @@ impl Component for UserTabPermissions {
 
                 let request = Request::delete(format!("{}/users/tenant_id/users/auth0|7CYXV0aDAlN0M2MTM3MTIyMTAxY2VmYTAwNzM0NzRmYmI/permissions", API_URL))
                     .header("access_token", "telkomidtelkomdomain")
-                    .body(Nothing)
+                    .header("Content-Type", "application/json")
+                    .body(Json(&new_permissions))
                     .expect("could not build request");
                 let callback = self.link.callback(|response: Response<Json<Result<ResponseMessage, anyhow::Error>>>|{
                     let Json(data) = response.into_body();
@@ -345,7 +346,10 @@ impl Component for UserTabPermissions {
 impl UserTabPermissions {
     fn view_user_permissions(&self) -> Vec<Html> {
         // https://stackoverflow.com/questions/58737024/how-to-get-the-index-of-the-current-element-being-processed-in-the-iteration-wit
-        self.user_permissions.iter().enumerate().map(|(i, user)|{
+        self.user_permissions
+        .iter()
+        .enumerate()
+        .map(|(i, user)|{
            html! {
                <tr>
                     <th scope="row">{&user.permission_name}</th>

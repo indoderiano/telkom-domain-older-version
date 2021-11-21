@@ -297,6 +297,7 @@ class ControllerUsers {
 
     static deleteUser(req, res) {
         console.log(req.params)
+        console.log(req.body)
         console.log("User berhasil di delete")
 
         setTimeout(() => {
@@ -311,6 +312,7 @@ class ControllerUsers {
 
     static deleteRolesFromUser(req, res) {
         console.log(req.params)
+        console.log(req.body)
         console.log("Roles dari User berhasil di delete")
 
         setTimeout(() => {
@@ -325,6 +327,7 @@ class ControllerUsers {
 
     static deletePermissionsFromUser(req, res) {
         console.log(req.params)
+        console.log(req.body)
         console.log("Permissions dari User berhasil di delete")
 
         setTimeout(() => {
