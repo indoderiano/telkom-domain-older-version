@@ -380,7 +380,7 @@ impl UserViewDetail {
                         Content::UserTabRawJson => html! {<UserTabRawJson/>},
                         Content::UserTabAuthorizedApp => html! {<UserTabAuthorizedApp/>},
                         Content::UserTabPermissions => html! {<UserTabPermissions/>},
-                        Content::UserTabRoles => html! {<UserTabRoles/>},
+                        Content::UserTabRoles => html! {<UserTabRoles user_details=self.user_details.clone()/>},
                     }
                 }
 
