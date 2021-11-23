@@ -3,7 +3,7 @@ use yew::{
     format::{ Json, Nothing },
     services::{
         ConsoleService,
-        fetch::{FetchService, FetchTask, Request, Response},
+        fetch::{FetchService, FetchTask, Request, Response, StatusCode},
     }
 };
 use yew_router::service::RouteService;
@@ -180,17 +180,31 @@ impl Component for TabSettings {
                     .body(Nothing)
                     .expect("Could not build request.");
                 let callback = self.link.callback(|response: Response<Json<Result<ResponseMessage, anyhow::Error>>>| {
-                let Json(data) = response.into_body();
-                match data {
-                    Ok(dataok) => {
-                        ConsoleService::info(&format!("{:?}", dataok));
+                // let Json(data) = response.into_body();
+                let (meta, Json(data)) = response.into_parts();
+                
+                let status_number = meta.status.as_u16();
+                match status_number {
+                    204 => {
+                        ConsoleService::info("status code is 204");
+                        ConsoleService::info("api is deleted");
                         Msg::RedirectToApi
                     }
-                    Err(error) => {
-                        ConsoleService::info(&error.to_string());
-                        Msg::ResponseError(error.to_string(), StateError::Delete)
+                    _ => {
+                        ConsoleService::info("status code is not 204");
+                        match data {
+                            Ok(dataok) => {
+                                ConsoleService::info(&format!("{:?}", dataok));
+                                Msg::RedirectToApi
+                            }
+                            Err(error) => {
+                                ConsoleService::info(&error.to_string());
+                                Msg::ResponseError(error.to_string(), StateError::Delete)
+                            }
+                        }
                     }
                 }
+                
                 });
                 let task = FetchService::fetch(request, callback).expect("failed to start request");
                 self.loading_delete_api = true;
