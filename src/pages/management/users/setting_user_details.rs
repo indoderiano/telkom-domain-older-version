@@ -231,7 +231,7 @@ impl Component for UserTabDetails {
                             <div class="row">
                                 <div class="col-4 col-md-4 col-lg-4">
                                     <p class="text-muted mb-1">{"Name"}</p>
-                                    <p class="mb-1">{given_name}<span>{family_name}</span></p>
+                                    <p class="mb-1">{format!("{} {}", given_name, family_name)}</p>
                                     <a href="">{"Edit"}</a>
                                 </div>
                                 <div class="col-4 col-md-4 col-lg-4">
