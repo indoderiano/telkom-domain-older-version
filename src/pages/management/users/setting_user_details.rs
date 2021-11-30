@@ -3,7 +3,7 @@ use yew::{
     format::{ Json, Nothing },
     services::{
         ConsoleService,
-        fetch::{FetchService, FetchTask, Request, Response},
+        fetch::{FetchService, FetchTask, Request, Response, StatusCode},
     }
 };
 use yew_router::service::RouteService;
@@ -137,11 +137,14 @@ impl Component for UserTabDetails {
                 true
             }
             Msg::Delete => {
-                let request = Request::delete(format!("{}/users/tenant_id/users/auth0|7CYXV0aDAlN0M2MTM3MTIyMTAxY2VmYTAwNzM0NzRmYmI", API_URL))
-                    .header("access_token", "tokenidtelkomdomain")
+                let request = Request::delete(format!("http://127.0.0.1:8080/api/v1/1/users/{}", self.user_details.id.clone()))
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
                     .body(Nothing)
                     .expect("Could not build request.");
-                let callback = self.link.callback(|response: Response<Json<Result<ResponseMessage, anyhow::Error>>>| {
+                let callback = self.link.callback(|response: Response<Json<Result<()
+                    // StatusCode
+                    , anyhow::Error>>>| {
+
                     let Json(data) = response.into_body();
                     match data {
                         Ok(dataok) => {
@@ -200,6 +203,7 @@ impl Component for UserTabDetails {
 
     fn view(&self) -> Html {
         let UserDetails {
+            id,
             user_id,
             email,
             email_verified: _,
