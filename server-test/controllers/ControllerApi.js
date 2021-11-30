@@ -183,7 +183,7 @@ class ControllerApi {
 
         setTimeout(() => {
             console.log("return status");
-            res.send({
+            res.status(204).send({
                 message: "Api deleted",
                 data: "",
             })
