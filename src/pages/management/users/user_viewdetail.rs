@@ -21,6 +21,7 @@ use yew_router::components::RouterAnchor;
 pub struct UserSettingsProps {
     pub tenant_id: String,
     pub user_id: String,
+    pub id : u32,
 }
 
 pub enum Content {
@@ -34,6 +35,7 @@ pub enum Content {
 }
 
 pub struct UserViewDetail {
+    id: u32,
     content: Content,
     link: ComponentLink<Self>,
     fetch_task: Option<FetchTask>,
@@ -61,6 +63,7 @@ impl Component for UserViewDetail {
         let user_details = UserDetails::new();
 
         UserViewDetail {
+            id: props.id,
             content: Content::UserTabDetails,
             link,
             fetch_task: None,
@@ -83,15 +86,14 @@ impl Component for UserViewDetail {
             }
             Msg::RequestUserDetails => {
                 
-                let request = Request::get(format!("{}/users/tenant_id/users/id", API_URL))
-                    .header("access_token", "telkomidtelkomdomain")
+                let request = Request::get(format!("http://127.0.0.1:8080/api/v1/1/users/{}", self.id.clone()))
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
                     .body(Nothing)
                     .expect("Could not build request.");
                 let callback = self.link.callback(
                     |response: Response<Json<Result<UserDetails, anyhow::Error>>>| {
                         let Json(data) = response.into_body();
                         Msg::GetUserDetails(data)
-                        
                     },
                 );
                 let task = FetchService::fetch(request, callback).expect("failed to start request");
@@ -153,6 +155,7 @@ impl Component for UserViewDetail {
 impl UserViewDetail {
     fn view_content(&self) -> Html {
         let UserDetails {
+            id,
             user_id,
             email,
             email_verified: _,

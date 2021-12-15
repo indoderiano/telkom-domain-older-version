@@ -1,5 +1,6 @@
 const express = require('express')
 const { RouterApi } = require('./RouterApi')
+const { RouterApp } = require('./RouterApp')
 const { RouterUser } = require('./RouterUser')
     // const {RouterProduct} = require('./RouterProduct')
     // const {RouterBanner} = require('./RouterBanner')
@@ -11,6 +12,7 @@ const { RouterRoles } = require('./RouterRoles')
 const router = express.Router()
 
 router.use('/api', RouterApi)
+router.use('/api/v1/1/clients', RouterApp)
 
 router.use('/users', RouterUser)
     // router.use('/product', RouterProduct)

@@ -77,8 +77,8 @@ impl Component for RolesCreated {
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
             Msg::RequestRoles => {
-                let request = Request::get(format!("{}/roles/v2", API_URL))
-                    .header("access_token", "tokenidtelkomdomain")
+                let request = Request::get("http://127.0.0.1:8080/api/v1/1/roles")
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
                     .body(Nothing)
                     .expect("Could not build request.");
                 let callback = 
@@ -121,18 +121,18 @@ impl Component for RolesCreated {
                 false
             }
             Msg::CreateRole => {
-                let request = Request::post(format!("{}/roles/v2", API_URL))
+                let request = Request::post("http://127.0.0.1:8080/api/v1/1/roles")
                     .header("Content-Type", "application/json")
-                    .header("access_token", "tokenidtelkomdomain")
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
                     .body(Json(&self.new_role))
                     .expect("Could not build request.");
                 let callback = 
-                    self.link.callback(|response: Response<Json<Result<Vec<Role>, anyhow::Error>>>| {
+                    self.link.callback(|response: Response<Json<Result<Role, anyhow::Error>>>| {
                         let Json(data) = response.into_body();
                         match data {
                             Ok(dataok) => {
                                 ConsoleService::info(&format!("{:?}", dataok));
-                                Msg::GetRoles(dataok)
+                                Msg::RequestRoles
                             }
                             Err(error) => {
                                 Msg::ResponseError(error.to_string(), StateError::CreateRole)
@@ -364,12 +364,12 @@ impl RolesCreated {
                                         </Anchor>
                                     </li>
                                     <li>
-                                        <Anchor route=AppRoute::ApisSettings{tenant_id: String::from("temp_tenant_id"), api_id: String::from("api_id")} classes="dropdown-item fs-7">
+                                        <Anchor route=AppRoute::ApisSettings{tenant_id: String::from("temp_tenant_id"), api_id: 0} classes="dropdown-item fs-7">
                                             {"Assign To Users"}
                                         </Anchor>
                                     </li>
                                     <li>
-                                        <Anchor route=AppRoute::ApisSettings{tenant_id: String::from("temp_tenant_id"), api_id: String::from("api_id")} classes="dropdown-item fs-7">
+                                        <Anchor route=AppRoute::ApisSettings{tenant_id: String::from("temp_tenant_id"), api_id: 0} classes="dropdown-item fs-7">
                                             {"Delete Role"}
                                         </Anchor>
                                     </li>

@@ -101,16 +101,16 @@ impl Component for UsersManagement {
                 true
             }
             Msg::RequestUserList => {
-                let request = Request::get(format!("{}/users/tenantid", API_URL))
-                    .header("access_token", "tokenidtelkomdomain")
+                let request = Request::get("http://127.0.0.1:8080/api/v1/1/users/")
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
                     .body(Nothing)
                     .expect("Could not build request.");
 
                 let callback = self.link.callback(
-                    |response: Response<Json<Result<ResponseUsersList, anyhow::Error>>>| {
+                    |response: Response<Json<Result<Vec<UserTitle>, anyhow::Error>>>| {
                         let Json(data) = response.into_body();
                         match data {
-                            Ok(dataok) => Msg::GetUserList(dataok.data),
+                            Ok(dataok) => Msg::GetUserList(dataok),
                             Err(error) => {
                                 Msg::ResponseError(error.to_string(), StateError::UserList)
                             }
@@ -158,13 +158,13 @@ impl Component for UsersManagement {
             }
             Msg::Create => {
                 ConsoleService::info(&format!("{:?}", self.user_create));
-                let request = Request::post(format!("{}/users/tenantid", API_URL))
+                let request = Request::post("http://127.0.0.1:8080/api/v1/1/users/")
                     .header("Content-Type", "application/json")
-                    .header("access_token", "tokenidtelkomdomain")
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
                     .body(Json(&self.user_create))
                     .expect("Could not build request.");
                 let callback = self.link.batch_callback(
-                    |response: Response<Json<Result<ResponseMessage, anyhow::Error>>>| {
+                    |response: Response<Json<Result<UserTitle, anyhow::Error>>>| {
                         let Json(data) = response.into_body();
                         match data {
                             Ok(response) => {
@@ -718,7 +718,7 @@ impl UsersManagement {
                                 "
                             >
                                 <Anchor
-                                    route=AppRoute::UserViewDetail {tenant_id: tenant_id.clone(), user_id: user.user_id.clone() }
+                                    route=AppRoute::UserViewDetail {tenant_id: tenant_id.clone(), user_id: user.user_id.clone(), id : user.id.clone() }
                                     classes="text-decoration-none fw-bold mb-0"
                                 >
                                     { &user.name }
@@ -736,7 +736,7 @@ impl UsersManagement {
                                         </button>
                                         <ul class="dropdown-menu pt-1" aria-labelledby="dropdownMenuButton1">
                                             <li class="p-1 text-muted" style="font-size:13px;">
-                                                <Anchor route=AppRoute::UserViewDetail {tenant_id: tenant_id.clone(), user_id: user.user_id.clone() } classes="dropdown-item">
+                                                <Anchor route=AppRoute::UserViewDetail {tenant_id: tenant_id.clone(), user_id: user.user_id.clone(), id : user.id.clone() } classes="dropdown-item">
                                                     {"View Details"}
                                                 </Anchor>
                                             </li>

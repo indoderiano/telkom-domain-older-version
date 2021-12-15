@@ -136,9 +136,9 @@ impl Component for SettingsGeneral {
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
             Msg::RequestSettingsDetails => {
-                let request = Request::get(format!("{}/tenant/v2/settings", API_URL))
+                let request = Request::get("http://127.0.0.1:8080/api/v1/1/tenants/settings")
                     // .header("Content-Type", "application/json")
-                    .header("access_token", "tokenidtelkomdomain")
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
                     .body(Nothing)
                     .expect("Could not build request.");
                 let callback = 
@@ -166,140 +166,144 @@ impl Component for SettingsGeneral {
                 self.fetch_task = None;
                 true
             }
-            Msg::InputString(value, data) => {
-                match data {
-                    Data::FriendlyName => {
-                        self.tenant_settings.friendly_name = value;
-                        true
-                    }
-                    Data::PictureUrl => {
-                        self.tenant_settings.picture_url = value;
-                        true
-                    }
-                    Data::SupportEmail => {
-                        self.tenant_settings.support_email = value;
-                        true
-                    }
-                    Data::SupportUrl => {
-                        self.tenant_settings.support_url = value;
-                        true
-                    }
-                    Data::DefaultAudience => {
-                        self.tenant_settings.default_audience = value;
-                        true
-                    }
-                    Data::DefaultDirectory => {
-                        self.tenant_settings.default_directory = value;
-                        true
-                    }
-                    Data::ErrorPage => {
-                        self.tenant_settings.error_page.url = value;
-                        true
-                    }
-                    // _ => {
-                    //     false
-                    // }
-                }
-            }
-            Msg::InputBool(value, data) => {
-                match data {
-                    Data::ErrorPage => {
-                        self.tenant_settings.error_page.show_log_link = value;
-                        true
-                    }
-                    _ => {
-                        false
-                    }
-                }
-            }
-            Msg::UpdateSettings => {
-                let data_settings = DataSettings {
-                    friendly_name: self.tenant_settings.friendly_name.clone(),
-                    picture_url: self.tenant_settings.picture_url.clone(),
-                    support_email: self.tenant_settings.support_email.clone(),
-                    support_url: self.tenant_settings.support_url.clone(),
-                };
-                ConsoleService::info(&format!("data settings = {:?}", data_settings));
-                let request = Request::patch(format!("{}/tenant/v2/settings", API_URL))
-                    .header("Content-Type", "application/json")
-                    .header("access_token", "tokennotfromreducer")
-                    .body(Json(&data_settings))
-                    .expect("Could not build request.");
-                let callback = self.link.callback(|response: Response<Json<Result<TenantSettings, anyhow::Error>>>| {
-                    let Json(data) = response.into_body();
-                    match data {
-                        Ok(dataok) => {
-                            ConsoleService::info(&format!("{:?}", dataok));
-                            Msg::GetTenantSettings(dataok)
-                        }
-                        Err(error) => {
-                            ConsoleService::info(&error.to_string());
-                            Msg::ResponseError(error.to_string(), StateError::UpdateSettings)
-                        }
-                    }
-                });
-                let task = FetchService::fetch(request, callback).expect("failed to start request");
-                self.loading_update_settings = true;
-                self.fetch_task = Some(task);
-                true
-            }
-            Msg::UpdateAuthorization => {
-                let data_authorization = DataAuthorization {
-                    default_audience: self.tenant_settings.default_audience.clone(),
-                    default_directory: self.tenant_settings.default_directory.clone(),
-                };
-                ConsoleService::info(&format!("data authorization = {:?}", data_authorization));
-                let request = Request::patch(format!("{}/tenant/v2/settings", API_URL))
-                    .header("Content-Type", "application/json")
-                    .header("access_token", "tokennotfromreducer")
-                    .body(Json(&data_authorization))
-                    .expect("Could not build request.");
-                let callback = self.link.callback(|response: Response<Json<Result<TenantSettings, anyhow::Error>>>| {
-                    let Json(data) = response.into_body();
-                    match data {
-                        Ok(dataok) => {
-                            ConsoleService::info(&format!("{:?}", dataok));
-                            Msg::GetTenantSettings(dataok)
-                        }
-                        Err(error) => {
-                            ConsoleService::info(&error.to_string());
-                            Msg::ResponseError(error.to_string(), StateError::UpdateAuthorization)
-                        }
-                    }
-                });
-                let task = FetchService::fetch(request, callback).expect("failed to start request");
-                self.loading_update_authorization = true;
-                self.fetch_task = Some(task);
-                true
-            }
-            Msg::UpdateErrorPage => {
-                let data_error_page = DataErrorPage {
-                    error_page: self.tenant_settings.error_page.clone()
-                };
-                ConsoleService::info(&format!("data error page = {:?}", data_error_page));
-                let request = Request::patch(format!("{}/tenant/v2/settings", API_URL))
-                    .header("Content-Type", "application/json")
-                    .header("access_token", "tokennotfromreducer")
-                    .body(Json(&data_error_page))
-                    .expect("Could not build request.");
-                let callback = self.link.callback(|response: Response<Json<Result<TenantSettings, anyhow::Error>>>| {
-                    let Json(data) = response.into_body();
-                    match data {
-                        Ok(dataok) => {
-                            ConsoleService::info(&format!("{:?}", dataok));
-                            Msg::GetTenantSettings(dataok)
-                        }
-                        Err(error) => {
-                            ConsoleService::info(&error.to_string());
-                            Msg::ResponseError(error.to_string(), StateError::UpdateErrorPage)
-                        }
-                    }
-                });
-                let task = FetchService::fetch(request, callback).expect("failed to start request");
-                self.loading_update_error_page = true;
-                self.fetch_task = Some(task);
-                true
-            }
+            // Msg::InputString(value, data) => {
+            //     match data {
+            //         Data::FriendlyName => {
+            //             self.tenant_settings.friendly_name = value;
+            //             true
+            //         }
+            //         Data::PictureUrl => {
+            //             self.tenant_settings.picture_url = value;
+            //             true
+            //         }
+            //         Data::SupportEmail => {
+            //             self.tenant_settings.support_email = value;
+            //             true
+            //         }
+            //         Data::SupportUrl => {
+            //             self.tenant_settings.support_url = value;
+            //             true
+            //         }
+            //         Data::DefaultAudience => {
+            //             self.tenant_settings.default_audience = value;
+            //             true
+            //         }
+            //         Data::DefaultDirectory => {
+            //             self.tenant_settings.default_directory = value;
+            //             true
+            //         }
+            //         Data::ErrorPage => {
+            //             self.tenant_settings.error_page.url = value;
+            //             true
+            //         }
+            //         // _ => {
+            //         //     false
+            //         // }
+            //     }
+            // }
+            // Msg::InputBool(value, data) => {
+            //     match data {
+            //         Data::ErrorPage => {
+            //             self.tenant_settings.error_page.show_log_link = value;
+            //             true
+            //         }
+            //         _ => {
+            //             false
+            //         }
+            //     }
+            // }
+            // Msg::UpdateSettings => {
+            //     let data_settings = DataSettings {
+            //         friendly_name: self.tenant_settings.friendly_name.clone(),
+            //         picture_url: self.tenant_settings.picture_url.clone(),
+            //         support_email: self.tenant_settings.support_email.clone(),
+            //         support_url: self.tenant_settings.support_url.clone(),
+            //     };
+            //     ConsoleService::info(&format!("data settings = {:?}", data_settings));
+            //     let request = Request::patch(format!("{}/tenant/v2/settings", API_URL))
+            //         .header("Content-Type", "application/json")
+            //         .header("access_token", "tokennotfromreducer")
+            //         .body(Json(
+            //             &data_settings
+            //         ))
+            //         .expect("Could not build request.");
+            //     let callback = self.link.callback(|response: Response<Json<Result<TenantSettings, anyhow::Error>>>| {
+            //         let Json(data) = response.into_body();
+            //         match data {
+            //             Ok(dataok) => {
+            //                 ConsoleService::info(&format!("{:?}", dataok));
+            //                 Msg::GetTenantSettings(dataok)
+            //             }
+            //             Err(error) => {
+            //                 ConsoleService::info(&error.to_string());
+            //                 Msg::ResponseError(error.to_string(), StateError::UpdateSettings)
+            //             }
+            //         }
+            //     });
+            //     let task = FetchService::fetch(request, callback).expect("failed to start request");
+            //     self.loading_update_settings = true;
+            //     self.fetch_task = Some(task);
+            //     true
+            // }
+            // Msg::UpdateAuthorization => {
+            //     let data_authorization = DataAuthorization {
+            //         default_audience: self.tenant_settings.default_audience.clone(),
+            //         default_directory: self.tenant_settings.default_directory.clone(),
+            //     };
+            //     ConsoleService::info(&format!("data authorization = {:?}", data_authorization));
+            //     let request = Request::patch(format!("{}/tenant/v2/settings", API_URL))
+            //         .header("Content-Type", "application/json")
+            //         .header("access_token", "tokennotfromreducer")
+            //         .body(Json(&data_authorization))
+            //         .expect("Could not build request.");
+            //     let callback = self.link.callback(|response: Response<Json<Result<TenantSettings, anyhow::Error>>>| {
+            //         let Json(data) = response.into_body();
+            //         match data {
+            //             Ok(dataok) => {
+            //                 ConsoleService::info(&format!("{:?}", dataok));
+            //                 Msg::GetTenantSettings(dataok)
+            //             }
+            //             Err(error) => {
+            //                 ConsoleService::info(&error.to_string());
+            //                 Msg::ResponseError(error.to_string(), StateError::UpdateAuthorization)
+            //             }
+            //         }
+            //     });
+            //     let task = FetchService::fetch(request, callback).expect("failed to start request");
+            //     self.loading_update_authorization = true;
+            //     self.fetch_task = Some(task);
+            //     true
+            // }
+            // Msg::UpdateErrorPage => {
+            //     let data_error_page = DataErrorPage {
+            //         error_page: self.tenant_settings.error_page.clone()
+            //     };
+            //     ConsoleService::info(&format!("data error page = {:?}", data_error_page));
+            //     let request = Request::patch(format!("{}/tenant/v2/settings", API_URL))
+            //         .header("Content-Type", "application/json")
+            //         .header("access_token", "tokennotfromreducer")
+            //         .body(Json(
+            //             &data_error_page
+            //         ))
+            //         .expect("Could not build request.");
+            //     let callback = self.link.callback(|response: Response<Json<Result<TenantSettings, anyhow::Error>>>| {
+            //         let Json(data) = response.into_body();
+            //         match data {
+            //             Ok(dataok) => {
+            //                 ConsoleService::info(&format!("{:?}", dataok));
+            //                 Msg::GetTenantSettings(dataok)
+            //             }
+            //             Err(error) => {
+            //                 ConsoleService::info(&error.to_string());
+            //                 Msg::ResponseError(error.to_string(), StateError::UpdateErrorPage)
+            //             }
+            //         }
+            //     });
+            //     let task = FetchService::fetch(request, callback).expect("failed to start request");
+            //     self.loading_update_error_page = true;
+            //     self.fetch_task = Some(task);
+            //     true
+            // }
             Msg::GetTenantSettings(data) => {
                 self.fetch_task = None;
                 self.loading_update_settings = false;
@@ -385,25 +389,25 @@ impl Component for SettingsGeneral {
 impl SettingsGeneral {
     fn view_content (&self) -> Html {
         let TenantSettings {
-            change_password: _,
-            guardian_mfa_page: _,
-            default_audience,
-            default_directory,
-            error_page,
-            device_flow: _,
+            // change_password: _,
+            // guardian_mfa_page: _,
+            // default_audience,
+            // default_directory,
+            // error_page,
+            // device_flow: _,
             flags: _,
-            friendly_name,
-            picture_url,
-            support_email,
-            support_url,
-            allowed_logout_urls: _,
-            session_lifetime: _,
-            idle_session_lifetime: _,
+            // friendly_name,
+            // picture_url,
+            // support_email,
+            // support_url,
+            // allowed_logout_urls: _,
+            // session_lifetime: _,
+            // idle_session_lifetime: _,
             sandbox_version: _,
             sandbox_versions_available: _,
-            default_redirection_uri: _,
+            // default_redirection_uri: _,
             enabled_locales: _,
-            session_cookie: _,
+            // session_cookie: _,
         } = self.tenant_settings.clone();
         html! {
             <div>
@@ -509,7 +513,7 @@ impl SettingsGeneral {
                                         class="form-control bg-input-grey"
                                         aria-label="Dollar amount (with dot and two decimal places)"
                                         placeholder="My Company Inc."
-                                        value={friendly_name.clone()}
+                                        // value={friendly_name.clone()}
                                         oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::FriendlyName))
                                         disabled={ if self.loading_update_settings {true} else {false} }
                                     />   
@@ -537,7 +541,7 @@ impl SettingsGeneral {
                                         class="form-control bg-input-grey"
                                         aria-label="Dollar amount (with dot and two decimal places)"
                                         placeholder="Your logo URL"
-                                        value={picture_url}
+                                        // value={picture_url}
                                         oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::PictureUrl))
                                         disabled={ if self.loading_update_settings {true} else {false} }
                                     />   
@@ -561,7 +565,7 @@ impl SettingsGeneral {
                                         class="form-control bg-input-grey"
                                         aria-label="Dollar amount (with dot and two decimal places)"
                                         placeholder="support@my_company.com"
-                                        value={support_email}
+                                        // value={support_email}
                                         oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::SupportEmail))
                                         disabled={ if self.loading_update_settings {true} else {false} }
                                     />
@@ -580,7 +584,7 @@ impl SettingsGeneral {
                                         class="form-control bg-input-grey"
                                         aria-label="Dollar amount (with dot and two decimal places)"
                                         placeholder="https://my-company.org/support"
-                                        value={support_url}
+                                        // value={support_url}
                                         oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::SupportUrl))
                                         disabled={ if self.loading_update_settings {true} else {false} }
                                     />
@@ -842,7 +846,7 @@ impl SettingsGeneral {
                                         class="form-control bg-input-grey"
                                         aria-label="Dollar amount (with dot and two decimal places)"
                                         placeholder="https://your-default-endpoint/"
-                                        value={default_audience}
+                                        // value={default_audience}
                                         oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::DefaultAudience))
                                         disabled={ if self.loading_update_authorization {true} else {false} }
                                     />
@@ -863,7 +867,7 @@ impl SettingsGeneral {
                                         class="form-control bg-input-grey"
                                         aria-label="Dollar amount (with dot and two decimal places)"
                                         placeholder="Connection Name"
-                                        value={default_directory}
+                                        // value={default_directory}
                                         oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::DefaultDirectory))
                                         disabled={ if self.loading_update_authorization {true} else {false} }
                                     />
@@ -945,7 +949,7 @@ impl SettingsGeneral {
                                                 type="radio"
                                                 name="flexRadioDefault"
                                                 id="flexRadioDefault1"
-                                                checked={ if error_page.show_log_link { false } else { true } }
+                                                // checked={ if error_page.show_log_link { false } else { true } }
                                             />
 
                                             <div
@@ -992,7 +996,7 @@ impl SettingsGeneral {
                                                 type="radio"
                                                 name="flexRadioDefault"
                                                 id="flexRadioDefault2"
-                                                checked={ if error_page.show_log_link { true } else { false } }
+                                                // checked={ if error_page.show_log_link { true } else { false } }
                                             />
 
                                             <div
@@ -1025,32 +1029,32 @@ impl SettingsGeneral {
                                     </div>
                                 </div>
 
-                                {
-                                    if self.tenant_settings.error_page.show_log_link {
-                                        html!{
-                                            <div
-                                                class="mb-4"
-                                            >
-                                                <p class="mb-2 fw-bold">
-                                                    {"Custom error page URL *"}
-                                                </p>
-                                                <div class="input-group mb-2">
-                                                    <input
-                                                        type="text"
-                                                        class="form-control bg-input-grey"
-                                                        aria-label="Dollar amount (with dot and two decimal places)"
-                                                        placeholder="http://mycompany.com/error/"
-                                                        value={error_page.url}
-                                                        oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::ErrorPage))
-                                                        disabled={ if self.loading_update_error_page {true} else {false} }
-                                                    />
-                                                </div>
-                                            </div>
-                                        }
-                                    } else {
-                                        html! {}
-                                    }
-                                }
+                                // {
+                                //     if self.tenant_settings.error_page.show_log_link {
+                                //         html!{
+                                //             <div
+                                //                 class="mb-4"
+                                //             >
+                                //                 <p class="mb-2 fw-bold">
+                                //                     {"Custom error page URL *"}
+                                //                 </p>
+                                //                 <div class="input-group mb-2">
+                                //                     <input
+                                //                         type="text"
+                                //                         class="form-control bg-input-grey"
+                                //                         aria-label="Dollar amount (with dot and two decimal places)"
+                                //                         placeholder="http://mycompany.com/error/"
+                                //                         value={error_page.url}
+                                //                         oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::ErrorPage))
+                                //                         disabled={ if self.loading_update_error_page {true} else {false} }
+                                //                     />
+                                //                 </div>
+                                //             </div>
+                                //         }
+                                //     } else {
+                                //         html! {}
+                                //     }
+                                // }
 
                             </div>
                             

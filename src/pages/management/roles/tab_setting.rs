@@ -11,6 +11,7 @@ use crate::configs::server::API_URL;
 use crate::types::{
     roles::{
         Role,
+        ResponseRoleDelete
     },
 };
 
@@ -81,17 +82,18 @@ impl Component for TabSettings {
             }
             Msg::Update => {
                 ConsoleService::info(&format!("role = {:?}", self.role));
-                let request = Request::put(format!("{}/roles/v2/{}", API_URL, self.role.id.clone()))
+                let request = Request::patch(format!("http://127.0.0.1:8080/api/v1/1/roles/{}", self.role.id.clone()))
                     .header("Content-Type", "application/json")
-                    .header("access_token", "tokenidtelkomdomain")
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
                     .body(Json(&self.role))
                     .expect("Could not build request.");
                 let callback = 
                     self.link.callback(|response: Response<Json<Result<Role, anyhow::Error>>>| {
                         let Json(data) = response.into_body();
+                        ConsoleService::info(&format!("ini yang di dapat = {:?}", data));
                         match data {
                             Ok(dataok) => {
-                                ConsoleService::info(&format!("role details = {:?}", dataok));
+                                // ConsoleService::info(&format!("role details = {:?}", dataok));
                                 Msg::GetRoleDetails(dataok)
                             }
                             Err(error) => {
@@ -112,15 +114,17 @@ impl Component for TabSettings {
                 true
             }
             Msg::Delete => {
-                let request = Request::delete(format!("{}/roles/v2/{}", API_URL,self.role.id.clone()))
-                    .header("access_token", "tokenidtelkomdomain")
+                let request = Request::delete(format!("http://127.0.0.1:8080/api/v1/1/roles/{}",self.role.id.clone()))
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
                     .body(Nothing)
                     .expect("Could not build request.");
-                let callback = self.link.callback(|response: Response<Json<Result<(), anyhow::Error>>>| {
+                let callback = self.link.callback(|response: Response<Json<Result<ResponseRoleDelete, anyhow::Error>>>| {
                 let Json(data) = response.into_body();
+                ConsoleService::info(&format!("{:?}", data));
                 match data {
                     Ok(dataok) => {
                         // ConsoleService::info(&format!("{:?}", dataok));
+                        ConsoleService::info(&format!("{:?}", dataok));
                         Msg::RedirectToRoles
                     }
                     Err(error) => {
@@ -170,8 +174,30 @@ impl Component for TabSettings {
         } = self.role.clone();
         html! {
             <>
-                <div class="mt-4 p-4">
-                    <form>
+            <div class="mt-4 p-4">
+                <form>
+                    <div class="mb-3">
+                        <label for="roleName" class="form-label">{"Name"}</label>
+                        <input
+                            type="text"
+                            class="form-control w-50"
+                            id="roleName"
+                            value={ name.clone() }
+                            disabled={ self.loading_update }
+                            oninput=self.link.callback(|data: InputData| Msg::Input(data.value, Data::Name))
+                        />
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputDescription" class="form-label">{"Description"}</label>
+                        <input
+                            type="text"
+                            class="form-control w-50"
+                            id="inputDescription"
+                            value={ description.clone() }
+                            disabled={ self.loading_update }
+                            oninput=self.link.callback(|data: InputData| Msg::Input(data.value, Data::Description))
+                        />
+                    </div>
 
                         <div class="mb-3">
                             <label for="roleName" class="form-label">{"Name"}</label>

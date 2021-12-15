@@ -83,8 +83,8 @@ impl Component for UserTabRoles {
                 self.show_modal_delete_role = false;
                 self.index_role_delete = None;
 
-                let request = Request::get(format!("{}/users/tenant_id/users/:id/roles", API_URL))
-                    .header("access_token", "telkomidtelkomdomain")
+                let request = Request::get(format!("http://127.0.0.1:8080/api/v1/1/users/{}/roles", self.user_details.id.clone()))
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
                     .body(Nothing)
                     .expect("Could not build request.");
                 let callback = self.link.callback(

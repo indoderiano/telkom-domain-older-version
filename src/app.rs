@@ -36,7 +36,10 @@ use crate::pages::{
     activity::Activity,
 
     applications::{
-        applications::home::ApplicationHome,
+        applications::{
+            home::ApplicationHome,
+            settings::ApplicationSettings,
+        },
         apis::{
             home::ApisHome,
             settings::ApisSettings,
@@ -99,17 +102,19 @@ pub enum AppRoute {
     #[to = "/activity"]
     Activity,
     #[to = "/{tenant_id}/apis/{api_id}/settings"]
-    ApisSettings { tenant_id: String, api_id: String },
+    ApisSettings { tenant_id: String, api_id: u32 },
     #[to = "/{tenant_id}/apis"]
     ApisHome { tenant_id: String },
-    #[to = "/applications"]
-    DatabaseSettings,
+    #[to = "/{tenant_id}/applications/{app_id}/settings"]
+    ApplicationSettings { tenant_id: String, app_id: String },
+    #[to = "/{tenant_id}/applications"]
+    ApplicationHome { tenant_id: String },
     #[to = "/authentication/database/settings"]
-    DbCreate,
+    DatabaseSettings,
     #[to = "/authentication/database/create"]
-    DatabaseHome,
+    DbCreate,
     #[to = "/authentication/database"]
-    ApplicationHome,
+    DatabaseHome,
     #[to = "/authentication/passwordless"]
     AuthPasswordless,
     #[to = "/sso/create-sso"]
@@ -126,8 +131,8 @@ pub enum AppRoute {
     RoleSettings { tenant_id: String, role_id: String },
     #[to = "/user-management/roles"]
     RolesCreated,
-    #[to="/{tenant_id}/users/{user_id}"]
-    UserViewDetail {tenant_id: String, user_id: String},
+    #[to="/{tenant_id}/users/{user_id}/{id}"]
+    UserViewDetail {tenant_id: String, user_id: String, id: u32},
     #[to = "/{tenant_id}/users"]
     UsersManagement {tenant_id: String},
     #[to = "/enterprise/google-app/create"]
@@ -279,11 +284,6 @@ impl Component for App {
                     }
                 },
 
-
-
-
-
-
                 // LOGGED IN ROUTES
                 AppRoute::Activity => {
                     if is_logged_in {
@@ -317,9 +317,17 @@ impl Component for App {
                         html! {<HomePage/>}
                     }
                 },
-                AppRoute::ApplicationHome => {
+                AppRoute::ApplicationHome{ tenant_id } => {
                     if is_logged_in {
-                        html! {<ApplicationHome/>}
+                        html! {<ApplicationHome tenant_id=tenant_id />}
+                    } else {
+                        route_service.set_route("/", ());
+                        html! {<HomePage/>}
+                    }
+                },
+                AppRoute::ApplicationSettings{ tenant_id, app_id } => {
+                    if is_logged_in {
+                        html! {<ApplicationSettings tenant_id=tenant_id app_id=app_id />}
                     } else {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
@@ -389,9 +397,9 @@ impl Component for App {
                         html! {<HomePage/>}
                     }
                 },
-                AppRoute::UserViewDetail{tenant_id, user_id} => {
+                AppRoute::UserViewDetail{tenant_id, user_id, id} => {
                     if is_logged_in {
-                        html! {<UserViewDetail tenant_id=tenant_id user_id=user_id/>}
+                        html! {<UserViewDetail tenant_id=tenant_id user_id=user_id id=id/>}
                     } else {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}

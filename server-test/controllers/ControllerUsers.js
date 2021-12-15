@@ -266,8 +266,7 @@ class ControllerUsers {
     static getUserPermissions(req, res, next) {
         console.log(req.params.id)
 
-        let data = [
-            {
+        let data = [{
                 resource_server_identifier: "https://jsonplaceholder.typicode.com/albums",
                 permission_name: "read:client_grants",
                 resource_server_name: "Example API",
