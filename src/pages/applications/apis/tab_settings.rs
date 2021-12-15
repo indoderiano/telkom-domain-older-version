@@ -178,7 +178,7 @@ impl Component for TabSettings {
                     .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
                     .body(Nothing)
                     .expect("Could not build request.");
-                let callback = self.link.callback(|response: Response<Json<Result<ResponseMessage, anyhow::Error>>>| {
+                let callback = self.link.callback(|response: Response<Json<Result<(), anyhow::Error>>>| {
                 // let Json(data) = response.into_body();
                 let (meta, Json(data)) = response.into_parts();
                 

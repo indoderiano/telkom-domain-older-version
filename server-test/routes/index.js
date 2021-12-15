@@ -12,10 +12,7 @@ const { RouterRoles } = require('./RouterRoles')
 const router = express.Router()
 
 router.use('/api', RouterApi)
-<<<<<<< HEAD
 router.use('/api/v1/1/clients', RouterApp)
-=======
->>>>>>> 3236460cd4d47c93cf7f7d7dc5cefbd8a1deb6e4
 
 router.use('/users', RouterUser)
     // router.use('/product', RouterProduct)

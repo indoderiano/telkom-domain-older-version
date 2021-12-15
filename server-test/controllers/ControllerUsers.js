@@ -266,12 +266,7 @@ class ControllerUsers {
     static getUserPermissions(req, res, next) {
         console.log(req.params.id)
 
-<<<<<<< HEAD
         let data = [{
-=======
-        let data = [
-            {
->>>>>>> 3236460cd4d47c93cf7f7d7dc5cefbd8a1deb6e4
                 resource_server_identifier: "https://jsonplaceholder.typicode.com/albums",
                 permission_name: "read:client_grants",
                 resource_server_name: "Example API",
@@ -282,9 +277,6 @@ class ControllerUsers {
                 permission_name: "update:client_grants",
                 resource_server_name: "Example API",
                 description: "Update Data"
-<<<<<<< HEAD
-            }
-=======
             },
             {
                 resource_server_identifier: "https://jsonplaceholder.typicode.com/albums",
@@ -292,7 +284,6 @@ class ControllerUsers {
                 resource_server_name: "Example API",
                 description: "Delete API"
             },
->>>>>>> 3236460cd4d47c93cf7f7d7dc5cefbd8a1deb6e4
         ]
 
         setTimeout(() => {
@@ -305,10 +296,7 @@ class ControllerUsers {
 
     static deleteUser(req, res) {
         console.log(req.params)
-<<<<<<< HEAD
-=======
         console.log(req.body)
->>>>>>> 3236460cd4d47c93cf7f7d7dc5cefbd8a1deb6e4
         console.log("User berhasil di delete")
 
         setTimeout(() => {
@@ -323,10 +311,7 @@ class ControllerUsers {
 
     static deleteRolesFromUser(req, res) {
         console.log(req.params)
-<<<<<<< HEAD
-=======
         console.log(req.body)
->>>>>>> 3236460cd4d47c93cf7f7d7dc5cefbd8a1deb6e4
         console.log("Roles dari User berhasil di delete")
 
         setTimeout(() => {
@@ -341,10 +326,7 @@ class ControllerUsers {
 
     static deletePermissionsFromUser(req, res) {
         console.log(req.params)
-<<<<<<< HEAD
-=======
         console.log(req.body)
->>>>>>> 3236460cd4d47c93cf7f7d7dc5cefbd8a1deb6e4
         console.log("Permissions dari User berhasil di delete")
 
         setTimeout(() => {

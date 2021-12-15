@@ -61,3 +61,19 @@ pub struct AppDetails {
     pub grant_types: String,
     pub custom_login_page_on: bool,
 }
+
+#[derive(Serialize, Debug, Clone)]
+pub struct AppCreate {
+    pub name: String,
+    pub app_type: String,
+}
+
+impl AppCreate {
+    pub fn new() -> AppCreate {
+        AppCreate {
+            name: String::from(""),
+            app_type: String::from("Single Page Application"),
+            // signing_alg: String::from("RS256"),
+        }
+    }
+}

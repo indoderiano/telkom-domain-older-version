@@ -79,12 +79,10 @@ impl Component for ApisHome {
     }
 
     fn rendered(&mut self, first_render: bool) {
-
         if first_render {
             ConsoleService::info("This is first render");
             self.link.send_message(Msg::RequestApiList);
         }
-
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {

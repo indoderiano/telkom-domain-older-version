@@ -7,6 +7,10 @@ use yew::{
     }
 };
 use yew_router::service::RouteService;
+use serde::{
+    Deserialize,
+    Serialize,
+};
 
 
 
@@ -145,17 +149,42 @@ impl Component for UserTabDetails {
                     // StatusCode
                     , anyhow::Error>>>| {
 
-                    let Json(data) = response.into_body();
-                    match data {
-                        Ok(dataok) => {
-                            ConsoleService::info(&format!("{:?}", dataok));
+                    let (meta, Json(data)) = response.into_parts();
+
+                    let status_number = meta.status.as_u16();
+
+                    match status_number {
+                        204 => {
+                            ConsoleService::info("status code is 204");
+                            ConsoleService::info("api is deleted");
                             Msg::RedirectToUser
                         }
-                        Err(error) => {
-                            ConsoleService::info(&error.to_string());
-                            Msg::ResponseError(error.to_string(), StateError::Delete)
+                        _ => {
+                            ConsoleService::info("status code is not 204");
+                            match data {
+                                Ok(dataok) => {
+                                    ConsoleService::info(&format!("{:?}", dataok));
+                                    Msg::RedirectToUser
+                                }
+                                Err(error) => {
+                                    ConsoleService::info(&error.to_string());
+                                    Msg::ResponseError(error.to_string(), StateError::Delete)
+                                }
+                            }
                         }
                     }
+
+                    // let Json(data) = response.into_body();
+                    // match data {
+                    //     Ok(dataok) => {
+                    //         ConsoleService::info(&format!("{:?}", dataok));
+                    //         Msg::RedirectToUser
+                    //     }
+                    //     Err(error) => {
+                    //         ConsoleService::info(&error.to_string());
+                    //         Msg::ResponseError(error.to_string(), StateError::Delete)
+                    //     }
+                    // }
                 });
                 let task = FetchService::fetch(request, callback).expect("failed to start request");
                 self.loading_delete_user = true;
@@ -169,11 +198,19 @@ impl Component for UserTabDetails {
                 true
             }
             Msg::Block => {
-                ConsoleService::info(&format!("{:?}", self.user_details));
+                #[derive(Serialize, Debug, Clone)]
+                struct BlockedUser {
+                    blocked : bool
+                }
+                let blocked_user = BlockedUser{
+                    blocked : true
+                };
+                ConsoleService::info(&format!("{:?}", blocked_user.clone()));
+
                 let request = Request::patch(format!("{}/users/dev-ofzd5p1b/users/auth0|7CYXV0aDAlN0M2MTM3MTIyMTAxY2VmYTAwNzM0NzRmYmI", API_URL))
                     .header("Content-Type", "application/json")
                     .header("access_token","tokenidtelkomdomain")
-                    .body(Json(&self.user_details))
+                    .body(Json(&blocked_user))
                     .expect("Could not build request.");
                 let callback = self.link.callback(|response: Response<Json<Result<UserDetails, anyhow::Error>>>| {
                     let Json(data) = response.into_body();

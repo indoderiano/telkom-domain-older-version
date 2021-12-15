@@ -6,7 +6,7 @@ use yew::{
 
 use crate::app::AppRoute;
 use crate::types::{
-    application::{AppList},
+    application::{AppList, AppCreate},
     ResponseMessage,
 };
 use yew::services::ConsoleService;
@@ -21,6 +21,12 @@ pub struct AppProps {
 
 pub enum StateError {
     AppList,
+    AppCreate,
+}
+
+pub enum DataAppCreate {
+    Name,
+    AppType,
 }
 
 pub struct ApplicationHome {
@@ -30,12 +36,19 @@ pub struct ApplicationHome {
     loading_get_app: bool,
     app_list: Vec<AppList>,
     error_app_list: Option<String>,
+    app_create: AppCreate,
+    show_modal_create: bool,
+    loading_create_app: bool,
+    error_app_create: Option<String>,
 }
 
 pub enum Msg {
     DefaultState,
     RequestAppList,
     GetAppList(Vec<AppList>),
+    Input(String, DataAppCreate),
+    ShowModalCreate(bool),
+    Create,
     ResponseError(String, StateError),
 }
 
@@ -200,6 +213,9 @@ impl Component for ApplicationHome {
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
         ConsoleService::info(&format!("Apps home props, tenant id = {}", props.tenant_id));
+        
+        let app_create = AppCreate::new();
+        
         ApplicationHome {
             tenant_id: props.tenant_id,
             error_app_list: None,
@@ -207,6 +223,10 @@ impl Component for ApplicationHome {
             link,
             loading_get_app: false,
             app_list: Vec::new(),
+            app_create,
+            show_modal_create: false,
+            loading_create_app: false,
+            error_app_create: None,
         }
     }
 
@@ -220,14 +240,13 @@ impl Component for ApplicationHome {
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
             Msg::DefaultState => {
-                // self.show_modal_create = false;
+                self.show_modal_create = false;
                 self.loading_get_app = false;
-                // self.error_api_list: None,
-                // self.loading_create_app = false;
-                // self.error_api_create: None,
-                // self.api_create.name = String::from("");
-                // self.api_create.identifier = String::from("");
-                // self.api_create.sign_algorithm = String::from("");
+                // self.error_app_list: None;
+                self.loading_create_app = false;
+                // self.error_app_create: None;
+                self.app_create.name = String::from("");
+                self.app_create.app_type = String::from("");
                 true
             }
             Msg::RequestAppList => {
@@ -264,11 +283,56 @@ impl Component for ApplicationHome {
                 self.fetch_task = None;
                 true
             }
+            Msg::Input(input, data) => {
+                match data {
+                    DataAppCreate::Name => {
+                        self.app_create.name = input;
+                    }
+                    DataAppCreate::AppType => {
+                        self.app_create.app_type = input;
+                    }
+                }
+                true
+            }
+            Msg::ShowModalCreate(state) => {
+                self.show_modal_create = state;
+                true
+            }
+            Msg::Create => {
+                ConsoleService::info(&format!("{:?}", self.app_create));
+                let request = Request::post("http://127.0.0.1:8080/api/v1/1/clients")
+                    .header("Content-Type", "application/json")
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
+                    .body(Json(&self.app_create))
+                    .expect("Could not build request.");
+                let callback = 
+                    self.link.batch_callback(|response: Response<Json<Result<AppList, anyhow::Error>>>| {
+                        let Json(data) = response.into_body();
+                        match data {
+                            Ok(dataok) => {
+                                ConsoleService::info(&format!("ini response berhasil{:?}", dataok));
+                                vec![Msg::DefaultState, Msg::RequestAppList]
+                            }
+                            Err(error) => {
+                                ConsoleService::info(&error.to_string());
+                                vec![Msg::ResponseError(error.to_string(), StateError::AppCreate)]
+                            }
+                        }
+                    });
+                let task = FetchService::fetch(request, callback).expect("failed to start request");
+                self.loading_create_app = true;
+                self.fetch_task = Some(task);
+                true
+            }
             Msg::ResponseError(message, state) => {
                 match state {
                     StateError::AppList => {
                         self.loading_get_app = false;
                         self.error_app_list = Some(message);
+                    }
+                    StateError::AppCreate => {
+                        self.loading_create_app = false;
+                        self.error_app_create = Some(message);
                     }
                 }
                 true
@@ -307,8 +371,9 @@ impl Component for ApplicationHome {
                                         <button
                                             type="button"
                                             class="btn btn-primary d-flex align-items-center"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#exampleModal"
+                                            // data-bs-toggle="modal"
+                                            // data-bs-target="#exampleModal"
+                                            onclick=self.link.callback(|_| {Msg::ShowModalCreate(true)})
                                         >
                                             <i
                                                 class="bi bi-plus me-2"
@@ -362,101 +427,214 @@ impl Component for ApplicationHome {
 
 
                         // <!-- Modal -->
-                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-scrollable">
-                                <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">{"Create Application"}</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body" style="font-size: 14px;">
-                                    <div class="mb-4">
-                                    <label for="basic-url" class="form-label fw-bold">{"Name"}</label>
-                                    <div class="input-group mb-2">
-                                        <input type="text" class="form-control" placeholder="My App" id="basic-url" aria-describedby="basic-addon3" />
-                                    </div>
-                                    <label class="form-label text-muted">{"This is your application name"}</label>
-                                    </div>
-                                    <div class="mb-4">
+                        // <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        //     <div class="modal-dialog modal-dialog-scrollable">
+                        //         <div class="modal-content">
+                        //         <div class="modal-header">
+                        //             <h5 class="modal-title" id="exampleModalLabel">{"Create Application"}</h5>
+                        //             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        //         </div>
+                        //         <div class="modal-body" style="font-size: 14px;">
+                        //             <div class="mb-4">
+                        //             <label for="basic-url" class="form-label fw-bold">{"Name"}</label>
+                        //             <div class="input-group mb-2">
+                        //                 <input type="text" class="form-control" placeholder="My App" id="basic-url" aria-describedby="basic-addon3" />
+                        //             </div>
+                        //             <label class="form-label text-muted">{"This is your application name"}</label>
+                        //             </div>
+                        //             <div class="mb-4">
                                     
                                     
 
-                                    <div class="MuiFormGroup-root"><label class="MuiFormLabel-root">{"Choose an application type"}</label>
-                                        <div class="jss2 jss386" data-cosmos-key="column-layout">
-                                        <div
-                                            class="MuiPaper-root MuiCard-root jss396 jss397 jss387 jss389 jss394 jss391 MuiPaper-outlined MuiPaper-rounded">
-                                            <div class="jss2 jss398" data-cosmos-key="row-layout">
-                                            <div class="jss2 jss399 jss279 jss293 jss288 jss298" data-cosmos-key="avatar"><img
-                                                data-cosmos-key="image"
-                                                src="https://cdn.auth0.com/manhattan/versions/1.3431.0/assets/native.svg" class="jss280"/>
-                                            </div>
-                                            <h6 class="MuiTypography-root MuiTypography-subtitle2" data-cosmos-key="text">{"Native"}</h6>
-                                            <p class="MuiTypography-root MuiTypography-body2" data-cosmos-key="text">{"Mobile, desktop, CLI and
-                                                smart device apps running natively"}</p>
-                                            <p class="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary"
-                                                data-cosmos-key="text">{"e.g.: iOS, Electron, Apple TV apps"}</p>
-                                            </div>
-                                        </div>
-                                        <div
-                                            class="MuiPaper-root MuiCard-root jss396 jss400 jss387 jss389 jss391 MuiPaper-outlined MuiPaper-rounded">
-                                            <div class="jss2 jss398" data-cosmos-key="row-layout">
-                                            <div class="jss2 jss402 jss279 jss293 jss288 jss298" data-cosmos-key="avatar"><img
-                                                data-cosmos-key="image" src="https://cdn.auth0.com/manhattan/versions/1.3431.0/assets/spa.svg"
-                                                class="jss280"/></div>
-                                            <h6 class="MuiTypography-root MuiTypography-subtitle2" data-cosmos-key="text">{"Single Page Web
-                                                Applications"}</h6>
-                                            <p class="MuiTypography-root MuiTypography-body2" data-cosmos-key="text">{"A JavaScript front-end
-                                                app that uses an API."}</p>
-                                            <p class="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary"
-                                                data-cosmos-key="text">{"e.g.: Angular, React, Vue"}</p>
-                                            </div>
-                                        </div>
-                                        <div
-                                            class="MuiPaper-root MuiCard-root jss396 jss403 jss387 jss389 jss391 MuiPaper-outlined MuiPaper-rounded">
-                                            <div class="jss2 jss398" data-cosmos-key="row-layout">
-                                            <div class="jss2 jss405 jss279 jss293 jss288 jss298" data-cosmos-key="avatar"><img
-                                                data-cosmos-key="image"
-                                                src="https://cdn.auth0.com/manhattan/versions/1.3431.0/assets/regular_web.svg" class="jss280"/>
-                                            </div>
-                                            <h6 class="MuiTypography-root MuiTypography-subtitle2" data-cosmos-key="text">{"Regular Web
-                                                Applications"}</h6>
-                                            <p class="MuiTypography-root MuiTypography-body2" data-cosmos-key="text">{"Traditional web app using
-                                                redirects."}</p>
-                                            <p class="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary"
-                                                data-cosmos-key="text">{"e.g.: Node.js Express, ASP.NET, Java, PHP"}</p>
-                                            </div>
-                                        </div>
-                                        <div
-                                            class="MuiPaper-root MuiCard-root jss396 jss406 jss387 jss389 jss391 MuiPaper-outlined MuiPaper-rounded">
-                                            <div class="jss2 jss398" data-cosmos-key="row-layout">
-                                            <div class="jss2 jss408 jss279 jss293 jss288 jss298" data-cosmos-key="avatar"><img
-                                                data-cosmos-key="image"
-                                                src="https://cdn.auth0.com/manhattan/versions/1.3431.0/assets/non_interactive.svg"
-                                                class="jss280"/></div>
-                                            <h6 class="MuiTypography-root MuiTypography-subtitle2" data-cosmos-key="text">{"Machine to Machine
-                                                Applications"}</h6>
-                                            <p class="MuiTypography-root MuiTypography-body2" data-cosmos-key="text">{"CLIs, daemons or services
-                                                running on your backend."}</p>
-                                            <p class="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary"
-                                                data-cosmos-key="text">{"e.g.: Shell script"}</p>
-                                            </div>
-                                        </div>
-                                        </div>
-                                    </div>
+                        //             <div class="MuiFormGroup-root"><label class="MuiFormLabel-root">{"Choose an application type"}</label>
+                        //                 <div class="jss2 jss386" data-cosmos-key="column-layout">
+                        //                 <div
+                        //                     class="MuiPaper-root MuiCard-root jss396 jss397 jss387 jss389 jss394 jss391 MuiPaper-outlined MuiPaper-rounded">
+                        //                     <div class="jss2 jss398" data-cosmos-key="row-layout">
+                        //                     <div class="jss2 jss399 jss279 jss293 jss288 jss298" data-cosmos-key="avatar"><img
+                        //                         data-cosmos-key="image"
+                        //                         src="https://cdn.auth0.com/manhattan/versions/1.3431.0/assets/native.svg" class="jss280"/>
+                        //                     </div>
+                        //                     <h6 class="MuiTypography-root MuiTypography-subtitle2" data-cosmos-key="text">{"Native"}</h6>
+                        //                     <p class="MuiTypography-root MuiTypography-body2" data-cosmos-key="text">{"Mobile, desktop, CLI and
+                        //                         smart device apps running natively"}</p>
+                        //                     <p class="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary"
+                        //                         data-cosmos-key="text">{"e.g.: iOS, Electron, Apple TV apps"}</p>
+                        //                     </div>
+                        //                 </div>
+                        //                 <div
+                        //                     class="MuiPaper-root MuiCard-root jss396 jss400 jss387 jss389 jss391 MuiPaper-outlined MuiPaper-rounded">
+                        //                     <div class="jss2 jss398" data-cosmos-key="row-layout">
+                        //                     <div class="jss2 jss402 jss279 jss293 jss288 jss298" data-cosmos-key="avatar"><img
+                        //                         data-cosmos-key="image" src="https://cdn.auth0.com/manhattan/versions/1.3431.0/assets/spa.svg"
+                        //                         class="jss280"/></div>
+                        //                     <h6 class="MuiTypography-root MuiTypography-subtitle2" data-cosmos-key="text">{"Single Page Web
+                        //                         Applications"}</h6>
+                        //                     <p class="MuiTypography-root MuiTypography-body2" data-cosmos-key="text">{"A JavaScript front-end
+                        //                         app that uses an API."}</p>
+                        //                     <p class="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary"
+                        //                         data-cosmos-key="text">{"e.g.: Angular, React, Vue"}</p>
+                        //                     </div>
+                        //                 </div>
+                        //                 <div
+                        //                     class="MuiPaper-root MuiCard-root jss396 jss403 jss387 jss389 jss391 MuiPaper-outlined MuiPaper-rounded">
+                        //                     <div class="jss2 jss398" data-cosmos-key="row-layout">
+                        //                     <div class="jss2 jss405 jss279 jss293 jss288 jss298" data-cosmos-key="avatar"><img
+                        //                         data-cosmos-key="image"
+                        //                         src="https://cdn.auth0.com/manhattan/versions/1.3431.0/assets/regular_web.svg" class="jss280"/>
+                        //                     </div>
+                        //                     <h6 class="MuiTypography-root MuiTypography-subtitle2" data-cosmos-key="text">{"Regular Web
+                        //                         Applications"}</h6>
+                        //                     <p class="MuiTypography-root MuiTypography-body2" data-cosmos-key="text">{"Traditional web app using
+                        //                         redirects."}</p>
+                        //                     <p class="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary"
+                        //                         data-cosmos-key="text">{"e.g.: Node.js Express, ASP.NET, Java, PHP"}</p>
+                        //                     </div>
+                        //                 </div>
+                        //                 <div
+                        //                     class="MuiPaper-root MuiCard-root jss396 jss406 jss387 jss389 jss391 MuiPaper-outlined MuiPaper-rounded">
+                        //                     <div class="jss2 jss398" data-cosmos-key="row-layout">
+                        //                     <div class="jss2 jss408 jss279 jss293 jss288 jss298" data-cosmos-key="avatar"><img
+                        //                         data-cosmos-key="image"
+                        //                         src="https://cdn.auth0.com/manhattan/versions/1.3431.0/assets/non_interactive.svg"
+                        //                         class="jss280"/></div>
+                        //                     <h6 class="MuiTypography-root MuiTypography-subtitle2" data-cosmos-key="text">{"Machine to Machine
+                        //                         Applications"}</h6>
+                        //                     <p class="MuiTypography-root MuiTypography-body2" data-cosmos-key="text">{"CLIs, daemons or services
+                        //                         running on your backend."}</p>
+                        //                     <p class="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary"
+                        //                         data-cosmos-key="text">{"e.g.: Shell script"}</p>
+                        //                     </div>
+                        //                 </div>
+                        //                 </div>
+                        //             </div>
 
 
-                                    <label class="form-label text-muted">{"Ex: Web Application"}</label>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{"Cancel"}</button>
-                                    <button type="button" class="btn btn-primary">{"Create"}</button>
-                                </div>
-                                </div>
-                            </div>
-                            </div>
+                        //             <label class="form-label text-muted">{"Ex: Web Application"}</label>
+                        //             </div>
+                        //         </div>
+                        //         <div class="modal-footer">
+                        //             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{"Cancel"}</button>
+                        //             <button type="button" class="btn btn-primary">{"Create"}</button>
+                        //         </div>
+                        //         </div>
+                        //     </div>
+                        //     </div>
 
                         </div>
+
+
+                <div
+                    class=format!("modal fade {}", if self.show_modal_create {"show"} else {""})
+                    // id="exampleModal"
+                    tabindex="-1"
+                    // aria-labelledby="exampleModalLabel"
+                    // aria-hidden="true"
+                    // style=format!("display: {};", if self.show_modal_create {"block; transition: display .15s linear .15s"} else {"none; transition: display .15s linear .15s"})
+                    style="display: block;"
+                    aria-modal={ if self.show_modal_create {"true"} else {"false"} }
+                    role={ if self.show_modal_create {"dialog"} else {""} }
+                    aria-hidden={ if self.show_modal_create {"false"} else {"true"} }
+                    // onclick=self.link.callback(|_| {Msg::ShowModalCreate(false)})   
+                >
+                    <div
+                        class="modal-dialog modal-dialog-scrollable" 
+                    >
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">{"New APP"}</h5>
+                                <button
+                                    type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="modal"
+                                    aria-label="Close"
+                                    onclick=self.link.callback(|_| {Msg::ShowModalCreate(false)})
+                                ></button>
+                            </div>
+                            <div class="modal-body" style="font-size: 14px;">
+                                <div
+                                    class="mb-4"
+                                >
+                                    <label for="basic-url" class="form-label fw-bold">{"Name"}</label>
+                                    <div class="input-group mb-2">
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="basic-url"
+                                            aria-describedby="basic-addon3"
+                                            oninput=self.link.callback(|data: InputData| Msg::Input(data.value, DataAppCreate::Name))
+                                        />
+                                    </div>
+                                    <label class="form-label text-muted">{"This is your Application Name"}</label>
+                                </div>
+
+                                <div
+                                    class="mb-4"
+                                >
+                                    <label for="basic-url" class="form-label fw-bold">{"Application Type"}</label>
+                                    <select
+                                        class="form-select mb-2"
+                                        aria-label="Default select example"
+                                        onchange=self.link.callback(|e| {
+                                            if let ChangeData::Select(select) = e {
+                                                let value = select.value();
+                                                Msg::Input(value, DataAppCreate::AppType)
+                                            } else {
+                                                Msg::Input(String::from("no value"), DataAppCreate::AppType)
+                                            }
+                                        })
+                                    >
+                                        <option value="Single Page Application">{"Single Page Application"}</option>
+                                        <option value="Regular Web Application">{"Regular Web Application"}</option>
+                                        <option value="Native App">{"Native App"}</option>
+                                    </select>
+                                    <label class="form-label text-muted">{"Choose an application type"}</label>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button
+                                    type="button"
+                                    class="btn btn-secondary"
+                                    data-bs-dismiss="modal"
+                                    onclick=self.link.callback(|_| {Msg::ShowModalCreate(false)})
+                                >{"Cancel"}</button>
+                                <button
+                                    type="button"
+                                    class=format!("btn {} btn-primary position-relative", if self.loading_create_app {"loading"} else {""} )
+                                    onclick=self.link.callback(|_| Msg::Create)
+                                    disabled={ if self.loading_create_app {true} else {false} }
+                                >
+                                    <div class="telkom-label">
+                                      {"Create"}
+                                    </div>
+                                    <div class="telkom-spinner telkom-center">
+                                      <div class="spinner-border spinner-border-sm" role="status"/>
+                                    </div>
+                                </button>
+                            </div>
+                            {
+                                if self.error_app_create.is_some() {
+                                    html! {
+                                        <div class="modal-footer">
+                                            <div class="alert alert-warning" role="alert">
+                                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                                { self.error_app_create.clone().unwrap() }
+                                            </div>
+                                        </div>
+                                    }
+                                } else {
+                                    html! {}
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+                
+                <div
+                    class=format!("modal-backdrop fade {}", if self.show_modal_create {"show"} else {""})
+                />
+
+
                     </div>
                 </div>
         </>
