@@ -1,19 +1,67 @@
-use yew::prelude::*;
+use yew::{
+    format::{Json, Nothing},
+    prelude::*,
+    services::{
+        fetch::{FetchService, FetchTask, Request, Response},
+        ConsoleService,
+    },
+};
 
-pub struct RegisterPage {}
+enum Data {
+    Name,
+    Email,
+    Password,
+}
 
-pub enum Msg {}
+pub struct RegisterPage {
+    link: ComponentLink<Self>,
+    name: String,
+    email: String,
+    password: String,
+}
+
+pub enum Msg {
+    Register,
+    Input(String, Data),
+}
 
 impl Component for RegisterPage {
     type Message = Msg;
     type Properties = ();
 
-    fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
-        RegisterPage {}
+    fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
+        RegisterPage {
+            link,
+            name: String::from(""),
+            email: String::from(""),
+            password: String::from(""),
+        }
     }
 
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-        true
+    fn update(&mut self, msg: Self::Message) -> ShouldRender {
+        match msg {
+            Msg::Register => {
+                ConsoleService::info("register");
+                ConsoleService::info(&format!("username is {}", self.name.clone()));
+                ConsoleService::info(&format!("email is {}", self.email.clone()));
+                ConsoleService::info(&format!("password is {}", self.password.clone()));
+                true
+            }
+            Msg::Input(input, data) => {
+                match data {
+                    Data::Name => {
+                        self.name = input;
+                    }
+                    Data::Email => {
+                        self.email = input;
+                    }
+                    Data::Password => {
+                        self.password = input;
+                    }
+                }
+                true
+            }
+        }
     }
 
     fn change(&mut self, _: Self::Properties) -> ShouldRender {
@@ -35,17 +83,37 @@ impl Component for RegisterPage {
                     <h1 class="h5 mb-2 fw-normal fs-6">{"Sign Up to TelAuth"}</h1>
             
                     <div class="form-floating m-auto w-75 d-flex justify-content-center mt-4">
-                        <input type="email" class="d-flex form-control" id={"floatingInput"} placeholder="name@example.com"/>
+                        <input
+                            type="email"
+                            class="d-flex form-control"
+                            id={"floatingInput"}
+                            placeholder="name@example.com"
+                            oninput=self.link.callback(|data: InputData| Msg::Input(data.value, Data::Email))
+                            value={self.email.clone()}
+                        />
                         <label for="floatingInput">{"Email Address"}</label>
                     </div>
                     
                     <div class="form-floating m-auto w-75 d-flex justify-content-center mt-4">
-                        <input type="username" class="d-flex form-control" id={"floatingInput"} placeholder="ex: Johndoe"/>
+                        <input
+                            type="username"
+                            class="d-flex form-control"
+                            id={"floatingInput"}
+                            placeholder="ex: Johndoe"
+                            oninput=self.link.callback(|data: InputData| Msg::Input(data.value, Data::Name))
+                            value={self.name.clone()}
+                        />
                         <label for="floatingInput">{"Username"}</label>
                     </div>
 
                     <div class="form-floating m-auto w-75 d-flex justify-content-center mt-4">
-                        <input type="password" class="d-flex form-control" id={"floatingInput"}/>
+                        <input
+                            type="password"
+                            class="d-flex form-control"
+                            id={"floatingInput"}
+                            oninput=self.link.callback(|data: InputData| Msg::Input(data.value, Data::Password))
+                            value={self.password.clone()}
+                        />
                         <label for="floatingInput">{"Password"}</label>
                     </div>
 
@@ -54,7 +122,13 @@ impl Component for RegisterPage {
                         <h1 class="h5 mb-2 fw-normal fs-6">{"I agree to the"} <a class="ms-2" href="">{"terms of service"}</a> </h1>
                     </div>
         
-                    <button class="w-75 btn btn-lg btn-primary mt-3 fs-6" type="submit">{"Sign Up"}</button>
+                    <button
+                        class="w-75 btn btn-lg btn-primary mt-3 fs-6"
+                        type="submit"
+                        onclick=self.link.callback(|| {Msg::Register})
+                    >
+                        {"Sign Up"}
+                    </button>
                     <h1 class="h5 mt-3 mb-1 fw-normal" style="font-family: fakt-web, Helvetica Neue, Helvetica, sans-serif;">{"or"}</h1>
                     <button class="w-75 btn btn-lg btn-outline-dark mt-3 fs-6" type="submit">
                         <div class="text-start">
