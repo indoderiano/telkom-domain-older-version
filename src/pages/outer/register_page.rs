@@ -6,6 +6,7 @@ use yew::{
         ConsoleService,
     },
 };
+use crate::configs::server::API_URL;
 
 enum Data {
     Name,
@@ -45,6 +46,29 @@ impl Component for RegisterPage {
                 ConsoleService::info(&format!("username is {}", self.name.clone()));
                 ConsoleService::info(&format!("email is {}", self.email.clone()));
                 ConsoleService::info(&format!("password is {}", self.password.clone()));
+                // struct Account {
+
+                // }
+                let request = Request::post(format!("{}/register", API_URL))
+                    .header("Content-Type", "application/x-www-form-urlencoded")
+                    .body()
+                    .expect("Could not build request.");
+                let callback = self.link.callback(
+                    |response: Response<Json<Result<Vec<AppList>, anyhow::Error>>>| {
+                        let Json(data) = response.into_body();
+                        // ConsoleService::info(&format!("{:?}", &data.unwrap()));
+                        // Msg::GetAppList(data.unwrap())
+                        match data {
+                            Ok(dataok) => {
+                                ConsoleService::info(&format!("{:?}", &dataok));
+                                Msg::GetAppList(dataok)
+                            } 
+                            Err(error) => {
+                                Msg::ResponseError(error.to_string(), StateError::AppList)
+                            }
+                        }
+                    },
+                );
                 true
             }
             Msg::Input(input, data) => {
