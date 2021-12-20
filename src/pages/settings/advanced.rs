@@ -32,20 +32,20 @@ pub enum StateError {
 }
 
 pub enum Data {
-    AllowedLogoutUrls,
-    DefaultRedirectionUri,
-    SessionCookieMode,
-    IdleSessionLifetime,
-    SessionLifetime,
-    DeviceFlowCharset,
-    DeviceFlowMask,
+    // AllowedLogoutUrls,
+    // DefaultRedirectionUri,
+    // SessionCookieMode,
+    // IdleSessionLifetime,
+    // SessionLifetime,
+    // DeviceFlowCharset,
+    // DeviceFlowMask,
     // Global client id
     // Global client secret
-    FlagsChangePwdFlowV1,
-    FlagsEnableApisSection,
-    FlagsEnableClientConnection,
-    FlagsEnablePublicSignupUserExistsError,
-    FlagsEnableAdfsWaadEmailVerification,
+    // FlagsChangePwdFlowV1,
+    // FlagsEnableApisSection,
+    // FlagsEnableClientConnection,
+    // FlagsEnablePublicSignupUserExistsError,
+    // FlagsEnableAdfsWaadEmailVerification,
     FlagsRevokeRefreshTokenGrant,
     // Extensibility
     FlagsDisableClickjackProtectionHeaders,
@@ -78,9 +78,9 @@ pub enum Msg {
     GetSettingsDetails(TenantSettings),
     SetDefaultState,
     InputString(String, Data),
-    UpdateLoginLogout,
-    UpdateLoginSession,
-    UpdateDeviceFlow,
+    // UpdateLoginLogout,
+    // UpdateLoginSession,
+    // UpdateDeviceFlow,
     // // UpdateGlobalClientInfo,
     UpdateSettings,
     // UpdateExtensibility,
@@ -125,8 +125,8 @@ impl Component for SettingsAdvanced {
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
             Msg::RequestSettingsDetails => {
-                let request = Request::get(format!("{}/tenant/v2/settings", API_URL))
-                    .header("access_token", "tokennotfromreducer")
+                let request = Request::get("http://127.0.0.1:8080/api/v1/1/tenants/settings")
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
                     .body(Nothing)
                     .expect("Could not build request.");
                 let callback = 
@@ -173,55 +173,55 @@ impl Component for SettingsAdvanced {
             }
             Msg::InputString(value, data) => {
                 match data {
-                    Data::AllowedLogoutUrls => {
-                        self.tenant_settings.allowed_logout_urls = vec![value];
-                    }
-                    Data::DefaultRedirectionUri => {
-                        self.tenant_settings.default_redirection_uri = value;
-                    }
-                    Data::SessionCookieMode => {
-                        self.tenant_settings.session_cookie.mode = value;
-                    }
-                    Data::IdleSessionLifetime => {
-                        if value.is_empty() {
-                            self.tenant_settings.idle_session_lifetime = 0;
-                        } else {
-                            self.tenant_settings.idle_session_lifetime = value.parse::<u64>().unwrap();
-                        }
-                    }
-                    Data::SessionLifetime => {
-                        if value.is_empty() {
-                            self.tenant_settings.session_lifetime = 0;
-                        } else {
-                            self.tenant_settings.session_lifetime = value.parse::<u64>().unwrap();
-                        }
-                    }
-                    Data::DeviceFlowCharset => {
-                        self.tenant_settings.device_flow.charset = value;
-                    }
-                    Data::DeviceFlowMask => {
-                        self.tenant_settings.device_flow.mask = value;
-                    }
-                    Data::FlagsChangePwdFlowV1 => {
-                        self.tenant_settings.flags.change_pwd_flow_v1 = !self.tenant_settings.flags.change_pwd_flow_v1;
-                        self.link.send_message(Msg::UpdateSettings);
-                    }
-                    Data::FlagsEnableApisSection => {
-                        self.tenant_settings.flags.enable_apis_section = !self.tenant_settings.flags.enable_apis_section;
-                        self.link.send_message(Msg::UpdateSettings);
-                    }
-                    Data::FlagsEnableClientConnection => {
-                        self.tenant_settings.flags.enable_client_connections = !self.tenant_settings.flags.enable_client_connections;
-                        self.link.send_message(Msg::UpdateSettings);
-                    }
-                    Data::FlagsEnablePublicSignupUserExistsError => {
-                        self.tenant_settings.flags.enable_public_signup_user_exists_error = !self.tenant_settings.flags.enable_public_signup_user_exists_error;
-                        self.link.send_message(Msg::UpdateSettings);
-                    }
-                    Data::FlagsEnableAdfsWaadEmailVerification => {
-                        self.tenant_settings.flags.enable_adfs_waad_email_verification = !self.tenant_settings.flags.enable_adfs_waad_email_verification;
-                        self.link.send_message(Msg::UpdateSettings);
-                    }
+                    // Data::AllowedLogoutUrls => {
+                    //     self.tenant_settings.allowed_logout_urls = vec![value];
+                    // }
+                    // Data::DefaultRedirectionUri => {
+                    //     self.tenant_settings.default_redirection_uri = value;
+                    // }
+                    // Data::SessionCookieMode => {
+                    //     self.tenant_settings.session_cookie.mode = value;
+                    // }
+                    // Data::IdleSessionLifetime => {
+                    //     if value.is_empty() {
+                    //         self.tenant_settings.idle_session_lifetime = 0;
+                    //     } else {
+                    //         self.tenant_settings.idle_session_lifetime = value.parse::<u64>().unwrap();
+                    //     }
+                    // }
+                    // Data::SessionLifetime => {
+                    //     if value.is_empty() {
+                    //         self.tenant_settings.session_lifetime = 0;
+                    //     } else {
+                    //         self.tenant_settings.session_lifetime = value.parse::<u64>().unwrap();
+                    //     }
+                    // }
+                    // Data::DeviceFlowCharset => {
+                    //     self.tenant_settings.device_flow.charset = value;
+                    // }
+                    // Data::DeviceFlowMask => {
+                    //     self.tenant_settings.device_flow.mask = value;
+                    // }
+                    // Data::FlagsChangePwdFlowV1 => {
+                    //     self.tenant_settings.flags.change_pwd_flow_v1 = !self.tenant_settings.flags.change_pwd_flow_v1;
+                    //     self.link.send_message(Msg::UpdateSettings);
+                    // }
+                    // Data::FlagsEnableApisSection => {
+                    //     self.tenant_settings.flags.enable_apis_section = !self.tenant_settings.flags.enable_apis_section;
+                    //     self.link.send_message(Msg::UpdateSettings);
+                    // }
+                    // Data::FlagsEnableClientConnection => {
+                    //     self.tenant_settings.flags.enable_client_connections = !self.tenant_settings.flags.enable_client_connections;
+                    //     self.link.send_message(Msg::UpdateSettings);
+                    // }
+                    // Data::FlagsEnablePublicSignupUserExistsError => {
+                    //     self.tenant_settings.flags.enable_public_signup_user_exists_error = !self.tenant_settings.flags.enable_public_signup_user_exists_error;
+                    //     self.link.send_message(Msg::UpdateSettings);
+                    // }
+                    // Data::FlagsEnableAdfsWaadEmailVerification => {
+                    //     self.tenant_settings.flags.enable_adfs_waad_email_verification = !self.tenant_settings.flags.enable_adfs_waad_email_verification;
+                    //     self.link.send_message(Msg::UpdateSettings);
+                    // }
                     Data::FlagsRevokeRefreshTokenGrant => {
                         self.tenant_settings.flags.revoke_refresh_token_grant = !self.tenant_settings.flags.revoke_refresh_token_grant;
                         self.link.send_message(Msg::UpdateSettings);
@@ -233,115 +233,123 @@ impl Component for SettingsAdvanced {
                 }
                 true
             }
-            Msg::UpdateLoginLogout => {
-                // ConsoleService::info(&format!("{:?}", self.tenant_settings));
-                #[derive(Serialize, Debug, Clone)]
-                pub struct DataLoginLogout {
-                    allowed_logout_urls: Vec<String>,
-                    default_redirection_uri: String,
-                }
-                let data_login_logout = DataLoginLogout {
-                    allowed_logout_urls: self.tenant_settings.allowed_logout_urls.clone(),
-                    default_redirection_uri: self.tenant_settings.default_redirection_uri.clone(),
-                };
-                // ConsoleService::info(&format!("data settings = {:?}", data_settings));
-                let request = Request::patch(format!("{}/tenant/v2/settings", API_URL))
-                    .header("Content-Type", "application/json")
-                    .header("access_token", "tokennotfromreducer")
-                    .body(Json(&data_login_logout))
-                    .expect("Could not build request.");
-                let callback = self.link.batch_callback(|response: Response<Json<Result<TenantSettings, anyhow::Error>>>| {
-                    let Json(data) = response.into_body();
-                    match data {
-                        Ok(dataok) => {
-                            ConsoleService::info(&format!("{:?}", dataok));
-                            vec![Msg::GetSettingsDetails(dataok), Msg::SetDefaultState]
-                        }
-                        Err(error) => {
-                            // ConsoleService::info(&error.to_string());
-                            vec![Msg::ResponseError(error.to_string(), StateError::UpdateLoginLogout)]
-                        }
-                    }
-                });
-                let task = FetchService::fetch(request, callback).expect("failed to start request");
-                self.loading_update_login_logout = true;
-                self.fetch_task = Some(task);
-                true
-            }
-            Msg::UpdateLoginSession => {
-                // ConsoleService::info(&format!("{:?}", self.tenant_settings));
-                #[derive(Serialize, Debug, Clone)]
-                pub struct SessionCookie {
-                    pub mode: String
-                }
-                #[derive(Serialize, Debug, Clone)]
-                pub struct DataLoginSession {
-                    session_cookie: SessionCookie
-                }
-                let data_login_session = DataLoginSession {
-                    session_cookie: SessionCookie {
-                        mode: self.tenant_settings.session_cookie.mode.clone(),
-                    },
-                };
-                // let data_login_logout = DataLoginLogout {
-                //     allowed_logout_urls: self.tenant_settings.allowed_logout_urls.clone(),
-                //     default_redirection_uri: self.tenant_settings.default_redirection_uri.clone(),
-                // };
-                // ConsoleService::info(&format!("data settings = {:?}", data_settings));
-                let request = Request::patch(format!("{}/tenant/v2/settings", API_URL))
-                    .header("Content-Type", "application/json")
-                    .header("access_token", "tokennotfromreducer")
-                    .body(Json(&data_login_session))
-                    .expect("Could not build request.");
-                let callback = self.link.batch_callback(|response: Response<Json<Result<TenantSettings, anyhow::Error>>>| {
-                    let Json(data) = response.into_body();
-                    match data {
-                        Ok(dataok) => {
-                            // ConsoleService::info(&format!("{:?}", dataok));
-                            vec![Msg::GetSettingsDetails(dataok), Msg::SetDefaultState]
-                        }
-                        Err(error) => {
-                            // ConsoleService::info(&error.to_string());
-                            vec![Msg::ResponseError(error.to_string(), StateError::UpdateLoginSession)]
-                        }
-                    }
-                });
-                let task = FetchService::fetch(request, callback).expect("failed to start request");
-                self.loading_update_login_session = true;
-                self.fetch_task = Some(task);
-                true
-            }
-            Msg::UpdateDeviceFlow => {
-                let data_device_flow = self.tenant_settings.device_flow.clone();
-                let request = Request::patch(format!("{}/tenant/v2/settings", API_URL))
-                    .header("Content-Type", "application/json")
-                    .header("access_token", "tokennotfromreducer")
-                    .body(Json(&data_device_flow))
-                    .expect("Could not build request.");
-                let callback = self.link.batch_callback(|response: Response<Json<Result<TenantSettings, anyhow::Error>>>| {
-                    let Json(data) = response.into_body();
-                    match data {
-                        Ok(dataok) => {
-                            // ConsoleService::info(&format!("{:?}", dataok));
-                            vec![Msg::GetSettingsDetails(dataok), Msg::SetDefaultState]
-                        }
-                        Err(error) => {
-                            // ConsoleService::info(&error.to_string());
-                            vec![Msg::ResponseError(error.to_string(), StateError::UpdateDeviceFlow)]
-                        }
-                    }
-                });
-                let task = FetchService::fetch(request, callback).expect("failed to start request");
-                self.loading_update_device_flow = true;
-                self.fetch_task = Some(task);
-                true
-            }
+            // Msg::UpdateLoginLogout => {
+            //     ConsoleService::info(&format!("{:?}", self.tenant_settings));
+            //     #[derive(Serialize, Debug, Clone)]
+            //     pub struct DataLoginLogout {
+            //         allowed_logout_urls: Vec<String>,
+            //         default_redirection_uri: String,
+            //     }
+            //     let data_login_logout = DataLoginLogout {
+            //         allowed_logout_urls: self.tenant_settings.allowed_logout_urls.clone(),
+            //         default_redirection_uri: self.tenant_settings.default_redirection_uri.clone(),
+            //     };
+            //     ConsoleService::info(&format!("data settings = {:?}", data_settings));
+            //     let request = Request::patch(format!("{}/tenant/v2/settings", API_URL))
+            //         .header("Content-Type", "application/json")
+            //         .header("access_token", "tokennotfromreducer")
+            //         .body(Json(
+            //             &data_login_logout
+            //         ))
+            //         .expect("Could not build request.");
+            //     let callback = self.link.batch_callback(|response: Response<Json<Result<TenantSettings, anyhow::Error>>>| {
+            //         let Json(data) = response.into_body();
+            //         match data {
+            //             Ok(dataok) => {
+            //                 ConsoleService::info(&format!("{:?}", dataok));
+            //                 vec![Msg::GetSettingsDetails(dataok), Msg::SetDefaultState]
+            //             }
+            //             Err(error) => {
+            //                 ConsoleService::info(&error.to_string());
+            //                 vec![Msg::ResponseError(error.to_string(), StateError::UpdateLoginLogout)]
+            //             }
+            //         }
+            //     });
+            //     let task = FetchService::fetch(request, callback).expect("failed to start request");
+            //     self.loading_update_login_logout = true;
+            //     self.fetch_task = Some(task);
+            //     true
+            // }
+            // Msg::UpdateLoginSession => {
+            //     ConsoleService::info(&format!("{:?}", self.tenant_settings));
+            //     #[derive(Serialize, Debug, Clone)]
+            //     pub struct SessionCookie {
+            //         pub mode: String
+            //     }
+            //     #[derive(Serialize, Debug, Clone)]
+            //     pub struct DataLoginSession {
+            //         session_cookie: SessionCookie
+            //     }
+            //     let data_login_session = DataLoginSession {
+            //         session_cookie: SessionCookie {
+            //             mode: self.tenant_settings.session_cookie.mode.clone(),
+            //         },
+            //     };
+            //     let data_login_logout = DataLoginLogout {
+            //         allowed_logout_urls: self.tenant_settings.allowed_logout_urls.clone(),
+            //         default_redirection_uri: self.tenant_settings.default_redirection_uri.clone(),
+            //     };
+            //     ConsoleService::info(&format!("data settings = {:?}", data_settings));
+            //     let request = Request::patch(format!("{}/tenant/v2/settings", API_URL))
+            //         .header("Content-Type", "application/json")
+            //         .header("access_token", "tokennotfromreducer")
+            //         .body(Json(
+            //             &data_login_session
+            //         ))
+            //         .expect("Could not build request.");
+            //     let callback = self.link.batch_callback(|response: Response<Json<Result<TenantSettings, anyhow::Error>>>| {
+            //         let Json(data) = response.into_body();
+            //         match data {
+            //             Ok(dataok) => {
+            //                 ConsoleService::info(&format!("{:?}", dataok));
+            //                 vec![Msg::GetSettingsDetails(dataok), Msg::SetDefaultState]
+            //             }
+            //             Err(error) => {
+            //                 ConsoleService::info(&error.to_string());
+            //                 vec![Msg::ResponseError(error.to_string(), StateError::UpdateLoginSession)]
+            //             }
+            //         }
+            //     });
+            //     let task = FetchService::fetch(request, callback).expect("failed to start request");
+            //     self.loading_update_login_session = true;
+            //     self.fetch_task = Some(task);
+            //     true
+            // }
+            // Msg::UpdateDeviceFlow => {
+                // let data_device_flow = self.tenant_settings.device_flow.clone();
+            //     let request = Request::patch(format!("{}/tenant/v2/settings", API_URL))
+            //         .header("Content-Type", "application/json")
+            //         .header("access_token", "tokennotfromreducer")
+            //         .body(
+            //             Json(
+            //                 &data_device_flow
+            //         ))
+            //         .expect("Could not build request.");
+            //     let callback = self.link.batch_callback(|response: Response<Json<Result<TenantSettings, anyhow::Error>>>| {
+            //         let Json(data) = response.into_body();
+            //         match data {
+            //             Ok(dataok) => {
+            //                 ConsoleService::info(&format!("{:?}", dataok));
+            //                 vec![Msg::GetSettingsDetails(dataok), Msg::SetDefaultState]
+            //             }
+            //             Err(error) => {
+            //                 ConsoleService::info(&error.to_string());
+            //                 vec![Msg::ResponseError(error.to_string(), StateError::UpdateDeviceFlow)]
+            //             }
+            //         }
+            //     });
+            //     let task = FetchService::fetch(request, callback).expect("failed to start request");
+            //     self.loading_update_device_flow = true;
+            //     self.fetch_task = Some(task);
+            //     true
+            // }
             Msg::UpdateSettings => {
                 
                 let data_settings = self.tenant_settings.flags.clone();
-                let request = Request::patch(format!("{}/tenant/v2/settings", API_URL))
+                ConsoleService::info(&format!("{:?}", data_settings.clone()));
+                let request = Request::patch("http://127.0.0.1:8080/api/v1/1/tenants/settings")
                     .header("Content-Type", "application/json")
-                    .header("access_token", "tokennotfromreducer")
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
                     .body(Json(&data_settings))
                     .expect("Could not build request.");
                 let callback = self.link.batch_callback(|response: Response<Json<Result<TenantSettings, anyhow::Error>>>| {
@@ -460,25 +468,25 @@ impl Component for SettingsAdvanced {
 impl SettingsAdvanced {
     fn view_content (&self) -> Html {
         let TenantSettings {
-            change_password: _,
-            guardian_mfa_page: _,
-            default_audience: _,
-            default_directory: _,
-            error_page: _,
-            device_flow,
+            // change_password: _,
+            // guardian_mfa_page: _,
+            // default_audience: _,
+            // default_directory: _,
+            // error_page: _,
+            // device_flow,
             flags,
-            friendly_name: _,
-            picture_url: _,
-            support_email: _,
-            support_url: _,
-            allowed_logout_urls,
-            session_lifetime,
-            idle_session_lifetime,
+            // friendly_name: _,
+            // picture_url: _,
+            // support_email: _,
+            // support_url: _,
+            // allowed_logout_urls,
+            // session_lifetime,
+            // idle_session_lifetime,
             sandbox_version: _,
             sandbox_versions_available: _,
-            default_redirection_uri,
+            // default_redirection_uri,
             enabled_locales: _,
-            session_cookie,
+            // session_cookie,
         } = self.tenant_settings.clone();
         html! {
             <div>
@@ -510,8 +518,8 @@ impl SettingsAdvanced {
                                         class="form-control"
                                         rows="4"
                                         placeholder="https://mycompany.org/logoutCallback"
-                                        value={allowed_logout_urls[0].clone()}
-                                        oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::AllowedLogoutUrls))
+                                        // value={allowed_logout_urls[0].clone()}
+                                        // oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::AllowedLogoutUrls))
                                         disabled={ self.loading_update_login_logout }
                                     ></textarea>
                                 </div>
@@ -534,8 +542,8 @@ impl SettingsAdvanced {
                                         class="form-control bg-input-grey"
                                         aria-label="Dollar amount (with dot and two decimal places)"
                                         placeholder="https://mycompany.org/login"
-                                        value={ default_redirection_uri.clone() }
-                                        oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::DefaultRedirectionUri))
+                                        // value={ default_redirection_uri.clone() }
+                                        // oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::DefaultRedirectionUri))
                                         disabled={ self.loading_update_login_logout }    
                                     />
                                 </div>
@@ -552,7 +560,7 @@ impl SettingsAdvanced {
                                 <button
                                     type="button"
                                     class=format!("btn {} btn-primary position-relative", if self.loading_update_login_logout {"loading"} else {""} )
-                                    onclick=self.link.callback(|_| Msg::UpdateLoginLogout)
+                                    // onclick=self.link.callback(|_| Msg::UpdateLoginLogout)
                                     disabled={ self.loading_update_login_logout }
                                 >
                                     <div class="telkom-label">
@@ -615,8 +623,8 @@ impl SettingsAdvanced {
                                         class="col-md-6 col-sm-12 mb-2"
                                     >
                                         <div
-                                            class=format!("card {}", if session_cookie.mode == String::from("persistent") {"border border-primary border-2"} else {""} )
-                                            onclick=self.link.callback(|_| Msg::InputString(String::from("persistent"), Data::SessionCookieMode))
+                                            // class=format!("card {}", if session_cookie.mode == String::from("persistent") {"border border-primary border-2"} else {""} )
+                                            // onclick=self.link.callback(|_| Msg::InputString(String::from("persistent"), Data::SessionCookieMode))
                                             style=format!("cursor: pointer; {}", if self.loading_update_login_session {"pointer-events: none;"} else {""} )
                                         >
                                             <div class="card-body">
@@ -629,8 +637,8 @@ impl SettingsAdvanced {
                                         class="col-md-6 col-sm-12 mb-2"
                                     >
                                     <div
-                                        class=format!("card {}", if session_cookie.mode == String::from("non-persistent") {"border border-primary border-2"} else {""} )
-                                        onclick=self.link.callback(|_| Msg::InputString(String::from("non-persistent"), Data::SessionCookieMode))
+                                        // class=format!("card {}", if session_cookie.mode == String::from("non-persistent") {"border border-primary border-2"} else {""} )
+                                        // onclick=self.link.callback(|_| Msg::InputString(String::from("non-persistent"), Data::SessionCookieMode))
                                         style=format!("cursor: pointer; {}", if self.loading_update_login_session {"pointer-events: none;"} else {""} )
                                     >
                                     <div class="card-body">
@@ -658,8 +666,8 @@ impl SettingsAdvanced {
                                         type="number"
                                         class="form-control"
                                         aria-label="Timeout"
-                                        value={idle_session_lifetime.to_string().clone()}
-                                        oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::IdleSessionLifetime))
+                                        // value={idle_session_lifetime.to_string().clone()}
+                                        // oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::IdleSessionLifetime))
                                         disabled={ self.loading_update_login_session }
                                     />
                                     <span
@@ -685,8 +693,8 @@ impl SettingsAdvanced {
                                     <input
                                         type="number"
                                         class="form-control"
-                                        value={session_lifetime.to_string().clone()}
-                                        oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::SessionLifetime))
+                                        // value={session_lifetime.to_string().clone()}
+                                        // oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::SessionLifetime))
                                         disabled={ self.loading_update_login_session }
                                     />
                                     <span class="input-group-text" id="basic-addon2">{"minutes"}</span>
@@ -704,7 +712,7 @@ impl SettingsAdvanced {
                                 <button
                                     type="button"
                                     class=format!("btn {} btn-primary position-relative", if self.loading_update_login_session {"loading"} else {""} )
-                                    onclick=self.link.callback(|_| Msg::UpdateLoginSession)
+                                    // onclick=self.link.callback(|_| Msg::UpdateLoginSession)
                                     disabled={ if self.loading_update_login_session {true} else {false} }
                                 >
                                     <div class="telkom-label">
@@ -761,25 +769,25 @@ impl SettingsAdvanced {
                                 <select
                                     class="form-select mb-2"
                                     aria-label="Default select example"
-                                    onchange=self.link.callback(|e| {
-                                        if let ChangeData::Select(select) = e {
-                                            let value = select.value();
-                                            Msg::InputString(value, Data::DeviceFlowCharset)
-                                        } else {
-                                            Msg::InputString(String::from("no value"), Data::DeviceFlowCharset)
-                                        }
-                                    })
+                                    // onchange=self.link.callback(|e| {
+                                    //     if let ChangeData::Select(select) = e {
+                                    //         let value = select.value();
+                                    //         Msg::InputString(value, Data::DeviceFlowCharset)
+                                    //     } else {
+                                    //         Msg::InputString(String::from("no value"), Data::DeviceFlowCharset)
+                                    //     }
+                                    // })
                                     disabled={ self.loading_update_device_flow }
                                 >
                                     <option
                                         value="base20"
-                                        selected={ if device_flow.charset == String::from("base20") {true} else {false} }
+                                        // selected={ if device_flow.charset == String::from("base20") {true} else {false} }
                                     >
                                         {"Base-20 (BCDFGHJKLMNPQRSTVWXZ)"}
                                     </option>
                                     <option
                                         value="digits"
-                                        selected={ if device_flow.charset == String::from("digits") {true} else {false} }
+                                        // selected={ if device_flow.charset == String::from("digits") {true} else {false} }
                                     >
                                         {"Digits (0123456789)"}
                                     </option>
@@ -803,8 +811,8 @@ impl SettingsAdvanced {
                                         class="form-control"
                                         aria-label="Recipient's username"
                                         aria-describedby="basic-addon2"
-                                        value={device_flow.mask.clone()}
-                                        oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::DeviceFlowMask))
+                                        // value={device_flow.mask.clone()}
+                                        // oninput=self.link.callback(|data: InputData| Msg::InputString(data.value, Data::DeviceFlowMask))
                                         disabled={ self.loading_update_device_flow }
                                     />
                                     <span class="input-group-text" id="basic-addon2">{"e.g BCDF-GHJK"}</span>
@@ -822,7 +830,7 @@ impl SettingsAdvanced {
                                 <button
                                     type="button"
                                     class=format!("btn {} btn-primary position-relative", if self.loading_update_device_flow {"loading"} else {""} )
-                                    onclick=self.link.callback(|_| Msg::UpdateDeviceFlow)
+                                    // onclick=self.link.callback(|_| Msg::UpdateDeviceFlow)
                                     disabled={ self.loading_update_device_flow }
                                 >
                                     <div class="telkom-label">
@@ -949,8 +957,8 @@ impl SettingsAdvanced {
                                         class="form-check-input"
                                         type="checkbox"
                                         id="flexSwitchCheckChecked"
-                                        checked={flags.change_pwd_flow_v1.clone()}
-                                        onclick=self.link.callback(|_| Msg::InputString(String::from(""), Data::FlagsChangePwdFlowV1))
+                                        // checked={flags.change_pwd_flow_v1.clone()}
+                                        // onclick=self.link.callback(|_| Msg::InputString(String::from(""), Data::FlagsChangePwdFlowV1))
                                     />
                                 </div>
                                 <p
@@ -971,8 +979,8 @@ impl SettingsAdvanced {
                                         class="form-check-input"
                                         type="checkbox"
                                         id="flexSwitchCheckChecked"
-                                        checked={ flags.enable_apis_section.clone() }
-                                        onclick=self.link.callback(|_| Msg::InputString(String::from(""), Data::FlagsEnableApisSection))
+                                        // checked={ flags.enable_apis_section.clone() }
+                                        // onclick=self.link.callback(|_| Msg::InputString(String::from(""), Data::FlagsEnableApisSection))
                                         disabled={ self.loading_update_settings }
                                     />
                                 </div>
@@ -994,8 +1002,8 @@ impl SettingsAdvanced {
                                         class="form-check-input"
                                         type="checkbox"
                                         id="flexSwitchCheckChecked"
-                                        checked={ flags.enable_client_connections.clone() }
-                                        onclick=self.link.callback(|_| Msg::InputString(String::from(""), Data::FlagsEnableClientConnection))
+                                        // checked={ flags.enable_client_connections.clone() }
+                                        // onclick=self.link.callback(|_| Msg::InputString(String::from(""), Data::FlagsEnableClientConnection))
                                         disabled={ self.loading_update_settings }
                                     />
                                 </div>
@@ -1017,8 +1025,8 @@ impl SettingsAdvanced {
                                         class="form-check-input"
                                         type="checkbox"
                                         id="flexSwitchCheckChecked"
-                                        checked={ flags.enable_public_signup_user_exists_error.clone() }
-                                        onclick=self.link.callback(|_| Msg::InputString(String::from(""), Data::FlagsEnablePublicSignupUserExistsError))
+                                        // checked={ flags.enable_public_signup_user_exists_error.clone() }
+                                        // onclick=self.link.callback(|_| Msg::InputString(String::from(""), Data::FlagsEnablePublicSignupUserExistsError))
                                         disabled={ self.loading_update_settings }
                                     />
                                 </div>
@@ -1040,8 +1048,8 @@ impl SettingsAdvanced {
                                         class="form-check-input"
                                         type="checkbox"
                                         id="flexSwitchCheckChecked"
-                                        checked={ flags.enable_adfs_waad_email_verification.clone() }
-                                        onclick=self.link.callback(|_| Msg::InputString(String::from(""), Data::FlagsEnableAdfsWaadEmailVerification))
+                                        // checked={ flags.enable_adfs_waad_email_verification.clone() }
+                                        // onclick=self.link.callback(|_| Msg::InputString(String::from(""), Data::FlagsEnableAdfsWaadEmailVerification))
                                         disabled={ self.loading_update_settings }
                                     />
                                 </div>
@@ -1142,7 +1150,7 @@ impl SettingsAdvanced {
                                 <button
                                     type="button"
                                     class=format!("btn {} btn-primary position-relative", if self.loading_update_device_flow {"loading"} else {""} )
-                                    onclick=self.link.callback(|_| Msg::UpdateDeviceFlow)
+                                    // onclick=self.link.callback(|_| Msg::UpdateDeviceFlow)
                                     disabled={ self.loading_update_device_flow }
                                 >
                                     <div class="telkom-label">

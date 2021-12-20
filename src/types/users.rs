@@ -8,6 +8,7 @@ pub struct GetUsersByIdResponseUserMetadata {}
 
 #[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct UserTitle {
+    pub id: u32,
     pub user_id: String,
     pub email: String,
     pub email_verified: bool,
@@ -90,6 +91,7 @@ impl UserCreate {
 
 #[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct UserDetails {
+    pub id : u32,
     pub user_id: String,
     pub email: String,
     pub email_verified: bool,
@@ -122,6 +124,7 @@ pub struct ResponseUserDetails{
 impl UserDetails {
     pub fn new() -> UserDetails {
         UserDetails {
+            id: 0,
             user_id: String::from(""),
             email: String::from(""),
             email_verified: false,
@@ -237,7 +240,7 @@ pub struct GetLogsByUserLocationInfo {
 
 #[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct UserRole{
-    pub id: String,
+    pub id: u32,
     pub name: String,
     pub description: String,
 }

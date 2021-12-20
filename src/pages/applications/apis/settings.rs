@@ -18,7 +18,7 @@ use crate::components::loading2::Loading2;
 #[derive(Clone, Debug, Eq, PartialEq, Properties)]
 pub struct ApisSettingsProps {
     pub tenant_id: String,
-    pub api_id: String,
+    pub api_id: u32,
     // api_title: ApiTitle,
 }
 
@@ -35,12 +35,13 @@ pub struct ApisSettings {
     fetch_task: Option<FetchTask>,
     error: Option<String>,
     api_details: ApiDetails,
+    app_id: u32,
 }
 
 pub enum Msg {
     ChangeContent(Content),
     RequestApiDetails,
-    GetApiDetails(Result<ResponseApiDetails, anyhow::Error>),
+    GetApiDetails(Result<ApiDetails, anyhow::Error>),
 }
 
 impl Component for ApisSettings {
@@ -59,6 +60,7 @@ impl Component for ApisSettings {
             fetch_task: None,
             error: None,
             api_details,
+            app_id: props.api_id
         }
     }
 
@@ -79,13 +81,13 @@ impl Component for ApisSettings {
                 true
             }
             Msg::RequestApiDetails => {
-                let request = Request::get(format!("{}/api/v2/dev-ofzd5p1b/resource-servers/60daccd6dff9a6003e8ef6ef", API_URL))
+                let request = Request::get(format!("http://127.0.0.1:8080/api/v1/1/resource-server/{}", self.app_id))
                     // .header("Content-Type", "application/json")
-                    .header("access_token", "tokenidtelkomdomain")
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
                     .body(Nothing)
                     .expect("Could not build request.");
                 let callback = 
-                    self.link.callback(|response: Response<Json<Result<ResponseApiDetails, anyhow::Error>>>| {
+                    self.link.callback(|response: Response<Json<Result<ApiDetails, anyhow::Error>>>| {
                         let Json(data) = response.into_body();
                         Msg::GetApiDetails(data)
                     });
@@ -97,7 +99,7 @@ impl Component for ApisSettings {
                 match response {
                     Ok(data) => {
                         ConsoleService::info(&format!("{:?}", data));
-                        self.api_details = data.data;
+                        self.api_details = data;
                     }
                     Err(error) => {
                         ConsoleService::info(&error.to_string());
@@ -181,12 +183,13 @@ impl ApisSettings {
             signing_alg: _,
             signing_secret: _,
             allow_offline_access: _,
-            skip_consent_for_verifiable_first_party_clients: _,
+            skip_consent_for_variable_first_party_clients: _,
             token_lifetime: _,
             token_lifetime_for_web: _,
             enforce_policies: _,
             token_dialect: _,
             client: _,
+
         } = self.api_details.clone();
 
         html! {

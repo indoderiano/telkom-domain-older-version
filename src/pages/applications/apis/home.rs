@@ -7,7 +7,7 @@ use yew_router::components::RouterAnchor;
 use yew::services::ConsoleService;
 use crate::app::AppRoute;
 use crate::types::{
-    api::{ ApiTitle, ResponseApiList, ApiCreate },
+    api::{ ApiTitle, ApiCreate },
     ResponseMessage,
 };
 use crate::components::{
@@ -79,12 +79,10 @@ impl Component for ApisHome {
     }
 
     fn rendered(&mut self, first_render: bool) {
-
         if first_render {
             ConsoleService::info("This is first render");
             self.link.send_message(Msg::RequestApiList);
         }
-
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
@@ -101,19 +99,22 @@ impl Component for ApisHome {
                 true
             }
             Msg::RequestApiList => {
-                let request = Request::get(format!("{}/api/v2/resource-servers/tenantid", API_URL))
+                // let request = Request::get(format!("{}/api/v2/resource-servers/tenantid", API_URL))
+                let request = Request::get("http://127.0.0.1:8080/api/v1/1/resource-server")
                     // .header("Content-Type", "application/json")
-                    .header("access_token", "tokenidtelkomdomain")
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
                     .body(Nothing)
                     .expect("Could not build request.");
                 let callback = 
-                    self.link.callback(|response: Response<Json<Result<ResponseApiList, anyhow::Error>>>| {
+                    self.link.callback(|response: Response<Json<Result<Vec<ApiTitle>, anyhow::Error>>>| {
                         let Json(data) = response.into_body();
                         match data {
                             Ok(dataok) => {
-                                Msg::GetApiList(dataok.data)
+                                ConsoleService::info(&format!("{:?}", &dataok));
+                                Msg::GetApiList(dataok)
                             }
                             Err(error) => {
+                                ConsoleService::info(&format!("{:?}", &error));
                                 Msg::ResponseError(error.to_string(), StateError::ApiList)
                             }
                         }
@@ -150,17 +151,17 @@ impl Component for ApisHome {
             }
             Msg::Create => {
                 ConsoleService::info(&format!("{:?}", self.api_create));
-                let request = Request::post(format!("{}/api/v2/resource-servers/tenantid", API_URL))
+                let request = Request::post("http://127.0.0.1:8080/api/v1/1/resource-server")
                     .header("Content-Type", "application/json")
-                    .header("access_token", "tokenidtelkomdomain")
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
                     .body(Json(&self.api_create))
                     .expect("Could not build request.");
                 let callback = 
-                    self.link.batch_callback(|response: Response<Json<Result<ResponseMessage, anyhow::Error>>>| {
+                    self.link.batch_callback(|response: Response<Json<Result<ApiTitle, anyhow::Error>>>| {
                         let Json(data) = response.into_body();
                         match data {
-                            Ok(response) => {
-                                ConsoleService::info(&format!("{:?}", response));
+                            Ok(dataok) => {
+                                ConsoleService::info(&format!("ini response berhasil{:?}", dataok));
                                 vec![Msg::DefaultState, Msg::RequestApiList]
                             }
                             Err(error) => {

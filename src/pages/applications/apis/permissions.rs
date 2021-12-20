@@ -111,7 +111,7 @@ impl Permissions {
                         <div
                             class="flex-fill"
                         >
-                            { scope.permission.clone() }
+                            { scope.value.clone() }
                         </div>
                         <div
                             class="flex-fill"

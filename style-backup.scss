@@ -146,17 +146,7 @@
 
 @media (min-width: 1280px) {
   .sidebar {
-    width: 68px;
-  }
-  
-  .text-color-primary {
-    color: #1e212a !important;
-  }
-  .text-color-secondary {
-    color: #635dff !important;
-  }
-  .text-color-disabled {
-    color: #65676e;
+    width: 265px;
   }
 }
 
@@ -167,23 +157,6 @@
   width: 35%;
 }
 
-  .modal.fade {
-    display: block;
-    visibility: hidden;
-    transition: visibility 0s linear .15s, opacity .15s linear;
-  }
-  .modal.fade.show {
-    visibility: visible;
-    transition: visibility 0s linear 0s, opacity .15s linear;
-  }
-  .modal-backdrop.fade {
-    visibility: hidden;
-    transition: visibility 0s linear .15s, opacity .15s linear;
-  }
-  .modal-backdrop.fade.show {
-    visibility: visible;
-    transition: visibility 0s linear 0s, opacity .15s linear;
-  }
 
 
 

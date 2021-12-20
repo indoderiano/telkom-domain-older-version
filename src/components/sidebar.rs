@@ -97,7 +97,8 @@ impl Component for Sidebar {
                                           <div role="region" id="quantum-product-91331-accordion" aria-labelledby="quantum-product-91331-title">
                                               <ul id="menu_item1" class="submenu collapse jss105" data-bs-parent="#nav_accordion">
                                                   <li class="jss74">
-                                                      <Anchor route=AppRoute::ApplicationHome>
+                                                      <Anchor route=AppRoute::ApplicationHome
+                                                      { tenant_id: tenant_id.clone() } >
                                                           <a title="Applications" class="jss76 jss77" href="#"
                                                               ><span class="jss80 jss81"></span><span
                                                               class="jss79">{"Applications"}</span></a>

@@ -88,8 +88,8 @@ impl Component for ViewDetail {
                 true
             }
             Msg::RequestRoleDetails => {
-                let request = Request::get(format!("{}/roles/v2/{}", API_URL, self.role_id.clone()))
-                    .header("access_token", "tokenidtelkomdomain")
+                let request = Request::get(format!("http://127.0.0.1:8080/api/v1/1/roles/{}", self.role_id.clone()))
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
                     .body(Nothing)
                     .expect("Could not build request.");
                 let callback = 
