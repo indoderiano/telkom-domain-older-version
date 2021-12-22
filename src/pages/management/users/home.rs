@@ -3,13 +3,18 @@ use crate::types::{
     users::{ResponseUsersList, UserCreate, UserTitle},
     ResponseMessage,
 };
-use yew::services::ConsoleService;
 use yew::{
     format::{Json, Nothing},
     prelude::*,
-    services::fetch::{FetchService, FetchTask, Request, Response},
+    services::{
+        ConsoleService,
+        fetch::{FetchService, FetchTask, Request, Response},
+        storage::{ StorageService, Area }
+    },
 };
 use yew_router::components::RouterAnchor;
+use crate::types::LocalStorage;
+use crate::types::LOCALSTORAGE_KEY;
 
 use crate::components::loading2::Loading2;
 use crate::configs::server::API_URL;
@@ -32,6 +37,7 @@ pub enum DataUserCreate {
 
 pub struct UsersManagement {
     tenant_id: String,
+    access_token: String,
     fetch_task: Option<FetchTask>,
     learn_more: bool,
     link: ComponentLink<Self>,
@@ -63,10 +69,43 @@ impl Component for UsersManagement {
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
         // ConsoleService::info(&format!("User home props, tenant id= {}", props.tenant_id));
 
+        
+        // LOCALSTORAGE RESOURCE
+        // https://github.com/yewstack/yew/issues/1287
+        // GET LOCALSTORAGE
+        // NEED BETTER WAY TO PARSE JSON DATA
+        let storage = StorageService::new(Area::Local).expect("storage was disabled");
+        let localstorage_data = {
+            if let Json(Ok(data)) = storage.restore(LOCALSTORAGE_KEY) {
+                ConsoleService::info(&format!("{:?}", data));
+                data
+            } else {
+                ConsoleService::info("token does not exist");
+                LocalStorage {
+                    username: None,
+                    email: None,
+                    token: None,
+                }
+            }
+        };
+
+        ConsoleService::info(&format!("{:?}", localstorage_data));
+
+        // IF LOCALSTORAGE EXISTS
+        // UPDATE STATE
+        let mut access_token = String::from("");
+        if let Some(_) = localstorage_data.token {
+            access_token = localstorage_data.token.unwrap();
+        } else {
+            
+        }
+
+
         let user_create = UserCreate::new();
 
         UsersManagement {
             tenant_id: props.tenant_id,
+            access_token,
             fetch_task: None,
             learn_more: false,
             link,
@@ -101,8 +140,8 @@ impl Component for UsersManagement {
                 true
             }
             Msg::RequestUserList => {
-                let request = Request::get("http://127.0.0.1:8080/api/v1/1/users/")
-                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
+                let request = Request::get(format!("{}/api/v2/users", API_URL))
+                    .header("access_token", self.access_token.clone())
                     .body(Nothing)
                     .expect("Could not build request.");
 
@@ -132,7 +171,7 @@ impl Component for UsersManagement {
                 true
             }
             Msg::GetUserList(data) => {
-                // ConsoleService::info(&format!("{:?}", data));
+                ConsoleService::info(&format!("{:?}", data));
                 self.user_list = data;
                 self.loading_get_user = false;
                 self.fetch_task = None;
@@ -158,9 +197,9 @@ impl Component for UsersManagement {
             }
             Msg::Create => {
                 ConsoleService::info(&format!("{:?}", self.user_create));
-                let request = Request::post("http://127.0.0.1:8080/api/v1/1/users/")
+                let request = Request::post("{}/api/v2/users")
                     .header("Content-Type", "application/json")
-                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
+                    .header("access_token", self.access_token.clone())
                     .body(Json(&self.user_create))
                     .expect("Could not build request.");
                 let callback = self.link.batch_callback(
@@ -173,10 +212,7 @@ impl Component for UsersManagement {
                             }
                             Err(error) => {
                                 // ConsoleService::info(&error.to_string());
-                                vec![Msg::ResponseError(
-                                    error.to_string(),
-                                    StateError::UserCreate,
-                                )]
+                                vec![Msg::ResponseError(error.to_string(), StateError::UserCreate)]
                             }
                         }
                     },
@@ -481,9 +517,9 @@ impl Component for UsersManagement {
                                         {"Select"}
                                     </option>
                                     <option
-                                        selected={ if self.user_create.connection == String::from("User Database") {true} else {false} }
+                                        selected={ if self.user_create.connection == String::from("Username-Password-Authentication") {true} else {false} }
                                     >
-                                        {"User Database"}
+                                        {"Username Password Authentication"}
                                     </option>
                                 </select>
                             </div>
@@ -718,7 +754,7 @@ impl UsersManagement {
                                 "
                             >
                                 <Anchor
-                                    route=AppRoute::UserViewDetail {tenant_id: tenant_id.clone(), user_id: user.user_id.clone(), id : user.id.clone() }
+                                    route=AppRoute::UserViewDetail {tenant_id: tenant_id.clone(), user_id: user.user_id.clone(), id:1 }
                                     classes="text-decoration-none fw-bold mb-0"
                                 >
                                     { &user.name }
@@ -736,7 +772,7 @@ impl UsersManagement {
                                         </button>
                                         <ul class="dropdown-menu pt-1" aria-labelledby="dropdownMenuButton1">
                                             <li class="p-1 text-muted" style="font-size:13px;">
-                                                <Anchor route=AppRoute::UserViewDetail {tenant_id: tenant_id.clone(), user_id: user.user_id.clone(), id : user.id.clone() } classes="dropdown-item">
+                                                <Anchor route=AppRoute::UserViewDetail {tenant_id: tenant_id.clone(), user_id: user.user_id.clone(), id:1 } classes="dropdown-item">
                                                     {"View Details"}
                                                 </Anchor>
                                             </li>

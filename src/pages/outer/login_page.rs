@@ -77,19 +77,42 @@ impl Component for LoginPage {
         match msg {
             Login => {
                 // ConsoleService::info(&self.form_data.email);
-                let request = Request::post("http://localhost:3000/user")
-                    .header("Content-Type", "application/json")
-                    .body(Json(&self.form_data))
-                    // .body(Nothing)
-                    .expect("Could not build request.");
-                let callback =
-                    self.link
-                        .callback(|response: Response<Json<Result<ResponseLogin, anyhow::Error>>>| {
-                            let Json(data) = response.into_body();
-                            Msg::LoginResponse(data)
-                        });
-                let task = FetchService::fetch(request, callback).expect("failed to start request");
-                self.fetch_task = Some(task);
+                // let request = Request::post("http://localhost:3000/user")
+                //     .header("Content-Type", "application/json")
+                //     .body(Json(&self.form_data))
+                //     // .body(Nothing)
+                //     .expect("Could not build request.");
+                // let callback =
+                //     self.link
+                //         .callback(|response: Response<Json<Result<ResponseLogin, anyhow::Error>>>| {
+                //             let Json(data) = response.into_body();
+                //             Msg::LoginResponse(data)
+                //         });
+                // let task = FetchService::fetch(request, callback).expect("failed to start request");
+                // self.fetch_task = Some(task);
+
+
+
+
+                // UPDATE REDUCER
+                let newdata = ResponseLogin {
+                    email: "indo@mail.com".into(),
+                    username: "Indo Halim".into(),
+                    token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NDAxNTU2NDEsImlhdCI6MTY0MDA2OTI0MSwiZW1haWwiOiJpbmRvQG1haWwuY29tIiwidGVuYW50IjoidGVsa29tLWRvbWFpbiJ9._9YTRmuqX_m7YPBnx8X28lFEVMn2Iz2paNQKtF0FNXE".into(),
+                };
+                self.dispatch.send(DataAccountAction::Update(newdata));
+
+                // SET LOCALSTORAGE
+                let mut storage = StorageService::new(Area::Local).expect("storage was disabled");
+                let user_data = LocalStorage {
+                    email: Some("indo@mail.com".into()),
+                    username: Some("Indo Halim".into()),
+                    token: Some("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NDAxNTU2NDEsImlhdCI6MTY0MDA2OTI0MSwiZW1haWwiOiJpbmRvQG1haWwuY29tIiwidGVuYW50IjoidGVsa29tLWRvbWFpbiJ9._9YTRmuqX_m7YPBnx8X28lFEVMn2Iz2paNQKtF0FNXE".into()),
+                };
+                let localstorage_data = Json(&user_data);
+                storage.store(LOCALSTORAGE_KEY, localstorage_data);
+
+
                 true
             }
             LoginResponse(response) => {
@@ -102,8 +125,8 @@ impl Component for LoginPage {
 
                         // UPDATE REDUCER
                         let newdata = ResponseLogin {
-                            username: String::from(data.username.clone()),
                             email: String::from(data.email.clone()),
+                            username: String::from(data.username.clone()),
                             token: String::from(data.token.clone()),
                         };
                         self.dispatch.send(DataAccountAction::Update(newdata));
@@ -111,9 +134,9 @@ impl Component for LoginPage {
 
                         // SET LOCALSTORAGE
                         let mut storage = StorageService::new(Area::Local).expect("storage was disabled");
-                        let user_data = LocalStorage{
-                            username: Some(data.username),
+                        let user_data = LocalStorage {
                             email: Some(data.email),
+                            username: Some(data.username),
                             token: Some(data.token),
                         };
                         let localstorage_data = Json(&user_data);

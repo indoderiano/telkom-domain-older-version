@@ -1,10 +1,11 @@
 use yew::{
     prelude::*,
-    format::{ Json, Nothing },
+    format::{Json, Nothing},
     services::{
         ConsoleService,
-        fetch::{FetchService, FetchTask, Request, Response, StatusCode},
-    }
+        fetch::{FetchService, FetchTask, Request, Response},
+        storage::{ StorageService, Area }
+    },
 };
 use yew_router::service::RouteService;
 use serde::{
@@ -12,11 +13,11 @@ use serde::{
     Serialize,
 };
 
-
-
 use crate::types::{
     users::{ UserDetails, ResponseUserDetails},
     ResponseMessage,
+    LocalStorage,
+    LOCALSTORAGE_KEY,
 };
 
 use crate::configs::server::API_URL;
@@ -118,7 +119,7 @@ impl Component for UserTabDetails {
                 true
             }
             Msg::GetUserDetails(data) => {
-                ConsoleService::info(&format!("{:?}", data));
+                ConsoleService::info(&format!("user details = {:?}", data));
                 self.fetch_task = None;
                 self.user_details = data;
                 self.loading_update_user = false;
@@ -141,7 +142,7 @@ impl Component for UserTabDetails {
                 true
             }
             Msg::Delete => {
-                let request = Request::delete(format!("http://127.0.0.1:8080/api/v1/1/users/{}", self.user_details.id.clone()))
+                let request = Request::delete(format!("http://127.0.0.1:8080/api/v2/users/{}", self.user_details.user_id.clone()))
                     .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
                     .body(Nothing)
                     .expect("Could not build request.");
@@ -240,7 +241,6 @@ impl Component for UserTabDetails {
 
     fn view(&self) -> Html {
         let UserDetails {
-            id,
             user_id,
             email,
             email_verified: _,
