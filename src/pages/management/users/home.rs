@@ -197,7 +197,7 @@ impl Component for UsersManagement {
             }
             Msg::Create => {
                 ConsoleService::info(&format!("{:?}", self.user_create));
-                let request = Request::post("{}/api/v2/users")
+                let request = Request::post(format!("{}/api/v2/users", API_URL))
                     .header("Content-Type", "application/json")
                     .header("access_token", self.access_token.clone())
                     .body(Json(&self.user_create))
@@ -518,6 +518,7 @@ impl Component for UsersManagement {
                                     </option>
                                     <option
                                         selected={ if self.user_create.connection == String::from("Username-Password-Authentication") {true} else {false} }
+                                        value={"Username-Password-Authentication"}
                                     >
                                         {"Username Password Authentication"}
                                     </option>
@@ -528,11 +529,13 @@ impl Component for UsersManagement {
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{"Cancel"}</button>
+                        
+                        
                         <button
                             type="button"
                             class=format!("btn {} btn-primary position-relative", if self.loading_create_user {"loading"} else {""} )
                             onclick=self.link.callback(|_| Msg::Create)
-                            disabled={ self.loading_create_user }
+                            disabled={ if self.loading_create_user {true} else {false} }
                         >
                             <div class="telkom-label">
                                 {"Create"}
@@ -541,6 +544,19 @@ impl Component for UsersManagement {
                                 <div class="spinner-border spinner-border-sm" role="status"/>
                             </div>
                         </button>
+                        // <button
+                        //     type="button"
+                        //     class=format!("btn {} btn-primary position-relative", if self.loading_create_user {"loading"} else {""} )
+                        //     onclick=self.link.callback(|_| Msg::Create)
+                        //     disabled={ self.loading_create_user }
+                        // >
+                        //     <div class="telkom-label">
+                        //         {"Create"}
+                        //     </div>
+                        //     <div class="telkom-spinner telkom-center">
+                        //         <div class="spinner-border spinner-border-sm" role="status"/>
+                        //     </div>
+                        // </button>
                     </div>
                     {
                         if self.error_user_create.is_some() {
