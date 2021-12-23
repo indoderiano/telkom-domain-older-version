@@ -1,21 +1,33 @@
 use yew::{
-    format::{Json, Nothing},
     prelude::*,
-    services::fetch::{FetchService, FetchTask, Request, Response},
+    format::{Json, Nothing},
+    services::{
+        ConsoleService,
+        fetch::{FetchService, FetchTask, Request, Response},
+        storage::{ StorageService, Area }
+    },
 };
-
-use yew::services::ConsoleService;
 use crate::components::loading2::Loading2;
 use crate::configs::server::API_URL;
 use crate::types::{
     users::{UserPermissions},
     ResponseMessage,
+    LocalStorage,
+    LOCALSTORAGE_KEY,
 };
 use yew_router::service::RouteService;
+
+
+#[derive(Clone, Debug, Eq, PartialEq, Properties)]
+pub struct UserTabPermissionsProps {
+    pub user_id: String,
+}
 
 pub struct UserTabPermissions {
     link: ComponentLink<Self>,
     fetch_task: Option<FetchTask>,
+    user_id: String,
+    access_token: String,
     user_permissions: Vec<UserPermissions>,
     loading_get_user_permission: bool,
     error_user_permission_list: Option<String>,
@@ -43,12 +55,37 @@ pub enum Msg {
 
 impl Component for UserTabPermissions {
     type Message = Msg;
-    type Properties = ();
+    type Properties = UserTabPermissionsProps;
 
-    fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
+    fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
+        
+        // GET LOCALSTORAGE
+        let storage = StorageService::new(Area::Local).expect("storage was disabled");
+        let localstorage_data = {
+            if let Json(Ok(data)) = storage.restore(LOCALSTORAGE_KEY) {
+                data
+            } else {
+                LocalStorage {
+                    username: None,
+                    email: None,
+                    token: None,
+                }
+            }
+        };
+
+        // UPDATE STATE
+        let mut access_token = String::from("");
+        if let Some(_) = localstorage_data.token {
+            access_token = localstorage_data.token.unwrap();
+        } else {
+            
+        }
+        
         UserTabPermissions {
             link,
             fetch_task: None,
+            user_id: props.user_id,
+            access_token,
             user_permissions: Vec::new(),
             loading_get_user_permission: false,
             error_user_permission_list: None,
@@ -82,8 +119,8 @@ impl Component for UserTabPermissions {
                 self.show_modal_delete_permission = false;
                 self.index_permission_delete = None;
 
-                let request = Request::get(format!("{}/users/tenantid/users/:id/permissions", API_URL))
-                    .header("access_token", "telkomidtelkomdomain")
+                let request = Request::get(format!("{}/api/v2/users/{}/permissions", API_URL, self.user_id.clone()))
+                    .header("access_token", self.access_token.clone())
                     .body(Nothing)
                     .expect("Could not build request");
                 let callback = self.link.callback(

@@ -103,8 +103,8 @@ impl Component for LoginPage {
 
                         // UPDATE REDUCER
                         let newdata = ResponseLogin {
-                            username: String::from(data.username.clone()),
                             email: String::from(data.email.clone()),
+                            username: String::from(data.username.clone()),
                             token: String::from(data.token.clone()),
                         };
                         self.dispatch.send(DataAccountAction::Update(newdata));
@@ -112,9 +112,9 @@ impl Component for LoginPage {
 
                         // SET LOCALSTORAGE
                         let mut storage = StorageService::new(Area::Local).expect("storage was disabled");
-                        let user_data = LocalStorage{
-                            username: Some(data.username),
+                        let user_data = LocalStorage {
                             email: Some(data.email),
+                            username: Some(data.username),
                             token: Some(data.token),
                         };
                         let localstorage_data = Json(&user_data);
