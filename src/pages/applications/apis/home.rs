@@ -100,9 +100,9 @@ impl Component for ApisHome {
             }
             Msg::RequestApiList => {
                 // let request = Request::get(format!("{}/api/v2/resource-servers/tenantid", API_URL))
-                let request = Request::get("http://127.0.0.1:8080/api/v1/1/resource-server")
+                let request = Request::get("https://evening-cliffs-55855.herokuapp.com/api/v2/resource-server")
                     // .header("Content-Type", "application/json")
-                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NDAyNDE0OTAsImlhdCI6MTY0MDE1NTA5MCwiZW1haWwiOiJoZXlrYWxsQGdtYWlsLmNvbSIsInRlbmFudCI6ImRvbWFpbiJ9.KqGPg11kNYIMjzdxUch2wL3EKngqRln2Svdv-AbLER4")
                     .body(Nothing)
                     .expect("Could not build request.");
                 let callback = 
@@ -151,9 +151,9 @@ impl Component for ApisHome {
             }
             Msg::Create => {
                 ConsoleService::info(&format!("{:?}", self.api_create));
-                let request = Request::post("http://127.0.0.1:8080/api/v1/1/resource-server")
+                let request = Request::post("https://evening-cliffs-55855.herokuapp.com/api/v2/resource-server")
                     .header("Content-Type", "application/json")
-                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NDAyNDE0OTAsImlhdCI6MTY0MDE1NTA5MCwiZW1haWwiOiJoZXlrYWxsQGdtYWlsLmNvbSIsInRlbmFudCI6ImRvbWFpbiJ9.KqGPg11kNYIMjzdxUch2wL3EKngqRln2Svdv-AbLER4")
                     .body(Json(&self.api_create))
                     .expect("Could not build request.");
                 let callback = 
@@ -435,7 +435,7 @@ impl ApisHome {
                                     "
                                 >
                                     <Anchor
-                                        route=AppRoute::ApisSettings { tenant_id: tenant_id.clone(), api_id: api.id.clone() }
+                                        route=AppRoute::ApisSettings { tenant_id: tenant_id.clone(), resource_server_id: api.resource_server_id.clone() }
                                         classes="text-decoration-none fw-bold mb-0"
                                     >
                                             // {"Auth0 Management API"}
@@ -501,7 +501,7 @@ impl ApisHome {
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                 <li>
-                                    <Anchor route=AppRoute::ApisSettings { tenant_id: tenant_id.clone(), api_id: api.id.clone() } classes="dropdown-item fs-7">
+                                    <Anchor route=AppRoute::ApisSettings { tenant_id: tenant_id.clone(), resource_server_id: api.resource_server_id.clone() } classes="dropdown-item fs-7">
                                         {"Settings"}
                                     </Anchor>
                                 </li>

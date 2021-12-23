@@ -18,7 +18,7 @@ use crate::components::loading2::Loading2;
 #[derive(Clone, Debug, Eq, PartialEq, Properties)]
 pub struct ApisSettingsProps {
     pub tenant_id: String,
-    pub api_id: u32,
+    pub resource_server_id: String,
     // api_title: ApiTitle,
 }
 
@@ -35,7 +35,7 @@ pub struct ApisSettings {
     fetch_task: Option<FetchTask>,
     error: Option<String>,
     api_details: ApiDetails,
-    app_id: u32,
+    resource_server_id: String,
 }
 
 pub enum Msg {
@@ -50,7 +50,7 @@ impl Component for ApisSettings {
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
         ConsoleService::info(&format!("Api Settings props, tenant id = {}", props.tenant_id));
-        ConsoleService::info(&format!("Api Settings props, api id = {}", props.api_id));
+        ConsoleService::info(&format!("Api Settings props, api id = {}", props.resource_server_id));
 
         let api_details = ApiDetails::new();
 
@@ -60,7 +60,7 @@ impl Component for ApisSettings {
             fetch_task: None,
             error: None,
             api_details,
-            app_id: props.api_id
+            resource_server_id: props.resource_server_id
         }
     }
 
@@ -81,9 +81,9 @@ impl Component for ApisSettings {
                 true
             }
             Msg::RequestApiDetails => {
-                let request = Request::get(format!("http://127.0.0.1:8080/api/v1/1/resource-server/{}", self.app_id))
+                let request = Request::get(format!("https://evening-cliffs-55855.herokuapp.com/api/v2/resource-server/{}", self.resource_server_id))
                     // .header("Content-Type", "application/json")
-                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NDAyNDE0OTAsImlhdCI6MTY0MDE1NTA5MCwiZW1haWwiOiJoZXlrYWxsQGdtYWlsLmNvbSIsInRlbmFudCI6ImRvbWFpbiJ9.KqGPg11kNYIMjzdxUch2wL3EKngqRln2Svdv-AbLER4")
                     .body(Nothing)
                     .expect("Could not build request.");
                 let callback = 
@@ -175,7 +175,7 @@ impl ApisSettings {
             // allow_off_acc: _,
             // tenant_id: _,
 
-            id: _,
+            resource_server_id: _,
             name,
             is_system,
             identifier,

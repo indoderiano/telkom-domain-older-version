@@ -34,7 +34,7 @@ pub enum Data {
     // PermissionAccToken,
     // AllowSkipUser,
     // AllowOffAcc,
-    Id,
+    ResourceServerId,
     Name,
     Identifier,
     TokenLifetime,
@@ -88,8 +88,8 @@ impl Component for TabSettings {
         match msg {
             Msg::InputText(input, data) => {
               match data {
-                Data::Id => {
-                    self.api_details.id = input.parse::<u32>().unwrap();
+                Data::ResourceServerId => {
+                    self.api_details.resource_server_id = input;
                 }
                 Data::Name => {
                     self.api_details.name = input;
@@ -128,9 +128,9 @@ impl Component for TabSettings {
             }
             Msg::Save => {
                 ConsoleService::info(&format!("{:?}", self.api_details));
-                let request = Request::patch(format!("http://127.0.0.1:8080/api/v1/1/resource-server/{}", self.api_details.id))
+                let request = Request::patch(format!("https://evening-cliffs-55855.herokuapp.com/api/v2/resource-server/{}", self.api_details.resource_server_id))
                     .header("Content-Type", "application/json")
-                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NDAyNDE0OTAsImlhdCI6MTY0MDE1NTA5MCwiZW1haWwiOiJoZXlrYWxsQGdtYWlsLmNvbSIsInRlbmFudCI6ImRvbWFpbiJ9.KqGPg11kNYIMjzdxUch2wL3EKngqRln2Svdv-AbLER4")
                     .body(Json(&self.api_details))
                     .expect("Could not build request.");
                 let callback = self.link.callback(|response: Response<Json<Result<ApiDetails, anyhow::Error>>>| {
@@ -173,9 +173,9 @@ impl Component for TabSettings {
                 true
             }
             Msg::Delete => {
-                let request = Request::delete(format!("http://127.0.0.1:8080/api/v1/1/resource-server/{}", self.api_details.id))
+                let request = Request::delete(format!("https://evening-cliffs-55855.herokuapp.com/api/v2/resource-server/{}", self.api_details.resource_server_id))
                     // .header("Content-Type", "application/json")
-                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
+                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NDAyNDE0OTAsImlhdCI6MTY0MDE1NTA5MCwiZW1haWwiOiJoZXlrYWxsQGdtYWlsLmNvbSIsInRlbmFudCI6ImRvbWFpbiJ9.KqGPg11kNYIMjzdxUch2wL3EKngqRln2Svdv-AbLER4")
                     .body(Nothing)
                     .expect("Could not build request.");
                 let callback = self.link.callback(|response: Response<Json<Result<(), anyhow::Error>>>| {
@@ -225,7 +225,7 @@ impl Component for TabSettings {
 
     fn view(&self) -> Html {
         let ApiDetails {
-            id,
+            resource_server_id,
             name,
             is_system: _,
             identifier,
@@ -269,8 +269,8 @@ impl Component for TabSettings {
                                       type="text"
                                       class="form-control bg-input-grey"
                                       aria-label="Dollar amount (with dot and two decimal places)"
-                                      value={id.to_string()}
-                                      oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::Id))
+                                      value={resource_server_id}
+                                      oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::ResourceServerId))
                                   />   
                               </div>
                               <p>
