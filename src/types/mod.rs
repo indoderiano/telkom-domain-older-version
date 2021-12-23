@@ -5,8 +5,8 @@ use serde::{
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct LocalStorage {
-    pub username: Option<String>,
     pub email: Option<String>,
+    pub username: Option<String>,
     pub token: Option<String>,
 }
 
@@ -23,6 +23,7 @@ pub const LOCALSTORAGE_KEY: &str = "telkom-domain";
 #[derive(Deserialize, Debug, Clone)]
 pub struct ResponseMessage {
     pub message: String,
+    pub data: String,
 }
 
 
