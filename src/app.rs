@@ -162,7 +162,7 @@ pub struct App {
 
 pub enum Msg {
     AutoLogin(ResponseLogin),
-    // SetIsAuth(bool),
+    SetIsAuth(bool),
 }
 
 impl Component for App {
@@ -209,7 +209,7 @@ impl Component for App {
             // dispatch.send(DataAccountAction::Update(data_account));
             link.send_message(Msg::AutoLogin(data_account));
         } else {
-            // link.send_message(Msg::SetIsAuth(false));
+            link.send_message(Msg::SetIsAuth(false));
         }
 
 
@@ -225,14 +225,14 @@ impl Component for App {
             Msg::AutoLogin(user) => {
                 ConsoleService::info("autologin");
                 self.dispatch.send(DataAccountAction::Update(user));
-                // self.dispatch.send(DataAccountAction::SetIsAuth(false));
+                self.dispatch.send(DataAccountAction::SetIsAuth(false));
                 true
             }
-            // Msg::SetIsAuth(state) => {
-            //     ConsoleService::info("set is auth from app");
-            //     self.dispatch.send(DataAccountAction::SetIsAuth(state));
-            //     true
-            // }
+            Msg::SetIsAuth(state) => {
+                ConsoleService::info("set is auth from app");
+                self.dispatch.send(DataAccountAction::SetIsAuth(state));
+                true
+            }
         }
     }
 
@@ -244,11 +244,13 @@ impl Component for App {
 
         // let acc_ref = &account;
         let acc = self.dispatch.state().clone();
-        // let is_auth = acc.is_auth;
+        let is_authenticating = acc.is_authenticating;
         let is_logged_in = if acc.username == None {false} else {true};
         // let route_service = RouteService::new();
+
         let render = Router::render(move |switch: AppRoute| {
             let mut route_service = RouteService::new();
+            ConsoleService::info(&format!("user {}", if is_logged_in {"is logged in"} else {"is not logged in"}));
             match switch {
                 // NOT LOGGED IN ROUTES
                 AppRoute::Home => {
@@ -609,7 +611,7 @@ impl Component for App {
                     // <WithDispatch<ReducerAccountView>/>
                 </>
             }
-        } else {
+        } else if !is_authenticating {
             html! {
                 <>
                     <main>
@@ -622,6 +624,12 @@ impl Component for App {
                         />
                     </main>
                 </>
+            }
+        } else {
+            html! {
+                <div>
+                    {"Authenticating..."}
+                </div>
             }
         }
 
