@@ -102,7 +102,7 @@ pub enum AppRoute {
     #[to = "/activity"]
     Activity,
     #[to = "/{tenant_id}/apis/{api_id}/settings"]
-    ApisSettings { tenant_id: String, api_id: u32 },
+    ApisSettings { tenant_id: String, api_id: String },
     #[to = "/{tenant_id}/apis"]
     ApisHome { tenant_id: String },
     #[to = "/{tenant_id}/applications/{app_id}/settings"]

@@ -18,7 +18,7 @@ use crate::components::loading2::Loading2;
 #[derive(Clone, Debug, Eq, PartialEq, Properties)]
 pub struct ApisSettingsProps {
     pub tenant_id: String,
-    pub api_id: u32,
+    pub api_id: String,
     // api_title: ApiTitle,
 }
 
@@ -35,7 +35,7 @@ pub struct ApisSettings {
     fetch_task: Option<FetchTask>,
     error: Option<String>,
     api_details: ApiDetails,
-    app_id: u32,
+    api_id: String,
 }
 
 pub enum Msg {
@@ -60,7 +60,7 @@ impl Component for ApisSettings {
             fetch_task: None,
             error: None,
             api_details,
-            app_id: props.api_id
+            api_id: props.api_id
         }
     }
 
@@ -81,7 +81,7 @@ impl Component for ApisSettings {
                 true
             }
             Msg::RequestApiDetails => {
-                let request = Request::get(format!("http://127.0.0.1:8080/api/v1/1/resource-server/{}", self.app_id))
+                let request = Request::get(format!("http://127.0.0.1:8080/api/v1/1/resource-server/{}", self.api_id))
                     // .header("Content-Type", "application/json")
                     .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
                     .body(Nothing)

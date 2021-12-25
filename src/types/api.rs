@@ -22,7 +22,8 @@ pub struct GetResourceServersResponseClient {}
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct ApiTitle {
-    pub id: u32,
+    // pub id: u32,
+    pub resource_server_id: String,
     pub name: String,
     pub is_system: bool,
     pub identifier: String,
@@ -36,7 +37,6 @@ pub struct ApiTitle {
     pub enforce_policies: bool,
     pub token_dialect: String,
     pub client: GetResourceServersResponseClient, // unidentified data type
-    pub resource_server_id: String,
     pub tenant_id: u32
 }
 

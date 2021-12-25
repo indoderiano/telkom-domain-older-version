@@ -11,6 +11,7 @@ use crate::components::loading2::Loading2;
 use crate::configs::server::API_URL;
 use crate::types::{
     users::{UserPermissions},
+    api::{ ApiTitle },
     ResponseMessage,
     LocalStorage,
     LOCALSTORAGE_KEY,
@@ -36,11 +37,17 @@ pub struct UserTabPermissions {
     loading_delete_permissions: bool,
     error_delete_permissions: Option<String>,
     route_service: RouteService,
+
+    // assign permission
+    loading_get_apis: bool,
+    error_get_apis: Option<String>,
+    apis: Vec<ApiTitle>,
 }
 
 pub enum StateError{
     UserPermissionList,
     Delete,
+    RequestApis,
 }
 
 pub enum Msg {
@@ -50,7 +57,10 @@ pub enum Msg {
     ShowModalDeletePermission(bool, Option<usize>),
     Delete,
     ResponseError(String, StateError),
-    RedirectToPermissions,  
+    RedirectToPermissions,
+
+    RequestApis,
+    GetApis(Vec<ApiTitle>),
 }
 
 impl Component for UserTabPermissions {
@@ -94,6 +104,11 @@ impl Component for UserTabPermissions {
             loading_delete_permissions: false,
             error_delete_permissions: None,
             route_service: RouteService::new(),
+
+            // Modal assign permission
+            loading_get_apis: false,
+            error_get_apis: None,
+            apis: Vec::new(),
         }
     }
 
@@ -162,9 +177,12 @@ impl Component for UserTabPermissions {
                         self.error_user_permission_list = Some(message);
                     }
                     StateError::Delete => {
-                        self.fetch_task = None;
                         self.loading_delete_permissions = false;
                         self.error_delete_permissions = Some(message);
+                    }
+                    StateError::RequestApis => {
+                        self.loading_get_apis = false;
+                        self.error_get_apis = Some(message)
                     }
                 }
                 self.fetch_task = None;
@@ -217,6 +235,37 @@ impl Component for UserTabPermissions {
                 self.route_service.set_route(&format!("/{}/permissions", "tenant_id_not_from_reducer"), ());
                 true
             }
+
+            Msg::RequestApis => {
+                let request = Request::get(format!("{}/api/v2/resource-server", API_URL))
+                    .header("access_token", self.access_token.clone())
+                    .body(Nothing)
+                    .expect("Could not build request");
+                let callback = self.link.callback(
+                    |response: Response<Json<Result<Vec<ApiTitle>, anyhow::Error>>>| {
+                        let Json(data) = response.into_body();
+                        // ConsoleService::info(&format!("{:?}", data));
+                        match data{
+                            Ok(dataok) => Msg::GetApis(dataok), 
+                            Err(error) => {
+                                Msg::ResponseError(error.to_string(), StateError::RequestApis)
+                            }
+                        }
+                    }
+                );
+
+                let task = FetchService::fetch(request, callback).expect("failed to start request");
+                self.fetch_task = Some(task);
+                self.error_get_apis = None;
+                self.loading_get_apis = true;
+                true
+            }
+            Msg::GetApis(apis) => {
+                self.apis = apis;
+                self.loading_get_apis = false;
+                self.fetch_task = None;
+                true
+            }
         }
     }
 
@@ -233,7 +282,15 @@ impl Component for UserTabPermissions {
                             <p>{"List of permissions this user has."}</p>
                         </div>
                         <div class="col d-flex justify-content-end">
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPermissions">{"Assign Permissions"}</button>
+                            <button
+                                type="button"
+                                class="btn btn-primary"
+                                data-bs-toggle="modal"
+                                data-bs-target="#addPermissions"
+                                onclick=self.link.callback(|_| Msg::RequestApis)
+                            >
+                                {"Assign Permissions"}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -325,13 +382,13 @@ impl Component for UserTabPermissions {
                     {
                         if self.loading_get_user_permission {
                             html!{
-                                <div style="position: relative; margin-top:4rem;">
-                                    <Loading2 width = 45 />
+                                <div style="position: relative; margin-top:6rem;">
+                                    <Loading2 width = 21 />
                                 </div>
                             }
                         } else if self.error_user_permission_list.is_some() {
                             html! {
-                                <div class="alert alert-warning mb-5" role="alert">
+                                <div class="alert alert-warning" role="alert">
                                 <i class="bi bi-exclamation-triangle me-2"></i>
                                 { self.error_user_permission_list.clone().unwrap() }
                                 </div>
@@ -345,26 +402,59 @@ impl Component for UserTabPermissions {
                     { self.modal_delete_permission() }
 
                      
+                    // MODAL ASSIGN PERMISSION
                     <div class="modal fade" id="addPermissions" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
+                            <div class="modal-content pt-4 pe-5 pb-4 ps-5">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="exampleModalLabel">{"Add Permissions"}</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
-                                <div class="modal-body">
-                                    <label for="exampleDataList" class="form-label">{"Select permissions from existing APIs"}</label>
-                                    <input class="form-control" list="listAPIOptions" id="exampleDataList" placeholder="Select an API..."/>
-                                    <datalist id="listAPIOptions">
-                                            <option value="Example API">{"https://jsonplaceholder.typicode.com/albums"}</option>
-                                            // <option value="New York">
-                                            // <option value="Seattle">
-                                            // <option value="Los Angeles">
-                                            // <option value="Chicago">
-                                    </datalist>
-                                </div>
+                                {
+                                    if self.loading_get_apis {
+                                        html! {
+                                            <div
+                                                class="modal-body mt-2"
+                                                style="position: relative;"
+                                            >
+                                                <Loading2 width=45 />
+                                            </div>
+                                        }
+                                    } else if self.error_get_apis.is_some() {
+                                        html! {
+                                            <div
+                                                class="modal-body"
+                                            >
+                                                <div class="alert alert-warning mb-5" role="alert">
+                                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                                    { self.error_get_apis.clone().unwrap() }
+                                                </div>
+                                            </div>
+                                        }
+                                    } else {
+                                        html! {
+                                            <div class="modal-body">
+                                                <label for="exampleDataList" class="form-label">{"Select permissions from existing APIs"}</label>
+                                                <input class="form-control" list="listAPIOptions" id="exampleDataList" placeholder="Select an API..."/>
+                                                <datalist id="listAPIOptions">
+                                                        <option value="Example API">{"https://jsonplaceholder.typicode.com/albums"}</option>
+                                                        // <option value="New York">
+                                                        // <option value="Seattle">
+                                                        // <option value="Los Angeles">
+                                                        // <option value="Chicago">
+                                                </datalist>
+                                            </div>
+                                        }
+                                    }
+                                }
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-primary">{"Add Permissions"}</button>
+                                    <button
+                                        type="button"
+                                        class="btn btn-primary"
+                                        disabled={self.loading_get_apis}
+                                    >
+                                        {"Add Permissions"}
+                                    </button>
                                 </div>
                             </div>
                         </div>
