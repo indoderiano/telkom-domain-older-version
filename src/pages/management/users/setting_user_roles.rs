@@ -1,15 +1,20 @@
+use yew::{
+    prelude::*,
+    format::{Json, Nothing},
+    services::{
+        ConsoleService,
+        fetch::{FetchService, FetchTask, Request, Response},
+        storage::{ StorageService, Area }
+    },
+};
 use crate::components::loading2::Loading2;
 use crate::configs::server::API_URL;
 use crate::types::{
     users::{ UserRole, UserDetails },
     ResponseMessage,
+    LocalStorage,
+    LOCALSTORAGE_KEY,
 };
-use yew::services::ConsoleService;
-use yew::{
-    format::{Json, Nothing},
-    prelude::*,
-    services::fetch::{FetchService, FetchTask, Request, Response},
-};  
 use yew_router::service::RouteService;
 
 
@@ -20,6 +25,7 @@ pub struct UserTabRolesProps {
 
 pub struct UserTabRoles {
     user_details: UserDetails,
+    access_token: String,
     link: ComponentLink<Self>,
     fetch_task: Option<FetchTask>,
     user_roles: Vec<UserRole>,
@@ -53,8 +59,31 @@ impl Component for UserTabRoles {
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
         // let user_roles = UserRoles::new();
 
+        // GET LOCALSTORAGE
+        let storage = StorageService::new(Area::Local).expect("storage was disabled");
+        let localstorage_data = {
+            if let Json(Ok(data)) = storage.restore(LOCALSTORAGE_KEY) {
+                data
+            } else {
+                LocalStorage {
+                    username: None,
+                    email: None,
+                    token: None,
+                }
+            }
+        };
+
+        // UPDATE STATE
+        let mut access_token = String::from("");
+        if let Some(_) = localstorage_data.token {
+            access_token = localstorage_data.token.unwrap();
+        } else {
+            
+        }
+
         UserTabRoles {
             user_details: props.user_details,
+            access_token,
             link,
             fetch_task: None,
             user_roles: vec![],
@@ -83,8 +112,8 @@ impl Component for UserTabRoles {
                 self.show_modal_delete_role = false;
                 self.index_role_delete = None;
 
-                let request = Request::get(format!("http://127.0.0.1:8080/api/v1/1/users/{}/roles", self.user_details.id.clone()))
-                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
+                let request = Request::get(format!("{}/api/v2/users/{}/roles", API_URL, self.user_details.user_id.clone()))
+                    .header("access_token", self.access_token.clone())
                     .body(Nothing)
                     .expect("Could not build request.");
                 let callback = self.link.callback(

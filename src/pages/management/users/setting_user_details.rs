@@ -1,10 +1,11 @@
 use yew::{
     prelude::*,
-    format::{ Json, Nothing },
+    format::{Json, Nothing},
     services::{
         ConsoleService,
-        fetch::{FetchService, FetchTask, Request, Response, StatusCode},
-    }
+        fetch::{FetchService, FetchTask, Request, Response},
+        storage::{ StorageService, Area }
+    },
 };
 use yew_router::service::RouteService;
 use serde::{
@@ -12,11 +13,11 @@ use serde::{
     Serialize,
 };
 
-
-
 use crate::types::{
     users::{ UserDetails, ResponseUserDetails},
     ResponseMessage,
+    LocalStorage,
+    LOCALSTORAGE_KEY,
 };
 
 use crate::configs::server::API_URL;
@@ -46,6 +47,7 @@ pub struct UserTabDetails {
     user_details: UserDetails,
     link: ComponentLink<Self>,
     fetch_task: Option<FetchTask>,
+    access_token: String,
     loading_update_user: bool,
     error_update_user: Option<String>,
     loading_delete_user: bool,
@@ -59,7 +61,7 @@ pub enum Msg {
     ResponseError(String, StateError),
     Delete,
     RedirectToUser,
-    Block,
+    Block(bool),
 }
 
 impl Component for UserTabDetails {
@@ -67,11 +69,43 @@ impl Component for UserTabDetails {
     type Properties = UsersTabSettingProps;
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        ConsoleService::info(&format!("this s fn create {:?}", props.user_details));
+        // ConsoleService::info(&format!("this s fn create {:?}", props.user_details));
+        
+        // LOCALSTORAGE RESOURCE
+        // https://github.com/yewstack/yew/issues/1287
+        // GET LOCALSTORAGE
+        // NEED BETTER WAY TO PARSE JSON DATA
+        let storage = StorageService::new(Area::Local).expect("storage was disabled");
+        let localstorage_data = {
+            if let Json(Ok(data)) = storage.restore(LOCALSTORAGE_KEY) {
+                ConsoleService::info(&format!("{:?}", data));
+                data
+            } else {
+                ConsoleService::info("token does not exist");
+                LocalStorage {
+                    username: None,
+                    email: None,
+                    token: None,
+                }
+            }
+        };
+
+        ConsoleService::info(&format!("{:?}", localstorage_data));
+
+        // IF LOCALSTORAGE EXISTS
+        // UPDATE STATE
+        let mut access_token = String::from("");
+        if let Some(_) = localstorage_data.token {
+            access_token = localstorage_data.token.unwrap();
+        } else {
+            
+        }
+        
         UserTabDetails {
             user_details: props.user_details,
             link,
             fetch_task: None,
+            access_token,
             loading_update_user: false,
             error_update_user: None,
             loading_delete_user: false,
@@ -118,7 +152,7 @@ impl Component for UserTabDetails {
                 true
             }
             Msg::GetUserDetails(data) => {
-                ConsoleService::info(&format!("{:?}", data));
+                ConsoleService::info(&format!("user details = {:?}", data));
                 self.fetch_task = None;
                 self.user_details = data;
                 self.loading_update_user = false;
@@ -141,8 +175,8 @@ impl Component for UserTabDetails {
                 true
             }
             Msg::Delete => {
-                let request = Request::delete(format!("http://127.0.0.1:8080/api/v1/1/users/{}", self.user_details.id.clone()))
-                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
+                let request = Request::delete(format!("{}/api/v2/users/{}", API_URL, self.user_details.user_id.clone()))
+                    .header("access_token", self.access_token.clone())
                     .body(Nothing)
                     .expect("Could not build request.");
                 let callback = self.link.callback(|response: Response<Json<Result<()
@@ -156,7 +190,7 @@ impl Component for UserTabDetails {
                     match status_number {
                         204 => {
                             ConsoleService::info("status code is 204");
-                            ConsoleService::info("api is deleted");
+                            ConsoleService::info("user is deleted");
                             Msg::RedirectToUser
                         }
                         _ => {
@@ -197,19 +231,19 @@ impl Component for UserTabDetails {
                 self.route_service.set_route(&format!("/{}/users", "tenant_id_not_from_reducer"), ());
                 true
             }
-            Msg::Block => {
+            Msg::Block(state) => {
                 #[derive(Serialize, Debug, Clone)]
                 struct BlockedUser {
                     blocked : bool
                 }
                 let blocked_user = BlockedUser{
-                    blocked : true
+                    blocked : state
                 };
                 ConsoleService::info(&format!("{:?}", blocked_user.clone()));
 
-                let request = Request::patch(format!("{}/users/dev-ofzd5p1b/users/auth0|7CYXV0aDAlN0M2MTM3MTIyMTAxY2VmYTAwNzM0NzRmYmI", API_URL))
+                let request = Request::patch(format!("{}/api/v2/users/{}", API_URL, self.user_details.user_id.clone()))
                     .header("Content-Type", "application/json")
-                    .header("access_token","tokenidtelkomdomain")
+                    .header("access_token", self.access_token.clone())
                     .body(Json(&blocked_user))
                     .expect("Could not build request.");
                 let callback = self.link.callback(|response: Response<Json<Result<UserDetails, anyhow::Error>>>| {
@@ -240,7 +274,6 @@ impl Component for UserTabDetails {
 
     fn view(&self) -> Html {
         let UserDetails {
-            id,
             user_id,
             email,
             email_verified: _,
@@ -259,7 +292,7 @@ impl Component for UserTabDetails {
             last_ip,
             last_login,
             logins_count,
-            blocked: _,
+            blocked,
             given_name,
             family_name,
         } = self.user_details.clone();
@@ -477,44 +510,92 @@ impl Component for UserTabDetails {
             </div>
 
 
-            <div class="mt-4">
-                <div class="alert alert-danger" role="alert">
-                    <div class="row">
-                        <div class="col-10 col-sm-10">
-                            <p class="p-0 m-0 fw-bold">{"Block user"}</p>
-                            <p class="p-0 m-0">{"The user will be blocked for logging into your applications."}</p>
-                        </div>
-                        <div class="col-2 col-sm-2 p-0 d-flex align-items-center justify-content-center">
-                            
-                            <button
-                                type="button"
-                                class=format!("btn {} btn-danger position-relative", if self.loading_update_user {"loading"} else {""} )
-                                onclick=self.link.callback(|_| Msg::Block)
-                                disabled={ self.loading_update_user }
-                            >
-                                <div class="telkom-label">
-                                    {"Block"}
+            
+            {
+                if blocked {
+                    html!{
+                        <div class="mt-4">
+                            <div class="alert alert-danger" role="alert">
+                                <div class="row">
+                                    <div class="col-10 col-sm-10">
+                                        <p class="p-0 m-0 fw-bold">{"Unblock User"}</p>
+                                        <p class="p-0 m-0">{"The user will be unblocked for logging into your applications."}</p>
+                                    </div>
+                                    <div class="col-2 col-sm-2 p-0 d-flex align-items-center justify-content-center">
+                                        
+                                        <button
+                                            type="button"
+                                            class=format!("btn {} btn-danger position-relative", if self.loading_update_user {"loading"} else {""} )
+                                            onclick=self.link.callback(|_| Msg::Block(false))
+                                            disabled={ self.loading_update_user }
+                                        >
+                                            <div class="telkom-label">
+                                                {"Unblock"}
+                                            </div>
+                                            <div class="telkom-spinner telkom-center">
+                                                <div class="spinner-border spinner-border-sm" role="status"/>
+                                            </div>
+                                        </button>
+                                            {
+                                                if self.error_update_user.is_some() {
+                                                html! {
+                                                    <div class="alert alert-warning mt-3" role="alert">
+                                                        <i class="bi bi-exclamation-triangle me-2"></i>
+                                                        { self.error_update_user.clone().unwrap() }
+                                                    </div>
+                                                }
+                                                } else {
+                                                    html! {}
+                                                }
+                                            }
+                                    </div>
                                 </div>
-                                <div class="telkom-spinner telkom-center">
-                                    <div class="spinner-border spinner-border-sm" role="status"/>
-                                </div>
-                            </button>
-                                {
-                                    if self.error_update_user.is_some() {
-                                    html! {
-                                        <div class="alert alert-warning mt-3" role="alert">
-                                            <i class="bi bi-exclamation-triangle me-2"></i>
-                                            { self.error_update_user.clone().unwrap() }
-                                        </div>
-                                    }
-                                    } else {
-                                        html! {}
-                                    }
-                                }
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
+                    }
+                } else {
+                    html!{
+                        <div class="mt-4">
+                            <div class="alert alert-danger" role="alert">
+                                <div class="row">
+                                    <div class="col-10 col-sm-10">
+                                        <p class="p-0 m-0 fw-bold">{"Block user"}</p>
+                                        <p class="p-0 m-0">{"The user will be blocked for logging into your applications."}</p>
+                                    </div>
+                                    <div class="col-2 col-sm-2 p-0 d-flex align-items-center justify-content-center">
+                                        
+                                        <button
+                                            type="button"
+                                            class=format!("btn {} btn-danger position-relative", if self.loading_update_user {"loading"} else {""} )
+                                            onclick=self.link.callback(|_| Msg::Block(true))
+                                            disabled={ self.loading_update_user }
+                                        >
+                                            <div class="telkom-label">
+                                                {"Block"}
+                                            </div>
+                                            <div class="telkom-spinner telkom-center">
+                                                <div class="spinner-border spinner-border-sm" role="status"/>
+                                            </div>
+                                        </button>
+                                            {
+                                                if self.error_update_user.is_some() {
+                                                html! {
+                                                    <div class="alert alert-warning mt-3" role="alert">
+                                                        <i class="bi bi-exclamation-triangle me-2"></i>
+                                                        { self.error_update_user.clone().unwrap() }
+                                                    </div>
+                                                }
+                                                } else {
+                                                    html! {}
+                                                }
+                                            }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            }
 
 
             <div class="mt-4">
