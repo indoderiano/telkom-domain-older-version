@@ -4,14 +4,17 @@ use yew::{
     services::{
         ConsoleService,
         fetch::{FetchService, FetchTask, Request, Response, StatusCode},
-    }
+        storage::{ StorageService, Area },
+    },
+    
 };
 use yew_router::service::RouteService;
 use crate::types::{
 	api::{ ApiDetails, ResponseApiDetails },
 };
 use crate::configs::server::API_URL;
-
+use crate::types::LocalStorage;
+use crate::types::LOCALSTORAGE_KEY;
 
 #[derive(Clone, Debug, Eq, PartialEq, Properties)]
 pub struct ApisTabSettingsProps {
@@ -54,6 +57,7 @@ pub struct TabSettings {
     loading_delete_api: bool,
     error_delete_api: Option<String>,
     route_service: RouteService,
+    access_token: String,
 }
 
 pub enum Msg {
@@ -72,6 +76,32 @@ impl Component for TabSettings {
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
         ConsoleService::info(&format!("Api Tab Settings props, api details = {:?}", props.api_details));
 
+        let storage = StorageService::new(Area::Local).expect("storage was disabled");
+        let localstorage_data = {
+            if let Json(Ok(data)) = storage.restore(LOCALSTORAGE_KEY) {
+                ConsoleService::info(&format!("{:?}", data));
+                data
+            } else {
+                ConsoleService::info("token does not exist");
+                LocalStorage {
+                    username: None,
+                    email: None,
+                    token: None,
+                }
+            }
+        };
+
+        ConsoleService::info(&format!("{:?}", localstorage_data));
+
+        // IF LOCALSTORAGE EXISTS
+        // UPDATE STATE
+        let mut access_token = String::from("");
+        if let Some(_) = localstorage_data.token {
+            access_token = localstorage_data.token.unwrap();
+        } else {
+            
+        }
+
         TabSettings {
             api_details: props.api_details,
             link,
@@ -81,6 +111,7 @@ impl Component for TabSettings {
             loading_delete_api: false,
             error_delete_api: None,
             route_service: RouteService::new(),
+            access_token,
         }
     }
 
@@ -130,7 +161,7 @@ impl Component for TabSettings {
                 ConsoleService::info(&format!("{:?}", self.api_details));
                 let request = Request::patch(format!("https://evening-cliffs-55855.herokuapp.com/api/v2/resource-server/{}", self.api_details.resource_server_id))
                     .header("Content-Type", "application/json")
-                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NDAyNDE0OTAsImlhdCI6MTY0MDE1NTA5MCwiZW1haWwiOiJoZXlrYWxsQGdtYWlsLmNvbSIsInRlbmFudCI6ImRvbWFpbiJ9.KqGPg11kNYIMjzdxUch2wL3EKngqRln2Svdv-AbLER4")
+                    .header("access_token", self.access_token.clone())
                     .body(Json(&self.api_details))
                     .expect("Could not build request.");
                 let callback = self.link.callback(|response: Response<Json<Result<ApiDetails, anyhow::Error>>>| {
@@ -175,7 +206,7 @@ impl Component for TabSettings {
             Msg::Delete => {
                 let request = Request::delete(format!("https://evening-cliffs-55855.herokuapp.com/api/v2/resource-server/{}", self.api_details.resource_server_id))
                     // .header("Content-Type", "application/json")
-                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NDAyNDE0OTAsImlhdCI6MTY0MDE1NTA5MCwiZW1haWwiOiJoZXlrYWxsQGdtYWlsLmNvbSIsInRlbmFudCI6ImRvbWFpbiJ9.KqGPg11kNYIMjzdxUch2wL3EKngqRln2Svdv-AbLER4")
+                    .header("access_token", self.access_token.clone())
                     .body(Nothing)
                     .expect("Could not build request.");
                 let callback = self.link.callback(|response: Response<Json<Result<(), anyhow::Error>>>| {

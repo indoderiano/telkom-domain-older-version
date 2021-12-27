@@ -9,10 +9,17 @@ use super::quickstart::Quickstart;
 use super::tab_settings::TabSettings;
 use super::permissions::Permissions;
 use super::machinetomachineapplications::MachineToMachineApplications;
-use yew::services::ConsoleService;
+use yew::services::{
+    ConsoleService,
+    storage::{ StorageService, Area },
+};
+
 use crate::types::api::{ ApiDetails, ResponseApiDetails };
 use crate::configs::server::API_URL;
 use crate::components::loading2::Loading2;
+
+use crate::types::LocalStorage;
+use crate::types::LOCALSTORAGE_KEY;
 
 
 #[derive(Clone, Debug, Eq, PartialEq, Properties)]
@@ -36,6 +43,7 @@ pub struct ApisSettings {
     error: Option<String>,
     api_details: ApiDetails,
     resource_server_id: String,
+    access_token: String,
 }
 
 pub enum Msg {
@@ -52,6 +60,32 @@ impl Component for ApisSettings {
         ConsoleService::info(&format!("Api Settings props, tenant id = {}", props.tenant_id));
         ConsoleService::info(&format!("Api Settings props, api id = {}", props.resource_server_id));
 
+        let storage = StorageService::new(Area::Local).expect("storage was disabled");
+        let localstorage_data = {
+            if let Json(Ok(data)) = storage.restore(LOCALSTORAGE_KEY) {
+                ConsoleService::info(&format!("{:?}", data));
+                data
+            } else {
+                ConsoleService::info("token does not exist");
+                LocalStorage {
+                    username: None,
+                    email: None,
+                    token: None,
+                }
+            }
+        };
+
+        ConsoleService::info(&format!("{:?}", localstorage_data));
+
+        // IF LOCALSTORAGE EXISTS
+        // UPDATE STATE
+        let mut access_token = String::from("");
+        if let Some(_) = localstorage_data.token {
+            access_token = localstorage_data.token.unwrap();
+        } else {
+            
+        }
+
         let api_details = ApiDetails::new();
 
         ApisSettings {
@@ -60,7 +94,8 @@ impl Component for ApisSettings {
             fetch_task: None,
             error: None,
             api_details,
-            resource_server_id: props.resource_server_id
+            resource_server_id: props.resource_server_id,
+            access_token,
         }
     }
 
@@ -83,7 +118,7 @@ impl Component for ApisSettings {
             Msg::RequestApiDetails => {
                 let request = Request::get(format!("https://evening-cliffs-55855.herokuapp.com/api/v2/resource-server/{}", self.resource_server_id))
                     // .header("Content-Type", "application/json")
-                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NDAyNDE0OTAsImlhdCI6MTY0MDE1NTA5MCwiZW1haWwiOiJoZXlrYWxsQGdtYWlsLmNvbSIsInRlbmFudCI6ImRvbWFpbiJ9.KqGPg11kNYIMjzdxUch2wL3EKngqRln2Svdv-AbLER4")
+                    .header("access_token", self.access_token.clone())
                     .body(Nothing)
                     .expect("Could not build request.");
                 let callback = 
