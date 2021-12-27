@@ -4,7 +4,10 @@ use yew::{
     services::fetch::{FetchService, FetchTask, Request, Response},
 };
 use yew_router::components::RouterAnchor;
-use yew::services::ConsoleService;
+use yew::services::{
+    ConsoleService,
+    storage::{ StorageService, Area },
+};
 use crate::app::AppRoute;
 use crate::types::{
     api::{ ApiTitle, ApiCreate },
@@ -13,7 +16,10 @@ use crate::types::{
 use crate::components::{
     loading2::Loading2,
 };
+
 use crate::configs::server::API_URL;
+use crate::types::LocalStorage;
+use crate::types::LOCALSTORAGE_KEY;
 
 
 #[derive(Clone, Debug, Eq, PartialEq, Properties)]
@@ -43,6 +49,7 @@ pub struct ApisHome {
     loading_create_api: bool,
     api_create: ApiCreate,
     error_api_create: Option<String>,
+    access_token: String
 }
 
 pub enum Msg {
@@ -62,8 +69,30 @@ impl Component for ApisHome {
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
         ConsoleService::info(&format!("Apis home props, tenant id = {}", props.tenant_id));
 
-        let api_create = ApiCreate::new();
+        let storage = StorageService::new(Area::Local).expect("storage was disabled");
+        
+        let localstorage_data = {
+            if let Json(Ok(data)) = storage.restore(LOCALSTORAGE_KEY) {
+                ConsoleService::info(&format!("{:?}", data));
+                data
+            } else {
+                ConsoleService::info("token does not exist");
+                LocalStorage {
+                    username: None,
+                    email: None,
+                    token: None,
+                }
+            }
+        };
+        
+        let mut access_token = String::from("");
+        if let Some(_) = localstorage_data.token {
+            access_token = localstorage_data.token.unwrap();
+        } else {
 
+        }
+
+        let api_create = ApiCreate::new();
         ApisHome {
             tenant_id: props.tenant_id,
             fetch_task: None,
@@ -75,6 +104,7 @@ impl Component for ApisHome {
             loading_create_api: false,
             api_create,
             error_api_create: None,
+            access_token,
         }
     }
 
@@ -100,9 +130,9 @@ impl Component for ApisHome {
             }
             Msg::RequestApiList => {
                 // let request = Request::get(format!("{}/api/v2/resource-servers/tenantid", API_URL))
-                let request = Request::get("http://127.0.0.1:8080/api/v1/1/resource-server")
+                let request = Request::get("https://evening-cliffs-55855.herokuapp.com/api/v2/resource-server")
                     // .header("Content-Type", "application/json")
-                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
+                    .header("access_token", self.access_token.clone())
                     .body(Nothing)
                     .expect("Could not build request.");
                 let callback = 
@@ -151,9 +181,9 @@ impl Component for ApisHome {
             }
             Msg::Create => {
                 ConsoleService::info(&format!("{:?}", self.api_create));
-                let request = Request::post("http://127.0.0.1:8080/api/v1/1/resource-server")
+                let request = Request::post("https://evening-cliffs-55855.herokuapp.com/api/v2/resource-server")
                     .header("Content-Type", "application/json")
-                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
+                    .header("access_token", self.access_token.clone())
                     .body(Json(&self.api_create))
                     .expect("Could not build request.");
                 let callback = 
@@ -435,7 +465,7 @@ impl ApisHome {
                                     "
                                 >
                                     <Anchor
-                                        route=AppRoute::ApisSettings { tenant_id: tenant_id.clone(), api_id: api.id.clone() }
+                                        route=AppRoute::ApisSettings { tenant_id: tenant_id.clone(), resource_server_id: api.resource_server_id.clone() }
                                         classes="text-decoration-none fw-bold mb-0"
                                     >
                                             // {"Auth0 Management API"}
@@ -501,7 +531,7 @@ impl ApisHome {
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                 <li>
-                                    <Anchor route=AppRoute::ApisSettings { tenant_id: tenant_id.clone(), api_id: api.id.clone() } classes="dropdown-item fs-7">
+                                    <Anchor route=AppRoute::ApisSettings { tenant_id: tenant_id.clone(), resource_server_id: api.resource_server_id.clone() } classes="dropdown-item fs-7">
                                         {"Settings"}
                                     </Anchor>
                                 </li>

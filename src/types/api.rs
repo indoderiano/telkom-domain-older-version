@@ -22,7 +22,7 @@ pub struct GetResourceServersResponseClient {}
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct ApiTitle {
-    pub id: u32,
+    pub resource_server_id: String,
     pub name: String,
     pub is_system: bool,
     pub identifier: String,
@@ -36,7 +36,6 @@ pub struct ApiTitle {
     pub enforce_policies: bool,
     pub token_dialect: String,
     pub client: GetResourceServersResponseClient, // unidentified data type
-    pub resource_server_id: String,
     pub tenant_id: u32
 }
 
@@ -105,7 +104,7 @@ pub struct GetResourceServersByIdResponseClient {}
 
 #[derive(Deserialize, Serialize, Debug, Clone, Eq, PartialEq)]
 pub struct ApiDetails {
-    pub id: u32,
+    pub resource_server_id: String,
     pub name: String,
     pub is_system: bool,
     pub identifier: String,
@@ -123,7 +122,7 @@ pub struct ApiDetails {
 impl ApiDetails {
     pub fn new() -> ApiDetails {
         ApiDetails {
-            id: 0,
+            resource_server_id: String::from(""),
             name: String::from(""),
             is_system: false,
             identifier: String::from(""),
@@ -146,7 +145,6 @@ pub struct ResponseApiDetails {
     pub message: String,
     pub data: ApiDetails
 }
-
 
 
 #[derive(Deserialize, Debug, Clone)]
