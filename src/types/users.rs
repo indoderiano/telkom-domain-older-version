@@ -8,7 +8,7 @@ pub struct GetUsersByIdResponseUserMetadata {}
 
 #[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct UserTitle {
-    pub id: u32,
+    // pub id: u32,
     pub user_id: String,
     pub email: String,
     pub email_verified: bool,
@@ -47,51 +47,51 @@ pub struct PostUsersByIdResponseUserMetadata {}
 #[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct UserCreate {
     pub email: String,
-    pub phone_number: String,
-    pub user_metadata: PostUsersByIdResponseUserMetadata,
-    pub blocked: bool,
-    pub email_verified: bool,
-    pub phone_verified: bool,
-    pub app_metadata: PostUsersByIdResponseAppMetadata,
-    pub given_name: String,
-    pub family_name: String,
-    pub name: String,
-    pub nickname: String,
-    pub picture: String,
-    pub user_id: String,
+    // pub phone_number: String,
+    // pub user_metadata: PostUsersByIdResponseUserMetadata,
+    // pub blocked: bool,
+    // pub email_verified: bool,
+    // pub phone_verified: bool,
+    // pub app_metadata: PostUsersByIdResponseAppMetadata,
+    // pub given_name: String,
+    // pub family_name: String,
+    // pub name: String,
+    // pub nickname: String,
+    // pub picture: String,
+    // pub user_id: String,
     pub connection: String,
     pub password: String,
-    pub verify_email: String,
-    pub username: String,
+    // pub verify_email: String,
+    // pub username: String,
 }
 
 impl UserCreate {
     pub fn new() -> UserCreate {
         UserCreate {
             email: String::from(""),
-            phone_number: String::from(""),
-            user_metadata: PostUsersByIdResponseUserMetadata {},
-            blocked: false,
-            email_verified: false,
-            phone_verified: false,
-            app_metadata: PostUsersByIdResponseAppMetadata {},
-            given_name: String::from(""),
-            family_name: String::from(""),
-            name: String::from(""),
-            nickname: String::from(""),
-            picture: String::from(""),
-            user_id: String::from(""),
+            // phone_number: String::from(""),
+            // user_metadata: PostUsersByIdResponseUserMetadata {},
+            // blocked: false,
+            // email_verified: false,
+            // phone_verified: false,
+            // app_metadata: PostUsersByIdResponseAppMetadata {},
+            // given_name: String::from(""),
+            // family_name: String::from(""),
+            // name: String::from(""),
+            // nickname: String::from(""),
+            // picture: String::from(""),
+            // user_id: String::from(""),
             connection: String::from(""),
             password: String::from(""),
-            verify_email: String::from(""),
-            username: String::from(""),
+            // verify_email: String::from(""),
+            // username: String::from(""),
         }
     }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct UserDetails {
-    pub id : u32,
+    // pub id : u32,
     pub user_id: String,
     pub email: String,
     pub email_verified: bool,
@@ -124,7 +124,7 @@ pub struct ResponseUserDetails{
 impl UserDetails {
     pub fn new() -> UserDetails {
         UserDetails {
-            id: 0,
+            // id: 0,
             user_id: String::from(""),
             email: String::from(""),
             email_verified: false,

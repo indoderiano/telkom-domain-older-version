@@ -13,6 +13,7 @@ use crate::store::reducer_account::{
     DataAccountAction,
     // DataAccount,
 };
+use crate::configs::server::API_URL;
 use crate::types::{
     ResponseLogin,
     LocalStorage,
@@ -77,7 +78,7 @@ impl Component for LoginPage {
         match msg {
             Login => {
                 // ConsoleService::info(&self.form_data.email);
-                let request = Request::post("http://localhost:3000/user")
+                let request = Request::post(format!("{}/login", API_URL))
                     .header("Content-Type", "application/json")
                     .body(Json(&self.form_data))
                     // .body(Nothing)
@@ -102,8 +103,8 @@ impl Component for LoginPage {
 
                         // UPDATE REDUCER
                         let newdata = ResponseLogin {
-                            username: String::from(data.username.clone()),
                             email: String::from(data.email.clone()),
+                            username: String::from(data.username.clone()),
                             token: String::from(data.token.clone()),
                         };
                         self.dispatch.send(DataAccountAction::Update(newdata));
@@ -111,9 +112,9 @@ impl Component for LoginPage {
 
                         // SET LOCALSTORAGE
                         let mut storage = StorageService::new(Area::Local).expect("storage was disabled");
-                        let user_data = LocalStorage{
-                            username: Some(data.username),
+                        let user_data = LocalStorage {
                             email: Some(data.email),
+                            username: Some(data.username),
                             token: Some(data.token),
                         };
                         let localstorage_data = Json(&user_data);
@@ -122,11 +123,9 @@ impl Component for LoginPage {
                         storage.store(LOCALSTORAGE_KEY, localstorage_data);
 
 
-
-
                         // REDIRECT ROUTE
                         // let router = RouteService::new();
-                        self.route_service.set_route("/apis", ());
+                        // self.route_service.set_route("/apis", ());
                         // router.set_route(AppRoute::ApisHome, );
                         
                         // yew_router::push_route(AppRoute::ApisHome);

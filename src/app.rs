@@ -1,14 +1,14 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 // use yew_router::components::RouterAnchor;
+use yew::format::Json;
 use yew::services::{
+    storage::{Area, StorageService},
     ConsoleService,
-    storage::{ StorageService, Area },
 };
-use yew::format::{ Json };
 // use yewdux::prelude::*;
-use yewdux::prelude::WithDispatch;
 use yewdux::dispatch::Dispatcher;
+use yewdux::prelude::WithDispatch;
 use yewtil::NeqAssign;
 // use yew_router::switch::{Permissive};
 use yew_router::route::Route;
@@ -19,77 +19,39 @@ use crate::store::reducer_account::{
     DataAccountAction,
     // DataAccount,
 };
-use crate::types::{
-    ResponseLogin,
-};
+use crate::types::ResponseLogin;
 
 use crate::pages::{
-
-    outer::{
-        login_page::LoginPage,
-        register_page::RegisterPage,
-        password_page::RequestPassPage,
-    },
-    
-    home_page::HomePage,
-    getting_started::GettingStarted,
     activity::Activity,
-
     applications::{
-        applications::{
-            home::ApplicationHome,
-            settings::ApplicationSettings,
-        },
-        apis::{
-            home::ApisHome,
-            settings::ApisSettings,
-        },
-        sso::{
-            home::SsoHome,
-            create_sso::CreateSso,
-        },
+        apis::{home::ApisHome, settings::ApisSettings},
+        applications::{home::ApplicationHome, settings::ApplicationSettings},
+        sso::{create_sso::CreateSso, home::SsoHome},
     },
-
     authentication::{
-        database::{
-            home::DatabaseHome,
-            create_db::DbCreate,
-            settings::DatabaseSettings,
-        },
-        social::{
-            home::SocialHome,
-            settings::SocialSettings,
-            create::SocialCreate,
-        },
+        database::{create_db::DbCreate, home::DatabaseHome, settings::DatabaseSettings},
         enterprise::{
+            google_apps::EnterpriseGoogle, google_apps_create::EnterpriseGoogleCreate,
             home::EnterpriseHome,
-            google_apps::EnterpriseGoogle,
-            google_apps_create::EnterpriseGoogleCreate,
         },
         passwordless::home::AuthPasswordLess,
+        social::{create::SocialCreate, home::SocialHome, settings::SocialSettings},
     },
-
-    settings::{
-        home::SettingsHome,
-    },
-
+    getting_started::GettingStarted,
+    home_page::HomePage,
     management::{
-        users::{
-            home::UsersManagement,
-            user_viewdetail::UserViewDetail,
-        },
         roles::{
+            dropdown_viewdetail::ViewDetail,
             // home::RolesManagement,
             role_created::RolesCreated,
-            dropdown_viewdetail::ViewDetail,
         },
+        users::{home::UsersManagement, user_viewdetail::UserViewDetail},
     },
+    outer::{login_page::LoginPage, password_page::RequestPassPage, register_page::RegisterPage},
+    settings::home::SettingsHome,
 };
 
-use crate::components::{
-    navtop::Navtop,
-    sidebar::Sidebar,
-};
+use crate::components::{navtop::Navtop, sidebar::Sidebar};
 
 use crate::types::LocalStorage;
 use crate::types::LOCALSTORAGE_KEY;
@@ -127,14 +89,18 @@ pub enum AppRoute {
     SocialSettings,
     #[to = "/social"]
     SocialHome,
-    #[to = "/user-management/{tenant_id}/roles/settings/{role_id}"]
-    RoleSettings { tenant_id: String, role_id: String },
+    #[to = "/user-management/roles/settings/{role_id}"]
+    RoleSettings { role_id: String },
     #[to = "/user-management/roles"]
     RolesCreated,
-    #[to="/{tenant_id}/users/{user_id}/{id}"]
-    UserViewDetail {tenant_id: String, user_id: String, id: u32},
+    #[to = "/{tenant_id}/users/{user_id}/{id}"]
+    UserViewDetail {
+        tenant_id: String,
+        user_id: String,
+        id: u32,
+    },
     #[to = "/{tenant_id}/users"]
-    UsersManagement {tenant_id: String},
+    UsersManagement { tenant_id: String },
     #[to = "/enterprise/google-app/create"]
     EnterpriseGoogleCreate,
     #[to = "/enterprise/google-app"]
@@ -170,7 +136,6 @@ impl Component for App {
     type Properties = AppDispatch;
 
     fn create(dispatch: Self::Properties, link: ComponentLink<Self>) -> Self {
-        
         let storage = StorageService::new(Area::Local).expect("storage was disabled");
 
         // LOCALSTORAGE RESOURCE
@@ -212,8 +177,6 @@ impl Component for App {
             link.send_message(Msg::SetIsAuth(false));
         }
 
-
-
         App {
             dispatch,
             // link,
@@ -241,14 +204,22 @@ impl Component for App {
     }
 
     fn view(&self) -> Html {
-
         // let acc_ref = &account;
         let acc = self.dispatch.state().clone();
-        let is_auth = acc.is_auth;
-        let is_logged_in = if acc.username == None {false} else {true};
+        let is_authenticating = acc.is_authenticating;
+        let is_logged_in = if acc.username == None { false } else { true };
         // let route_service = RouteService::new();
+
         let render = Router::render(move |switch: AppRoute| {
             let mut route_service = RouteService::new();
+            ConsoleService::info(&format!(
+                "user {}",
+                if is_logged_in {
+                    "is logged in"
+                } else {
+                    "is not logged in"
+                }
+            ));
             match switch {
                 // NOT LOGGED IN ROUTES
                 AppRoute::Home => {
@@ -258,7 +229,7 @@ impl Component for App {
                     } else {
                         html! {<HomePage/>}
                     }
-                },
+                }
                 AppRoute::LoginPage => {
                     if is_logged_in {
                         route_service.set_route("/manage", ());
@@ -266,33 +237,33 @@ impl Component for App {
                     } else {
                         html! {<WithDispatch<LoginPage>/>}
                     }
-                },
+                }
                 AppRoute::RegisterPage => {
                     if is_logged_in {
                         route_service.set_route("/manage", ());
                         html! {<GettingStarted/>}
                     } else {
-                        html!{<RegisterPage/>}
+                        html! {<RegisterPage/>}
                     }
-                },
+                }
                 AppRoute::RequestPassPage => {
                     if is_logged_in {
                         route_service.set_route("/manage", ());
                         html! {<GettingStarted/>}
                     } else {
-                        html!{<RequestPassPage/>}
+                        html! {<RequestPassPage/>}
                     }
-                },
+                }
 
                 // LOGGED IN ROUTES
                 AppRoute::Activity => {
                     if is_logged_in {
-                        html!{<Activity/>}
+                        html! {<Activity/>}
                     } else {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
                     }
-                },
+                }
                 AppRoute::GettingStarted => {
                     if is_logged_in {
                         html! {<GettingStarted/>}
@@ -300,39 +271,39 @@ impl Component for App {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
                     }
-                },
-                AppRoute::ApisHome{ tenant_id } => {
+                }
+                AppRoute::ApisHome { tenant_id } => {
                     if is_logged_in {
                         html! {<ApisHome tenant_id=tenant_id />}
                     } else {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
                     }
-                },
-                AppRoute::ApisSettings{ tenant_id, api_id } => {
+                }
+                AppRoute::ApisSettings { tenant_id, api_id } => {
                     if is_logged_in {
                         html! {<ApisSettings tenant_id=tenant_id api_id=api_id />}
                     } else {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
                     }
-                },
-                AppRoute::ApplicationHome{ tenant_id } => {
+                }
+                AppRoute::ApplicationHome { tenant_id } => {
                     if is_logged_in {
                         html! {<ApplicationHome tenant_id=tenant_id />}
                     } else {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
                     }
-                },
-                AppRoute::ApplicationSettings{ tenant_id, app_id } => {
+                }
+                AppRoute::ApplicationSettings { tenant_id, app_id } => {
                     if is_logged_in {
                         html! {<ApplicationSettings tenant_id=tenant_id app_id=app_id />}
                     } else {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
                     }
-                },
+                }
                 AppRoute::AuthPasswordless => {
                     if is_logged_in {
                         html! {<AuthPasswordLess/>}
@@ -340,7 +311,7 @@ impl Component for App {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
                     }
-                },
+                }
                 AppRoute::SsoHome => {
                     if is_logged_in {
                         html! {<SsoHome/>}
@@ -348,7 +319,7 @@ impl Component for App {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
                     }
-                },
+                }
                 AppRoute::CreateSso => {
                     if is_logged_in {
                         html! {<CreateSso/>}
@@ -356,7 +327,7 @@ impl Component for App {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
                     }
-                },
+                }
                 AppRoute::SocialHome => {
                     if is_logged_in {
                         html! {<SocialHome/>}
@@ -364,7 +335,7 @@ impl Component for App {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
                     }
-                },
+                }
                 AppRoute::SocialSettings => {
                     if is_logged_in {
                         html! {<SocialSettings/>}
@@ -372,7 +343,7 @@ impl Component for App {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
                     }
-                },
+                }
                 AppRoute::SocialCreate => {
                     if is_logged_in {
                         html! {<SocialCreate/>}
@@ -380,24 +351,28 @@ impl Component for App {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
                     }
-                },
+                }
                 AppRoute::RolesCreated => {
                     if is_logged_in {
-                        html! {<RolesCreated/>}
+                        html! {<RolesCreated />}
                     } else {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
                     }
-                },
-                AppRoute::UsersManagement{tenant_id} => {
+                }
+                AppRoute::UsersManagement { tenant_id } => {
                     if is_logged_in {
                         html! {<UsersManagement tenant_id=tenant_id/>}
                     } else {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
                     }
-                },
-                AppRoute::UserViewDetail{tenant_id, user_id, id} => {
+                }
+                AppRoute::UserViewDetail {
+                    tenant_id,
+                    user_id,
+                    id,
+                } => {
                     if is_logged_in {
                         html! {<UserViewDetail tenant_id=tenant_id user_id=user_id id=id/>}
                     } else {
@@ -412,7 +387,7 @@ impl Component for App {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
                     }
-                },
+                }
                 AppRoute::EnterpriseGoogle => {
                     if is_logged_in {
                         html! {<EnterpriseGoogle/>}
@@ -420,7 +395,7 @@ impl Component for App {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
                     }
-                },
+                }
                 AppRoute::EnterpriseGoogleCreate => {
                     if is_logged_in {
                         html! {<EnterpriseGoogleCreate/>}
@@ -428,7 +403,7 @@ impl Component for App {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
                     }
-                },
+                }
                 AppRoute::SettingsHome => {
                     if is_logged_in {
                         html! {<SettingsHome/>}
@@ -436,15 +411,15 @@ impl Component for App {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
                     }
-                },
-                AppRoute::RoleSettings{ tenant_id, role_id } => {
+                }
+                AppRoute::RoleSettings { role_id } => {
                     if is_logged_in {
-                        html! {<ViewDetail tenant_id=tenant_id role_id=role_id />}
+                        html! {<ViewDetail role_id=role_id />}
                     } else {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
                     }
-                },
+                }
                 AppRoute::DatabaseHome => {
                     if is_logged_in {
                         html! {<DatabaseHome/>}
@@ -452,7 +427,7 @@ impl Component for App {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
                     }
-                },
+                }
                 AppRoute::DbCreate => {
                     if is_logged_in {
                         html! {<DbCreate/>}
@@ -460,7 +435,7 @@ impl Component for App {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
                     }
-                },
+                }
                 AppRoute::DatabaseSettings => {
                     if is_logged_in {
                         html! {<DatabaseSettings/>}
@@ -468,13 +443,7 @@ impl Component for App {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
                     }
-                },
-
-
-
-
-
-                
+                }
                 // OTHER ROUTES
                 // _ => {
                 //     if is_logged_in {
@@ -533,9 +502,6 @@ impl Component for App {
             //     }
             // }
 
-
-
-
             // match switch {
             //     AppRoute::GettingStarted => html! {<GettingStarted/>},
             //     AppRoute::ApisHome if !is_logged_in => {
@@ -546,7 +512,7 @@ impl Component for App {
             //     AppRoute::ApisHome => html! {<ApisHome/>},
             //     AppRoute::Settings => html! {<Settings/>},
             //     AppRoute::ApplicationHome => html! {<ApplicationHome/>},
-            //     AppRoute::Home if !is_logged_in => html!{<HomePage/>}, 
+            //     AppRoute::Home if !is_logged_in => html!{<HomePage/>},
             //     AppRoute::Home => {
             //         route_service.set_route("/manage", ());
             //         html! {<GettingStarted/>}
@@ -569,11 +535,11 @@ impl Component for App {
 
         // let account = self.dispatch.state().clone();
 
-        if is_logged_in && !is_auth {
+        if is_logged_in {
             html! {
                 <>
                     <WithDispatch<Navtop>/>
-                    
+
                     <div
                         class="container-fluid"
                     >
@@ -581,7 +547,7 @@ impl Component for App {
                             class="row flex-nowrap"
                         >
                             <WithDispatch<Sidebar>/>
-                            <div 
+                            <div
                                 class="col"
                                 style="
                                     height: calc(100vh - 64px);
@@ -600,7 +566,7 @@ impl Component for App {
                                 />
                             </div>
                         </div>
-                        
+
                     </div>
                     // <TestingFetch/>
                     // <p></p>
@@ -609,7 +575,7 @@ impl Component for App {
                     // <WithDispatch<ReducerAccountView>/>
                 </>
             }
-        } else if !is_auth {
+        } else if !is_authenticating {
             html! {
                 <>
                     <main>
@@ -626,11 +592,10 @@ impl Component for App {
         } else {
             html! {
                 <div>
-                    {"LOADING..."}
+                    {"Authenticating..."}
                 </div>
             }
         }
-
     }
 }
 

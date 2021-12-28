@@ -1,22 +1,18 @@
+use serde::{Deserialize, Serialize};
 use yew::{
+    format::{Json, Nothing},
     prelude::*,
-    format::{ Json, Nothing },
     services::{
+        fetch::{FetchService, FetchTask, Request, Response},
+        storage::{Area, StorageService},
         ConsoleService,
-        fetch::{FetchService, FetchTask, Request, Response, StatusCode},
-    }
+    },
 };
 use yew_router::service::RouteService;
-use serde::{
-    Deserialize,
-    Serialize,
-};
-
-
 
 use crate::types::{
-    users::{ UserDetails, ResponseUserDetails},
-    ResponseMessage,
+    users::{ResponseUserDetails, UserDetails},
+    LocalStorage, ResponseMessage, LOCALSTORAGE_KEY,
 };
 
 use crate::configs::server::API_URL;
@@ -26,7 +22,7 @@ pub struct UsersTabSettingProps {
     pub user_details: UserDetails,
 }
 
-pub enum Data{
+pub enum Data {
     UserId,
     Picture,
     CreatedAt,
@@ -37,7 +33,7 @@ pub enum Data{
     LoginsCount,
 }
 
-pub enum StateError{
+pub enum StateError {
     Blocked,
     Delete,
 }
@@ -46,6 +42,7 @@ pub struct UserTabDetails {
     user_details: UserDetails,
     link: ComponentLink<Self>,
     fetch_task: Option<FetchTask>,
+    access_token: String,
     loading_update_user: bool,
     error_update_user: Option<String>,
     loading_delete_user: bool,
@@ -59,7 +56,7 @@ pub enum Msg {
     ResponseError(String, StateError),
     Delete,
     RedirectToUser,
-    Block,
+    Block(bool),
 }
 
 impl Component for UserTabDetails {
@@ -67,11 +64,42 @@ impl Component for UserTabDetails {
     type Properties = UsersTabSettingProps;
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        ConsoleService::info(&format!("this s fn create {:?}", props.user_details));
+        // ConsoleService::info(&format!("this s fn create {:?}", props.user_details));
+
+        // LOCALSTORAGE RESOURCE
+        // https://github.com/yewstack/yew/issues/1287
+        // GET LOCALSTORAGE
+        // NEED BETTER WAY TO PARSE JSON DATA
+        let storage = StorageService::new(Area::Local).expect("storage was disabled");
+        let localstorage_data = {
+            if let Json(Ok(data)) = storage.restore(LOCALSTORAGE_KEY) {
+                ConsoleService::info(&format!("{:?}", data));
+                data
+            } else {
+                ConsoleService::info("token does not exist");
+                LocalStorage {
+                    username: None,
+                    email: None,
+                    token: None,
+                }
+            }
+        };
+
+        ConsoleService::info(&format!("{:?}", localstorage_data));
+
+        // IF LOCALSTORAGE EXISTS
+        // UPDATE STATE
+        let mut access_token = String::from("");
+        if let Some(_) = localstorage_data.token {
+            access_token = localstorage_data.token.unwrap();
+        } else {
+        }
+
         UserTabDetails {
             user_details: props.user_details,
             link,
             fetch_task: None,
+            access_token,
             loading_update_user: false,
             error_update_user: None,
             loading_delete_user: false,
@@ -88,11 +116,10 @@ impl Component for UserTabDetails {
                         self.user_details.user_id = input;
                     }
                     Data::Picture => {
-                        self.user_details.picture = input;   
+                        self.user_details.picture = input;
                     }
                     Data::CreatedAt => {
                         self.user_details.created_at = input;
-                       
                     }
                     Data::UpdatedAt => {
                         self.user_details.updated_at = input;
@@ -106,25 +133,24 @@ impl Component for UserTabDetails {
                     Data::LastLogin => {
                         self.user_details.last_login = input;
                     }
-                    Data::LoginsCount =>{
-                       if input.is_empty() {
-                           self.user_details.logins_count = 0;
-                       } else {
-                           self.user_details.logins_count = input.parse::<u32>().unwrap();
-                       }
+                    Data::LoginsCount => {
+                        if input.is_empty() {
+                            self.user_details.logins_count = 0;
+                        } else {
+                            self.user_details.logins_count = input.parse::<u32>().unwrap();
+                        }
                     }
-
                 }
                 true
             }
             Msg::GetUserDetails(data) => {
-                ConsoleService::info(&format!("{:?}", data));
+                ConsoleService::info(&format!("user details = {:?}", data));
                 self.fetch_task = None;
                 self.user_details = data;
                 self.loading_update_user = false;
                 self.error_update_user = None;
                 true
-            },
+            }
             Msg::ResponseError(message, state) => {
                 match state {
                     StateError::Blocked => {
@@ -141,51 +167,61 @@ impl Component for UserTabDetails {
                 true
             }
             Msg::Delete => {
-                let request = Request::delete(format!("http://127.0.0.1:8080/api/v1/1/users/{}", self.user_details.id.clone()))
-                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
-                    .body(Nothing)
-                    .expect("Could not build request.");
-                let callback = self.link.callback(|response: Response<Json<Result<()
-                    // StatusCode
-                    , anyhow::Error>>>| {
+                let request = Request::delete(format!(
+                    "{}/api/v2/users/{}",
+                    API_URL,
+                    self.user_details.user_id.clone()
+                ))
+                .header("access_token", self.access_token.clone())
+                .body(Nothing)
+                .expect("Could not build request.");
+                let callback = self.link.callback(
+                    |response: Response<
+                        Json<
+                            Result<
+                                (), // StatusCode
+                                anyhow::Error,
+                            >,
+                        >,
+                    >| {
+                        let (meta, Json(data)) = response.into_parts();
 
-                    let (meta, Json(data)) = response.into_parts();
+                        let status_number = meta.status.as_u16();
 
-                    let status_number = meta.status.as_u16();
-
-                    match status_number {
-                        204 => {
-                            ConsoleService::info("status code is 204");
-                            ConsoleService::info("api is deleted");
-                            Msg::RedirectToUser
-                        }
-                        _ => {
-                            ConsoleService::info("status code is not 204");
-                            match data {
-                                Ok(dataok) => {
-                                    ConsoleService::info(&format!("{:?}", dataok));
-                                    Msg::RedirectToUser
-                                }
-                                Err(error) => {
-                                    ConsoleService::info(&error.to_string());
-                                    Msg::ResponseError(error.to_string(), StateError::Delete)
+                        match status_number {
+                            204 => {
+                                ConsoleService::info("status code is 204");
+                                ConsoleService::info("user is deleted");
+                                Msg::RedirectToUser
+                            }
+                            _ => {
+                                ConsoleService::info("status code is not 204");
+                                match data {
+                                    Ok(dataok) => {
+                                        ConsoleService::info(&format!("{:?}", dataok));
+                                        Msg::RedirectToUser
+                                    }
+                                    Err(error) => {
+                                        ConsoleService::info(&error.to_string());
+                                        Msg::ResponseError(error.to_string(), StateError::Delete)
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    // let Json(data) = response.into_body();
-                    // match data {
-                    //     Ok(dataok) => {
-                    //         ConsoleService::info(&format!("{:?}", dataok));
-                    //         Msg::RedirectToUser
-                    //     }
-                    //     Err(error) => {
-                    //         ConsoleService::info(&error.to_string());
-                    //         Msg::ResponseError(error.to_string(), StateError::Delete)
-                    //     }
-                    // }
-                });
+                        // let Json(data) = response.into_body();
+                        // match data {
+                        //     Ok(dataok) => {
+                        //         ConsoleService::info(&format!("{:?}", dataok));
+                        //         Msg::RedirectToUser
+                        //     }
+                        //     Err(error) => {
+                        //         ConsoleService::info(&error.to_string());
+                        //         Msg::ResponseError(error.to_string(), StateError::Delete)
+                        //     }
+                        // }
+                    },
+                );
                 let task = FetchService::fetch(request, callback).expect("failed to start request");
                 self.loading_delete_user = true;
                 self.fetch_task = Some(task);
@@ -194,43 +230,46 @@ impl Component for UserTabDetails {
             Msg::RedirectToUser => {
                 self.loading_delete_user = false;
                 self.fetch_task = None;
-                self.route_service.set_route(&format!("/{}/users", "tenant_id_not_from_reducer"), ());
+                self.route_service
+                    .set_route(&format!("/{}/users", "tenant_id_not_from_reducer"), ());
                 true
             }
-            Msg::Block => {
+            Msg::Block(state) => {
                 #[derive(Serialize, Debug, Clone)]
                 struct BlockedUser {
-                    blocked : bool
+                    blocked: bool,
                 }
-                let blocked_user = BlockedUser{
-                    blocked : true
-                };
+                let blocked_user = BlockedUser { blocked: state };
                 ConsoleService::info(&format!("{:?}", blocked_user.clone()));
 
-                let request = Request::patch(format!("{}/users/dev-ofzd5p1b/users/auth0|7CYXV0aDAlN0M2MTM3MTIyMTAxY2VmYTAwNzM0NzRmYmI", API_URL))
-                    .header("Content-Type", "application/json")
-                    .header("access_token","tokenidtelkomdomain")
-                    .body(Json(&blocked_user))
-                    .expect("Could not build request.");
-                let callback = self.link.callback(|response: Response<Json<Result<UserDetails, anyhow::Error>>>| {
-                    let Json(data) = response.into_body();
-                    match data {
-                        Ok(dataok) => {
-                            ConsoleService::info(&format!("{:?}", dataok));
-                            Msg::GetUserDetails(dataok)
+                let request = Request::patch(format!(
+                    "{}/api/v2/users/{}",
+                    API_URL,
+                    self.user_details.user_id.clone()
+                ))
+                .header("Content-Type", "application/json")
+                .header("access_token", self.access_token.clone())
+                .body(Json(&blocked_user))
+                .expect("Could not build request.");
+                let callback = self.link.callback(
+                    |response: Response<Json<Result<UserDetails, anyhow::Error>>>| {
+                        let Json(data) = response.into_body();
+                        match data {
+                            Ok(dataok) => {
+                                ConsoleService::info(&format!("{:?}", dataok));
+                                Msg::GetUserDetails(dataok)
+                            }
+                            Err(error) => {
+                                Msg::ResponseError(error.to_string(), StateError::Blocked)
+                            }
                         }
-                        Err(error) => {
-                            Msg::ResponseError(error.to_string(), StateError::Blocked)
-                        }
-                    }
-                });
+                    },
+                );
                 let task = FetchService::fetch(request, callback).expect("failed to start request");
                 self.loading_update_user = true;
                 self.fetch_task = Some(task);
                 true
-
             }
-            
         }
     }
 
@@ -240,7 +279,6 @@ impl Component for UserTabDetails {
 
     fn view(&self) -> Html {
         let UserDetails {
-            id,
             user_id,
             email,
             email_verified: _,
@@ -253,13 +291,13 @@ impl Component for UserTabDetails {
             app_metadata: _,
             user_metadata: _,
             picture,
-            name:_,
+            name: _,
             nickname: _,
             multifactor: _,
             last_ip,
             last_login,
             logins_count,
-            blocked: _,
+            blocked,
             given_name,
             family_name,
         } = self.user_details.clone();
@@ -316,7 +354,7 @@ impl Component for UserTabDetails {
                     </div>
                 </div>
         </div>
-        
+
         <div class="mt-4">
             <div class="card">
                 <div class="card-body">
@@ -334,32 +372,32 @@ impl Component for UserTabDetails {
                     <p class="fw-bold fs-4">{"Identity Provider Attributes"}</p>
                     <div class="mb-3">
                         <label class="form-label fw-bold">{"user_id"}</label>
-                        <input 
-                            type="text" 
-                            class="form-control" 
+                        <input
+                            type="text"
+                            class="form-control"
                             aria-label="readonly input example"
-                            value={user_id} 
+                            value={user_id}
                             readonly=true
                             oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::UserId))
                         />
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">{"picture"}</label>
-                        <input 
-                            type="text" 
+                        <input
+                            type="text"
                             class="form-control"
-                            aria-label="readonly input example" 
-                            value={picture} 
+                            aria-label="readonly input example"
+                            value={picture}
                             readonly=true
                             oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::Picture))
                         />
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">{"created_at"}</label>
-                        <input 
-                            type="text" 
+                        <input
+                            type="text"
                             class="form-control"
-                            aria-label="readonly input example" 
+                            aria-label="readonly input example"
                             value={created_at.clone()}
                             readonly=true
                             oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::CreatedAt))
@@ -367,11 +405,11 @@ impl Component for UserTabDetails {
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">{"updated_at"}</label>
-                        <input 
-                            type="text" 
-                            class="form-control" 
+                        <input
+                            type="text"
+                            class="form-control"
                             aria-label="readonly input example"
-                            value={updated_at} 
+                            value={updated_at}
                             readonly=true
                             oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::UpdatedAt))
                         />
@@ -382,53 +420,53 @@ impl Component for UserTabDetails {
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">{"blocked"}</label>
-                        <input 
-                            type="text" 
-                            class="form-control" 
-                            value="false" 
-                            aria-label="readonly input example" 
+                        <input
+                            type="text"
+                            class="form-control"
+                            value="false"
+                            aria-label="readonly input example"
                             readonly=true
                         />
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">{"last_password_reset"}</label>
-                        <input 
-                            class="form-control" 
-                            type="text" 
-                            value="2021-10-09T04:43:28.300Z" 
-                            aria-label="readonly input example" 
+                        <input
+                            class="form-control"
+                            type="text"
+                            value="2021-10-09T04:43:28.300Z"
+                            aria-label="readonly input example"
                             readonly=true
                         />
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">{"last_ip"}</label>
-                        <input 
-                            type="text" 
+                        <input
+                            type="text"
                             class="form-control"
-                            value={last_ip} 
-                            aria-label="readonly input example" 
+                            value={last_ip}
+                            aria-label="readonly input example"
                             readonly=true
                             oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::LastIp))
                         />
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">{"last_logins"}</label>
-                        <input 
-                            type="text" 
-                            class="form-control" 
-                            value={last_login.clone()} 
-                            aria-label="readonly input example" 
+                        <input
+                            type="text"
+                            class="form-control"
+                            value={last_login.clone()}
+                            aria-label="readonly input example"
                             readonly=true
                             oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::LastLogin))
                         />
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">{"logins_count"}</label>
-                        <input 
-                            type="text" 
-                            class="form-control" 
-                            value={logins_count.to_string()} 
-                            aria-label="readonly input example" 
+                        <input
+                            type="text"
+                            class="form-control"
+                            value={logins_count.to_string()}
+                            aria-label="readonly input example"
                             readonly=true
                             oninput=self.link.callback(|data: InputData| Msg::InputText(data.value, Data::LoginsCount))
                         />
@@ -445,7 +483,7 @@ impl Component for UserTabDetails {
                             <p class="p-0 m-0">{"The user will be removed and it will no longer have access to your applications"}</p>
                         </div>
                         <div class="col-2 col-sm-2 p-0 d-flex align-items-center justify-content-center">
-                            
+
                             <button
                                 type="button"
                                 class=format!("btn {} btn-danger position-relative", if self.loading_delete_user {"loading"} else {""} )
@@ -477,44 +515,92 @@ impl Component for UserTabDetails {
             </div>
 
 
-            <div class="mt-4">
-                <div class="alert alert-danger" role="alert">
-                    <div class="row">
-                        <div class="col-10 col-sm-10">
-                            <p class="p-0 m-0 fw-bold">{"Block user"}</p>
-                            <p class="p-0 m-0">{"The user will be blocked for logging into your applications."}</p>
-                        </div>
-                        <div class="col-2 col-sm-2 p-0 d-flex align-items-center justify-content-center">
-                            
-                            <button
-                                type="button"
-                                class=format!("btn {} btn-danger position-relative", if self.loading_update_user {"loading"} else {""} )
-                                onclick=self.link.callback(|_| Msg::Block)
-                                disabled={ self.loading_update_user }
-                            >
-                                <div class="telkom-label">
-                                    {"Block"}
+
+            {
+                if blocked {
+                    html!{
+                        <div class="mt-4">
+                            <div class="alert alert-danger" role="alert">
+                                <div class="row">
+                                    <div class="col-10 col-sm-10">
+                                        <p class="p-0 m-0 fw-bold">{"Unblock User"}</p>
+                                        <p class="p-0 m-0">{"The user will be unblocked for logging into your applications."}</p>
+                                    </div>
+                                    <div class="col-2 col-sm-2 p-0 d-flex align-items-center justify-content-center">
+
+                                        <button
+                                            type="button"
+                                            class=format!("btn {} btn-danger position-relative", if self.loading_update_user {"loading"} else {""} )
+                                            onclick=self.link.callback(|_| Msg::Block(false))
+                                            disabled={ self.loading_update_user }
+                                        >
+                                            <div class="telkom-label">
+                                                {"Unblock"}
+                                            </div>
+                                            <div class="telkom-spinner telkom-center">
+                                                <div class="spinner-border spinner-border-sm" role="status"/>
+                                            </div>
+                                        </button>
+                                            {
+                                                if self.error_update_user.is_some() {
+                                                html! {
+                                                    <div class="alert alert-warning mt-3" role="alert">
+                                                        <i class="bi bi-exclamation-triangle me-2"></i>
+                                                        { self.error_update_user.clone().unwrap() }
+                                                    </div>
+                                                }
+                                                } else {
+                                                    html! {}
+                                                }
+                                            }
+                                    </div>
                                 </div>
-                                <div class="telkom-spinner telkom-center">
-                                    <div class="spinner-border spinner-border-sm" role="status"/>
-                                </div>
-                            </button>
-                                {
-                                    if self.error_update_user.is_some() {
-                                    html! {
-                                        <div class="alert alert-warning mt-3" role="alert">
-                                            <i class="bi bi-exclamation-triangle me-2"></i>
-                                            { self.error_update_user.clone().unwrap() }
-                                        </div>
-                                    }
-                                    } else {
-                                        html! {}
-                                    }
-                                }
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
+                    }
+                } else {
+                    html!{
+                        <div class="mt-4">
+                            <div class="alert alert-danger" role="alert">
+                                <div class="row">
+                                    <div class="col-10 col-sm-10">
+                                        <p class="p-0 m-0 fw-bold">{"Block user"}</p>
+                                        <p class="p-0 m-0">{"The user will be blocked for logging into your applications."}</p>
+                                    </div>
+                                    <div class="col-2 col-sm-2 p-0 d-flex align-items-center justify-content-center">
+
+                                        <button
+                                            type="button"
+                                            class=format!("btn {} btn-danger position-relative", if self.loading_update_user {"loading"} else {""} )
+                                            onclick=self.link.callback(|_| Msg::Block(true))
+                                            disabled={ self.loading_update_user }
+                                        >
+                                            <div class="telkom-label">
+                                                {"Block"}
+                                            </div>
+                                            <div class="telkom-spinner telkom-center">
+                                                <div class="spinner-border spinner-border-sm" role="status"/>
+                                            </div>
+                                        </button>
+                                            {
+                                                if self.error_update_user.is_some() {
+                                                html! {
+                                                    <div class="alert alert-warning mt-3" role="alert">
+                                                        <i class="bi bi-exclamation-triangle me-2"></i>
+                                                        { self.error_update_user.clone().unwrap() }
+                                                    </div>
+                                                }
+                                                } else {
+                                                    html! {}
+                                                }
+                                            }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            }
 
 
             <div class="mt-4">
@@ -538,6 +624,4 @@ impl Component for UserTabDetails {
             </>
         }
     }
-
-
 }

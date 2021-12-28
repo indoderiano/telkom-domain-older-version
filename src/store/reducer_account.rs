@@ -13,7 +13,7 @@ pub enum DataAccountAction {
 
 #[derive(Clone, Debug)]
 pub struct DataAccount {
-    pub is_auth: bool,
+    pub is_authenticating: bool,
     pub username: Option<String>,
     pub email: Option<String>,
     pub token: Option<String>,
@@ -25,7 +25,7 @@ impl Reducer for DataAccount {
 
     fn new() -> Self {
         Self { 
-            is_auth: true,
+            is_authenticating: true,
             username: None,
             email: None,
             token: None,
@@ -37,7 +37,7 @@ impl Reducer for DataAccount {
         match action {
             DataAccountAction::SetIsAuth(state) => {
                 ConsoleService::info("set is auth from reducer");
-                self.is_auth = state;
+                self.is_authenticating = state;
                 true
             }
             DataAccountAction::Update(data) => {
@@ -48,7 +48,10 @@ impl Reducer for DataAccount {
                 true
             }
             DataAccountAction::Logout => {
-                *self = DataAccount::new();
+                // *self = DataAccount::new();
+                self.username = None;
+                self.email = None;
+                self.token = None;
                 true
             }
         }
