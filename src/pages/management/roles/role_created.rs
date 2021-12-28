@@ -146,7 +146,7 @@ impl Component for RolesCreated {
                 false
             }
             Msg::CreateRole => {
-                let request = Request::post("http://127.0.0.1:8080/api/v1/1/roles")
+                let request = Request::post(format!("{}/api/v2/roles", API_URL))
                     .header("Content-Type", "application/json")
                     .header("access_token", self.access_token.clone())
                     .body(Json(&self.new_role))
