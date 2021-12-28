@@ -8,10 +8,11 @@ use yew::{
     },
 };
 use crate::components::loading2::Loading2;
+use crate::pages::management::users::modal_assign_permissions::ModalAssignPermissions;
 use crate::configs::server::API_URL;
 use crate::types::{
     users::{UserPermissions},
-    api::{ ApiTitle },
+    api::{ ApiTitle, Scope },
     ResponseMessage,
     LocalStorage,
     LOCALSTORAGE_KEY,
@@ -42,6 +43,8 @@ pub struct UserTabPermissions {
     loading_get_apis: bool,
     error_get_apis: Option<String>,
     apis: Vec<ApiTitle>,
+    selected_api_id: Option<String>,
+    selected_permissions: Option<Vec<Scope>>
 }
 
 pub enum StateError{
@@ -61,6 +64,7 @@ pub enum Msg {
 
     RequestApis,
     GetApis(Vec<ApiTitle>),
+    SelectApi(String),
 }
 
 impl Component for UserTabPermissions {
@@ -109,6 +113,8 @@ impl Component for UserTabPermissions {
             loading_get_apis: false,
             error_get_apis: None,
             apis: Vec::new(),
+            selected_api_id: None,
+            selected_permissions: None,
         }
     }
 
@@ -266,6 +272,18 @@ impl Component for UserTabPermissions {
                 self.fetch_task = None;
                 true
             }
+            Msg::SelectApi(index) => {
+                ConsoleService::info(&format!("index = {}", index));
+                if index.is_empty() {
+                    ConsoleService::info("index is empty");
+                } else {
+                    ConsoleService::info(&format!("selected api id = {}", self.apis[index.parse::<usize>().unwrap()].resource_server_id));
+                    ConsoleService::info(&format!("selected permissions are = {:?}", self.apis[index.parse::<usize>().unwrap()].scopes));
+                    self.selected_api_id = Some(self.apis[index.parse::<usize>().unwrap()].resource_server_id.clone());
+                    self.selected_permissions = Some(self.apis[index.parse::<usize>().unwrap()].scopes.clone());
+                }
+                true
+            }
         }
     }
 
@@ -403,62 +421,77 @@ impl Component for UserTabPermissions {
 
                      
                     // MODAL ASSIGN PERMISSION
-                    <div class="modal fade" id="addPermissions" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content pt-4 pe-5 pb-4 ps-5">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">{"Add Permissions"}</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                {
-                                    if self.loading_get_apis {
-                                        html! {
-                                            <div
-                                                class="modal-body mt-2"
-                                                style="position: relative;"
-                                            >
-                                                <Loading2 width=45 />
-                                            </div>
-                                        }
-                                    } else if self.error_get_apis.is_some() {
-                                        html! {
-                                            <div
-                                                class="modal-body"
-                                            >
-                                                <div class="alert alert-warning mb-5" role="alert">
-                                                    <i class="bi bi-exclamation-triangle me-2"></i>
-                                                    { self.error_get_apis.clone().unwrap() }
-                                                </div>
-                                            </div>
-                                        }
-                                    } else {
-                                        html! {
-                                            <div class="modal-body">
-                                                <label for="exampleDataList" class="form-label">{"Select permissions from existing APIs"}</label>
-                                                <input class="form-control" list="listAPIOptions" id="exampleDataList" placeholder="Select an API..."/>
-                                                <datalist id="listAPIOptions">
-                                                        <option value="Example API">{"https://jsonplaceholder.typicode.com/albums"}</option>
-                                                        // <option value="New York">
-                                                        // <option value="Seattle">
-                                                        // <option value="Los Angeles">
-                                                        // <option value="Chicago">
-                                                </datalist>
-                                            </div>
-                                        }
-                                    }
-                                }
-                                <div class="modal-footer">
-                                    <button
-                                        type="button"
-                                        class="btn btn-primary"
-                                        disabled={self.loading_get_apis}
-                                    >
-                                        {"Add Permissions"}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    // <div class="modal fade" id="addPermissions" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    //     <div class="modal-dialog modal-dialog-centered">
+                    //         <div class="modal-content pt-4 pe-5 pb-4 ps-5">
+                    //             <div class="modal-header">
+                    //                 <h5 class="modal-title" id="exampleModalLabel">{"Add Permissions"}</h5>
+                    //                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    //             </div>
+                    //             {
+                    //                 if self.loading_get_apis {
+                    //                     html! {
+                    //                         <div
+                    //                             class="modal-body pt-2"
+                    //                             style="position: relative;"
+                    //                         >
+                    //                             <Loading2 width=45 />
+                    //                         </div>
+                    //                     }
+                    //                 } else if self.error_get_apis.is_some() {
+                    //                     html! {
+                    //                         <div
+                    //                             class="modal-body"
+                    //                         >
+                    //                             <div class="alert alert-warning mb-5" role="alert">
+                    //                                 <i class="bi bi-exclamation-triangle me-2"></i>
+                    //                                 { self.error_get_apis.clone().unwrap() }
+                    //                             </div>
+                    //                         </div>
+                    //                     }
+                    //                 } else {
+                    //                     html! {
+                    //                         <div class="modal-body">
+                    //                             <label for="exampleDataList" class="form-label">{"Select permissions from existing APIs"}</label>
+                    //                             // <input class="form-control" list="listAPIOptions" id="exampleDataList" placeholder="Select an API..."/>
+                    //                             <select
+                    //                                 // id="listAPIOptions"
+                    //                                 class="form-select mb-2"
+                    //                                 aria-label="Select Api"
+                    //                                 onchange=self.link.callback(|e| {
+                    //                                     if let ChangeData::Select(select) = e {
+                    //                                         let value = select.value();
+                    //                                         // Msg::Input(value, DataUserCreate::Connection)
+                    //                                         Msg::SelectApi(value)
+                    //                                     } else {
+                    //                                         Msg::SelectApi(String::from("no index"))
+                    //                                         // Msg::Input(String::from("no value"), DataUserCreate::Connection)
+                    //                                     }
+                    //                                 })
+                    //                             >
+                    //                                 <option>
+                    //                                     {"-- Select Api --"}
+                    //                                 </option>
+                    //                                 { self.view_apis() }
+                    //                             </select>
+                    //                         </div>
+                    //                     }
+                    //                 }
+                    //             }
+                    //             <div class="modal-footer">
+                    //                 <button
+                    //                     type="button"
+                    //                     class="btn btn-primary"
+                    //                     disabled={self.loading_get_apis}
+                    //                 >
+                    //                     {"Add Permissions"}
+                    //                 </button>
+                    //             </div>
+                    //         </div>
+                    //     </div>
+                    // </div>
+
+                    <ModalAssignPermissions/>
 
 
 
@@ -585,5 +618,39 @@ impl UserTabPermissions {
                 />
             </>
         }
+    }
+
+    fn view_apis(&self) -> Vec<Html> {
+        
+        self.apis
+        .clone()
+        .iter()
+        .enumerate()
+        .map(|(index, api)| {
+            let ApiTitle {
+                resource_server_id,
+                name,
+                is_system: _,
+                identifier,
+                scopes: _,
+                signing_alg: _,
+                signing_secret: _,
+                allow_offline_access: _,
+                skip_consent_for_variable_first_party_clients: _,
+                token_lifetime: _,
+                token_lifetime_for_web: _,
+                enforce_policies: _,
+                token_dialect: _,
+                client: _,
+                tenant_id: _,
+            } = api.clone();
+            html! {
+                <option
+                    value={index.to_string()}
+                >
+                    { name }
+                </option>
+            }
+        }).collect()
     }
 }
