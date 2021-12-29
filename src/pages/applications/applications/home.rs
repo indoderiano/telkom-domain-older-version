@@ -1,7 +1,10 @@
 use yew::{
     format::{Json, Nothing},
     prelude::*,
-    services::fetch::{FetchService, FetchTask, Request, Response},
+    services::{
+        fetch::{FetchService, FetchTask, Request, Response},
+        storage::{ StorageService, Area },
+    },
 };
 
 use crate::app::AppRoute;
@@ -13,6 +16,9 @@ use yew::services::ConsoleService;
 use yew_router::components::RouterAnchor;
 
 use crate::components::loading2::Loading2;
+
+use crate::types::LocalStorage;
+use crate::types::LOCALSTORAGE_KEY;
 
 #[derive(Clone, Debug, Eq, PartialEq, Properties)]
 pub struct AppProps {
@@ -40,6 +46,7 @@ pub struct ApplicationHome {
     show_modal_create: bool,
     loading_create_app: bool,
     error_app_create: Option<String>,
+    access_token: String,
 }
 
 pub enum Msg {
@@ -214,6 +221,32 @@ impl Component for ApplicationHome {
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
         ConsoleService::info(&format!("Apps home props, tenant id = {}", props.tenant_id));
         
+        let storage = StorageService::new(Area::Local).expect("storage was disabled");
+        let localstorage_data = {
+            if let Json(Ok(data)) = storage.restore(LOCALSTORAGE_KEY) {
+                ConsoleService::info(&format!("{:?}", data));
+                data
+            } else {
+                ConsoleService::info("token does not exist");
+                LocalStorage {
+                    username: None,
+                    email: None,
+                    token: None,
+                }
+            }
+        };
+
+        ConsoleService::info(&format!("{:?}", localstorage_data));
+
+        // IF LOCALSTORAGE EXISTS
+        // UPDATE STATE
+        let mut access_token = String::from("");
+        if let Some(_) = localstorage_data.token {
+            access_token = localstorage_data.token.unwrap();
+        } else {
+            
+        }
+
         let app_create = AppCreate::new();
         
         ApplicationHome {
@@ -227,6 +260,7 @@ impl Component for ApplicationHome {
             show_modal_create: false,
             loading_create_app: false,
             error_app_create: None,
+            access_token,
         }
     }
 
@@ -250,8 +284,8 @@ impl Component for ApplicationHome {
                 true
             }
             Msg::RequestAppList => {
-                let request = Request::get("http://127.0.0.1:8080/api/v1/1/clients")
-                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
+                let request = Request::get("https://evening-cliffs-55855.herokuapp.com/api/v2/clients")
+                    .header("access_token", self.access_token.clone())
                     .header("Content-Type", "application/json")
                     .body(Nothing)
                     .expect("Could not build request.");
@@ -300,9 +334,9 @@ impl Component for ApplicationHome {
             }
             Msg::Create => {
                 ConsoleService::info(&format!("{:?}", self.app_create));
-                let request = Request::post("http://127.0.0.1:8080/api/v1/1/clients")
+                let request = Request::post("https://evening-cliffs-55855.herokuapp.com/api/v2/clients")
                     .header("Content-Type", "application/json")
-                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
+                    .header("access_token", self.access_token.clone())
                     .body(Json(&self.app_create))
                     .expect("Could not build request.");
                 let callback = 
@@ -584,9 +618,10 @@ impl Component for ApplicationHome {
                                             }
                                         })
                                     >
-                                        <option value="Single Page Application">{"Single Page Application"}</option>
-                                        <option value="Regular Web Application">{"Regular Web Application"}</option>
-                                        <option value="Native App">{"Native App"}</option>
+                                        <option value="spa">{"Single Page Application"}</option>
+                                        <option value="regular_web">{"Regular Web Application"}</option>
+                                        <option value="native">{"Native Appication"}</option>
+                                        <option value="non_interactive">{"Non Interactive"}</option>
                                     </select>
                                     <label class="form-label text-muted">{"Choose an application type"}</label>
                                 </div>
