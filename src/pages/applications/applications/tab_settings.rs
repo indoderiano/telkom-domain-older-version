@@ -3,7 +3,7 @@ use yew::{
     format::{ Json, Nothing },
     services::{
         ConsoleService,
-        fetch::{FetchService, FetchTask, Request, Response},
+        fetch::{FetchService, FetchTask, Request, Response, StatusCode},
         storage::{ StorageService, Area },
     },
     agent::Bridged,
@@ -273,18 +273,41 @@ impl Component for TabSettings {
               .body(Nothing)
               .expect("Could not build request.");
           let callback = self.link.callback(|response: Response<Json<Result<(), anyhow::Error>>>| {
-          let Json(data) = response.into_body();
-          match data {
-              Ok(dataok) => {
-                  ConsoleService::info(&format!("{:?}", dataok));
-                  // self.router_agent.send(ChangeRoute(<yew_router::route::Route<_> as Trait>::ApplicationHome {self.tenant_id}));
+      
+          let (meta, Json(data)) = response.into_parts();
+          let status_number = meta.status.as_u16();
+
+          match status_number {
+              204 => {
+                  ConsoleService::info("status code is 204");
+                  ConsoleService::info("api is deleted");
                   Msg::RedirectToApp
               }
-              Err(error) => {
-                  ConsoleService::info(&error.to_string());
-                  Msg::ResponseError(error.to_string(), StateError::Delete)
+              _ => {
+                  ConsoleService::info("status code is not 204");
+                  match data {
+                      Ok(dataok) => {
+                          ConsoleService::info(&format!("{:?}", dataok));
+                          Msg::RedirectToApp
+                      }
+                      Err(error) => {
+                          ConsoleService::info(&error.to_string());
+                          Msg::ResponseError(error.to_string(), StateError::Delete)
+                      }
+                  }
               }
           }
+          // match data {
+          //     Ok(dataok) => {
+          //         ConsoleService::info(&format!("{:?}", dataok));
+          //         // self.router_agent.send(ChangeRoute(<yew_router::route::Route<_> as Trait>::ApplicationHome {self.tenant_id}));
+          //         Msg::RedirectToApp
+          //     }
+          //     Err(error) => {
+          //         ConsoleService::info(&error.to_string());
+          //         Msg::ResponseError(error.to_string(), StateError::Delete)
+          //     }
+          // }
           });
           let task = FetchService::fetch(request, callback).expect("failed to start request");
           self.loading_delete_app = true;
