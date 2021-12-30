@@ -7,6 +7,7 @@ use yew::{
         storage::{ StorageService, Area }
     },
 };
+use serde::Serialize;
 use crate::components::loading2::Loading2;
 use crate::configs::server::API_URL;
 use crate::types::{
@@ -17,6 +18,11 @@ use crate::types::{
     LOCALSTORAGE_KEY,
 };
 
+#[derive(Serialize, Debug, Clone, PartialEq)]
+struct SelectedPermission {
+    permission_name: String,
+    resource_server_identifier: String,
+}
 
 #[derive(Clone, Debug, Eq, PartialEq, Properties)]
 pub struct ModalAssignPermissionsProps {
@@ -31,10 +37,11 @@ pub struct ModalAssignPermissions {
     loading_get_apis: bool,
     error_get_apis: Option<String>,
     apis: Vec<ApiTitle>,
-    selected_api_id: Option<String>,
-    selected_api_name: Option<String>,
+    // selected_api_id: Option<String>,
+    // selected_api_name: Option<String>,
+    selected_api: Option<ApiTitle>,
     option_permissions: Option<Vec<Scope>>,
-    selected_permissions: Vec<usize>,
+    selected_permissions: Vec<SelectedPermission>,
 }
 
 pub enum StateError {
@@ -85,8 +92,9 @@ impl Component for ModalAssignPermissions {
             loading_get_apis: false,
             error_get_apis: None,
             apis: Vec::new(),
-            selected_api_id: None,
-            selected_api_name: None,
+            // selected_api_id: None,
+            // selected_api_name: None,
+            selected_api: None,
             option_permissions: None,
             selected_permissions: Vec::new(),
         }
@@ -132,20 +140,76 @@ impl Component for ModalAssignPermissions {
             }
             Msg::SelectApi(index) => {
                 ConsoleService::info(&format!("index = {}", index));
+                let index_integer = index.parse::<usize>().unwrap();
                 if index.is_empty() {
                     ConsoleService::info("index is empty");
                 } else {
-                    // ConsoleService::info(&format!("selected api id = {}", self.apis[index.parse::<usize>().unwrap()].resource_server_id));
-                    // ConsoleService::info(&format!("selected permissions are = {:?}", self.apis[index.parse::<usize>().unwrap()].scopes));
-                    self.selected_api_id = Some(self.apis[index.parse::<usize>().unwrap()].resource_server_id.clone());
-                    self.selected_api_name = Some(self.apis[index.parse::<usize>().unwrap()].name.clone());
-                    self.option_permissions = Some(self.apis[index.parse::<usize>().unwrap()].scopes.clone());
+                    // ConsoleService::info(&format!("selected api id = {}", self.apis[index_integer].resource_server_id));
+                    // ConsoleService::info(&format!("selected permissions are = {:?}", self.apis[index_integer].scopes));
+                    // self.selected_api_id = Some(self.apis[index_integer].resource_server_id.clone());
+                    // self.selected_api_name = Some(self.apis[index_integer].name.clone());
+                    self.selected_api = Some(self.apis[index_integer].clone());
+                    self.option_permissions = Some(self.apis[index_integer].scopes.clone());
                 }
                 true
             }
             Msg::SelectPermission(index) => {
                 ConsoleService::info(&format!("selected index is {}", index));
-                // let index_parsed = index.parse::<usize>().unwrap();
+
+                let mut selected_permission = SelectedPermission {
+                    permission_name: String::from(""),
+                    resource_server_identifier: String::from(""),
+                };
+
+                // SECURE WAY TO DEFINE VARIABLE
+                // if self.option_permissions.is_some() && self.selected_api.is_some() {
+                //     selected_permission = SelectedPermission {
+                //         permission_name: self.option_permissions.clone().unwrap()[index].value,
+                //         resource_server_identifier: self.selected_api.clone().unwrap().identifier,
+                //     };
+                // }
+
+                // SECURE WAY TO DEFINE VARIABLE
+                if let Some(permissions) = self.option_permissions.clone() {
+                    if let Some(api) = self.selected_api.clone() {
+                        selected_permission = SelectedPermission {
+                            permission_name: permissions[index].value.clone(),
+                            resource_server_identifier: api.identifier.clone(),
+                        };
+                    }
+                }
+
+                ConsoleService::info(&format!("selected permission is {:?}", selected_permission));
+
+                // CHECK IF PERMISSION TARGETED IS ALREADY SELECTED
+                if self.selected_permissions
+                .clone()
+                .iter()
+                .any(|data| {
+                    *data == selected_permission
+                })
+                {
+                    // REMOVE PERMISSION FROM SELECTED PERMISSIONS
+                    let new_selected_permissions = self.selected_permissions
+                    .clone()
+                    .iter()
+                    .filter(|data| {
+                        **data != selected_permission
+                    })
+                    .map (|data| {
+                        data.clone()
+                    })
+                    .collect::<Vec<SelectedPermission>>();
+
+                    self.selected_permissions = new_selected_permissions;
+                } else {
+                    // let new_selected_permissions = self.selected_permissions.clone().push(selected_permission);
+                    // self.selected_permissions = new_selected_permissions;
+                    self.selected_permissions.push(selected_permission);
+                }
+
+
+                ConsoleService::info(&format!("new selected permissions = {:?}", self.selected_permissions));
 
                 // self.selected_permissions
                 // .clone()
@@ -318,16 +382,25 @@ impl ModalAssignPermissions {
                         .enumerate()
                         .filter(|(index, permission)| {
                             let mut already_assigned = false;
-                            for user_permission in self.user_permissions.clone() {
-                                ConsoleService::info(&format!("permission {:?}", permission.value));
-                                if user_permission.permission_name == permission.value && Some(user_permission.resource_server_name) == self.selected_api_name {
-                                    ConsoleService::info(&format!("permission {:?} is already assigned", permission.value));
-                                    already_assigned = true;
+                            if self.selected_api.is_some() {
+                                for user_permission in self.user_permissions.clone() {
+                                    // ConsoleService::info(&format!("permission {:?}", permission.value));
+                                    if user_permission.permission_name == permission.value && user_permission.resource_server_name == self.selected_api.clone().unwrap().name {
+                                        // ConsoleService::info(&format!("permission {:?} is already assigned", permission.value));
+                                        already_assigned = true;
+                                    }
                                 }
                             }
                             !already_assigned
                         })
                         .map(|(index, permission)| {
+                            let checked = self.selected_permissions
+                            .clone()
+                            .iter()
+                            .any(|selected_permission| {
+                                *selected_permission.permission_name == permission.value
+                            });
+
                             html! {
                                 <div
                                     class="d-inline-block m-2"
@@ -346,7 +419,8 @@ impl ModalAssignPermissions {
                                                 class="form-check-input"
                                                 type="checkbox"
                                                 // id="inlineCheckbox1"
-                                                value="option1"
+                                                // value="option1"
+                                                checked={checked}
                                             />
                                             <label
                                                 class="form-check-label text-dark"
