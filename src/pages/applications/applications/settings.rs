@@ -1,7 +1,10 @@
 use yew::{
     format::{ Json, Nothing },
     prelude::*,
-    services::fetch::{FetchService, FetchTask, Request, Response},
+    services::{
+        fetch::{FetchService, FetchTask, Request, Response},
+        storage::{ StorageService, Area },
+    },
 };
 use yew_router::components::RouterAnchor;
 use crate::app::AppRoute;
@@ -9,10 +12,12 @@ use super::tab_connection::ConnectionTab;
 use super::tab_settings::TabSettings;
 use yew::services::ConsoleService;
 use crate::types::application::{ AppDetails, RefreshToken, 
-    // SigningKeys,
+    SigningKeys,
     JwtConfiguration };
 use crate::components::loading2::Loading2;
 
+use crate::types::LocalStorage;
+use crate::types::LOCALSTORAGE_KEY;
 
 #[derive(Clone, Debug, Eq, PartialEq, Properties)]
 pub struct AppsSettingsProps {
@@ -33,6 +38,7 @@ pub struct ApplicationSettings {
     app_details: AppDetails,
     app_id: String,
     tenant_id: String,
+    access_token: String,
 }
 
 pub enum Msg {
@@ -57,9 +63,36 @@ impl Component for ApplicationSettings {
         //     rotation_type: String::from("default"),
         // }
 
+        let storage = StorageService::new(Area::Local).expect("storage was disabled");
+        let localstorage_data = {
+            if let Json(Ok(data)) = storage.restore(LOCALSTORAGE_KEY) {
+                ConsoleService::info(&format!("{:?}", data));
+                data
+            } else {
+                ConsoleService::info("token does not exist");
+                LocalStorage {
+                    username: None,
+                    email: None,
+                    token: None,
+                }
+            }
+        };
+
+        ConsoleService::info(&format!("{:?}", localstorage_data));
+
+        // IF LOCALSTORAGE EXISTS
+        // UPDATE STATE
+        let mut access_token = String::from("");
+        if let Some(_) = localstorage_data.token {
+            access_token = localstorage_data.token.unwrap();
+        } else {
+            
+        }
+
         let app_details = AppDetails {
             tenant: String::from("default"),
             global: false,
+            description: String::from("default"),
             is_token_endpoint_ip_header_trusted: false,
             name: String::from("default"),
             is_first_party: false,
@@ -76,26 +109,33 @@ impl Component for ApplicationSettings {
                 rotation_type: String::from("default"),
             },
             encrypted: false,
-            allowed_clients: String::from("default"),
-            callbacks: String::from("default"),
-            // signing_keys: SigningKeys {
-            //     cert: String::from("default"),
-            //     pkcs7: String::from("default"),
-            //     subject: String::from("default"),
-            // },
+            allowed_clients: vec![],
+            callbacks: vec![],
+            logo_uri: String::from("default"),
+            sso: false,
+            web_origins: vec![],
+            signing_keys: vec![],
             client_id: String::from("default"),
             callback_url_template: false,
             client_secret: String::from("default"),
             jwt_configuration: JwtConfiguration {
-                alg: String::from("default"),
                 lifetime_in_seconds: 0,
                 secret_encoded: false,
             },
-            client_aliases: String::from("default"),
+            client_aliases: vec![],
             token_endpoint_auth_method: String::from("default"),
             app_type: String::from("default"),
-            grant_types: String::from("default"),
+            grant_types: vec![],
             custom_login_page_on: false,
+            allowed_logout_urls: vec![],
+            allowed_origins: vec![],
+            cross_origin_loc : String::from("default"),
+            custom_login_page : String::from("default"),
+            custom_login_page_preview : String::from("default"),
+            form_template : String::from("default"),
+            initiate_login_uri : String::from("default"),
+            organization_usage : String::from("default"),
+            organization_require_behavior : String::from("default"),
         };
         ApplicationSettings {
             content: Content::Settings,
@@ -104,7 +144,8 @@ impl Component for ApplicationSettings {
             error: None,
             app_details,
             app_id: props.app_id,
-            tenant_id: props.tenant_id
+            tenant_id: props.tenant_id,
+            access_token,
         }
     }
 
@@ -126,9 +167,9 @@ impl Component for ApplicationSettings {
                 true
             }
             Msg::RequestAppDetails => {
-                let request = Request::get(format!("http://127.0.0.1:8080/api/v1/1/clients/{}", self.app_id))
+                let request = Request::get(format!("https://evening-cliffs-55855.herokuapp.com/api/v2/clients/{}", self.app_id))
                     // .header("Content-Type", "application/json")
-                    .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
+                    .header("access_token", self.access_token.clone())
                     .body(Nothing)
                     .expect("Could not build request.");
                 let callback = 
@@ -207,39 +248,36 @@ impl ApplicationSettings {
             is_token_endpoint_ip_header_trusted,
             name,
             is_first_party,
+            description,
             oidc_conformant,
             sso_disabled,
             cross_origin_auth,
-            refresh_token: RefreshToken {
-                expiration_type,
-                leeway,
-                infinite_token_lifetime,
-                infinite_idle_token_lifetime,
-                token_lifetime,
-                idle_token_lifetime,
-                rotation_type,
-            },
+            allowed_origins,
+            web_origins,
+            logo_uri,
+            sso,
+            cross_origin_loc,
+            custom_login_page,
+            custom_login_page_preview,
+            form_template,
+            initiate_login_uri,
+            organization_usage,
+            organization_require_behavior,
+            refresh_token,
             encrypted,
             allowed_clients,
             callbacks,
-            // signing_keys: SigningKeys {
-            //     cert,
-            //     pkcs7,
-            //     subject,
-            // },
+            signing_keys,
             client_id,
             callback_url_template,
             client_secret,
-            jwt_configuration: JwtConfiguration {
-                alg,
-                lifetime_in_seconds,
-                secret_encoded,
-            },
+            jwt_configuration,
             client_aliases,
             token_endpoint_auth_method,
             app_type,
             grant_types,
             custom_login_page_on,
+            allowed_logout_urls,
         } = self.app_details.clone();
 
         html! {
