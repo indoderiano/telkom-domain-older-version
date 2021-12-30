@@ -10,22 +10,31 @@ use yew::{
 use crate::components::loading2::Loading2;
 use crate::configs::server::API_URL;
 use crate::types::{
-    users::{UserPermissions},
+    users::{ UserPermissions },
     api::{ ApiTitle, Scope },
     ResponseMessage,
     LocalStorage,
     LOCALSTORAGE_KEY,
 };
 
+
+#[derive(Clone, Debug, Eq, PartialEq, Properties)]
+pub struct ModalAssignPermissionsProps {
+    pub user_permissions: Vec<UserPermissions>,
+}
+
 pub struct ModalAssignPermissions {
     link: ComponentLink<Self>,
     fetch_task: Option<FetchTask>,
     access_token: String,
+    user_permissions: Vec<UserPermissions>,
     loading_get_apis: bool,
     error_get_apis: Option<String>,
     apis: Vec<ApiTitle>,
     selected_api_id: Option<String>,
-    selected_permissions: Option<Vec<Scope>>,
+    selected_api_name: Option<String>,
+    option_permissions: Option<Vec<Scope>>,
+    selected_permissions: Vec<usize>,
 }
 
 pub enum StateError {
@@ -35,14 +44,15 @@ pub enum Msg {
     RequestApis,
     GetApis(Vec<ApiTitle>),
     SelectApi(String),
+    SelectPermission(usize),
     ResponseError(String, StateError),
 }
 
 impl Component for ModalAssignPermissions {
     type Message = Msg;
-    type Properties = ();
+    type Properties = ModalAssignPermissionsProps;
 
-    fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
+    fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
         // GET LOCALSTORAGE
         let storage = StorageService::new(Area::Local).expect("storage was disabled");
         let localstorage_data = {
@@ -65,15 +75,20 @@ impl Component for ModalAssignPermissions {
             
         }
 
+        ConsoleService::info(&format!("user permissions = {:?}", props.user_permissions));
+
         ModalAssignPermissions {
             link,
             fetch_task: None,
             access_token,
+            user_permissions: props.user_permissions,
             loading_get_apis: false,
             error_get_apis: None,
             apis: Vec::new(),
             selected_api_id: None,
-            selected_permissions: None,
+            selected_api_name: None,
+            option_permissions: None,
+            selected_permissions: Vec::new(),
         }
     }
 
@@ -120,11 +135,29 @@ impl Component for ModalAssignPermissions {
                 if index.is_empty() {
                     ConsoleService::info("index is empty");
                 } else {
-                    ConsoleService::info(&format!("selected api id = {}", self.apis[index.parse::<usize>().unwrap()].resource_server_id));
-                    ConsoleService::info(&format!("selected permissions are = {:?}", self.apis[index.parse::<usize>().unwrap()].scopes));
+                    // ConsoleService::info(&format!("selected api id = {}", self.apis[index.parse::<usize>().unwrap()].resource_server_id));
+                    // ConsoleService::info(&format!("selected permissions are = {:?}", self.apis[index.parse::<usize>().unwrap()].scopes));
                     self.selected_api_id = Some(self.apis[index.parse::<usize>().unwrap()].resource_server_id.clone());
-                    self.selected_permissions = Some(self.apis[index.parse::<usize>().unwrap()].scopes.clone());
+                    self.selected_api_name = Some(self.apis[index.parse::<usize>().unwrap()].name.clone());
+                    self.option_permissions = Some(self.apis[index.parse::<usize>().unwrap()].scopes.clone());
                 }
+                true
+            }
+            Msg::SelectPermission(index) => {
+                ConsoleService::info(&format!("selected index is {}", index));
+                // let index_parsed = index.parse::<usize>().unwrap();
+
+                // self.selected_permissions
+                // .clone()
+                // .iter()
+                // .filter(|data| {
+                //     data
+                // })
+                // .map(|data| {
+                //     data.clone()
+                // })
+                // .collect::<>()
+                // .len()
                 true
             }
             Msg::ResponseError(message, state) => {
@@ -140,14 +173,22 @@ impl Component for ModalAssignPermissions {
         }
     }
 
-    fn change(&mut self, _: Self::Properties) -> ShouldRender {
-        false
+    fn change(&mut self, props: Self::Properties) -> ShouldRender {
+        if self.user_permissions != props.user_permissions {
+            self.user_permissions = props.user_permissions;
+            true
+        } else {
+            false
+        }
     }
 
     fn view(&self) -> Html {
         html! {
             <div class="modal fade" id="addPermissions" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
+                <div
+                    class="modal-dialog modal-dialog-centered"
+                    style="max-width: 50%"
+                >
                     <div class="modal-content pt-4 pe-5 pb-4 ps-5">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel">{"Add Permissions"}</h5>
@@ -257,60 +298,71 @@ impl ModalAssignPermissions {
 
     fn view_permissions (&self) -> Html {
 
-        if self.selected_permissions.is_some() {
+        // if self.option_permissions.is_some() {
+        //     ConsoleService::info(&format!("option permissions = {:?}", self.option_permissions.clone().unwrap()));
+        // }
+        // ConsoleService::info(&format!("user permissions = {:?}", self.user_permissions));
+
+        if self.option_permissions.is_some() {
             html! {
                 <div
-                    class="border border-1 rounded p-3 mt-2"
+                    class="border border-1 rounded p-3 mt-3"
+                    style="max-height: 300px; overflow-y: scroll;"
                 >
                     {
-                        self.selected_permissions
+                        
+                        self.option_permissions
                         .clone()
                         .unwrap()
                         .iter()
                         .enumerate()
+                        .filter(|(index, permission)| {
+                            let mut already_assigned = false;
+                            for user_permission in self.user_permissions.clone() {
+                                ConsoleService::info(&format!("permission {:?}", permission.value));
+                                if user_permission.permission_name == permission.value && Some(user_permission.resource_server_name) == self.selected_api_name {
+                                    ConsoleService::info(&format!("permission {:?} is already assigned", permission.value));
+                                    already_assigned = true;
+                                }
+                            }
+                            !already_assigned
+                        })
                         .map(|(index, permission)| {
                             html! {
                                 <div
-                                    class="border border-1 rounded p-3 mt-2"
+                                    class="d-inline-block m-2"
+                                    onclick=self.link.callback(move |_| Msg::SelectPermission(index.clone()))
                                 >
-                                    <div
-                                        class="d-inline-block m-2"
+                                    <input
+                                        type="checkbox"
+                                        class="btn-check"
+                                    />
+                                    <label
+                                        class="btn btn-outline-secondary"
+                                        for="btn-check-outlined"
                                     >
-                                        <input
-                                            type="checkbox"
-                                            class="btn-check"
-                                        />
-                                        <label
-                                            class="btn btn-outline-secondary"
-                                            for="btn-check-outlined"
-                                        >
-                                            <div class="form-check form-check-inline">
-                                                <input
-                                                    class="form-check-input"
-                                                    type="checkbox"
-                                                    id="inlineCheckbox1"
-                                                    value="option1"
-                                                />
-                                                <label
-                                                    class="form-check-label text-dark"
-                                                    for="inlineCheckbox1"
-                                                >{ permission.value.clone() }</label>
-                                            </div>
-                                        </label>
-                                    </div>
+                                        <div class="form-check form-check-inline">
+                                            <input
+                                                class="form-check-input"
+                                                type="checkbox"
+                                                // id="inlineCheckbox1"
+                                                value="option1"
+                                            />
+                                            <label
+                                                class="form-check-label text-dark"
+                                                for="inlineCheckbox1"
+                                            >{ permission.value.clone() }</label>
+                                        </div>
+                                    </label>
                                 </div>
                             }
-                        }).collect()
+                        }).collect::<Vec<Html>>()
                     }
                 </div>
             }
         } else {
             html! {}
         }
-
-
-        
-
 
     }
 }
