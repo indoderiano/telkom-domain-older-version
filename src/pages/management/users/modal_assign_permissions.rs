@@ -187,7 +187,7 @@ impl Component for ModalAssignPermissions {
             <div class="modal fade" id="addPermissions" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div
                     class="modal-dialog modal-dialog-centered"
-                    style="max-width: 50%"
+                    style="max-width: 50%; overflow: hidden;"
                 >
                     <div class="modal-content pt-4 pe-5 pb-4 ps-5">
                         <div class="modal-header">
