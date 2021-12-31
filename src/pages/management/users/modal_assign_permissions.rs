@@ -8,7 +8,10 @@ use yew::{
     },
 };
 use serde::Serialize;
-use crate::components::loading2::Loading2;
+use crate::components::{
+    loading2::Loading2,
+    developers_note::DevelopersNote,
+};
 use crate::configs::server::API_URL;
 use crate::types::{
     users::{ UserPermissions },
@@ -389,6 +392,9 @@ impl Component for ModalAssignPermissions {
                                 html! {}
                             }
                         }
+                        <DevelopersNote
+                            message="Feature autoclose modal is not yet implemented"
+                        />
                         <div class="modal-footer">
                         </div>
                     </div>
@@ -444,7 +450,7 @@ impl ModalAssignPermissions {
             html! {
                 <div
                     class="border border-1 rounded p-3 mt-3"
-                    style="max-height: 300px; overflow-y: scroll;"
+                    style="max-height: 250px; overflow-y: scroll;"
                 >
                     {
                         

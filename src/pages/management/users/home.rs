@@ -16,7 +16,10 @@ use yew_router::components::RouterAnchor;
 use crate::types::LocalStorage;
 use crate::types::LOCALSTORAGE_KEY;
 
-use crate::components::loading2::Loading2;
+use crate::components::{
+    loading2::Loading2,
+    developers_note::DevelopersNote,
+};
 use crate::configs::server::API_URL;
 
 #[derive(Clone, Debug, Eq, PartialEq, Properties)]
@@ -384,7 +387,9 @@ impl Component for UsersManagement {
                         }
                     </div>
 
+
                     <div class="mt-5">
+                        <DevelopersNote message="Feature Search and Filter are not yet implemented"/>
                         <div class="row">
                             <div class="col-md col-lg">
                                 <div class="input-group flex-nowrap">
