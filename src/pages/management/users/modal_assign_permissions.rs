@@ -27,6 +27,7 @@ struct SelectedPermission {
 #[derive(Clone, Debug, Eq, PartialEq, Properties)]
 pub struct ModalAssignPermissionsProps {
     pub user_permissions: Vec<UserPermissions>,
+    pub user_id: String,
 }
 
 pub struct ModalAssignPermissions {
@@ -34,6 +35,7 @@ pub struct ModalAssignPermissions {
     fetch_task: Option<FetchTask>,
     access_token: String,
     user_permissions: Vec<UserPermissions>,
+    user_id: String,
     loading_get_apis: bool,
     error_get_apis: Option<String>,
     apis: Vec<ApiTitle>,
@@ -42,16 +44,22 @@ pub struct ModalAssignPermissions {
     selected_api: Option<ApiTitle>,
     option_permissions: Option<Vec<Scope>>,
     selected_permissions: Vec<SelectedPermission>,
+    error_assign_permissions: Option<String>,
+    loading_assign_permissions: bool,
+    message: Option<String>,
 }
 
 pub enum StateError {
     RequestApis,
+    RequestAssignPermissions,
 }
 pub enum Msg {
     RequestApis,
     GetApis(Vec<ApiTitle>),
     SelectApi(String),
     SelectPermission(usize),
+    RequestAssignPermissions,
+    GetResponseAssignPermissions(String),
     ResponseError(String, StateError),
 }
 
@@ -89,6 +97,7 @@ impl Component for ModalAssignPermissions {
             fetch_task: None,
             access_token,
             user_permissions: props.user_permissions,
+            user_id: props.user_id,
             loading_get_apis: false,
             error_get_apis: None,
             apis: Vec::new(),
@@ -97,6 +106,9 @@ impl Component for ModalAssignPermissions {
             selected_api: None,
             option_permissions: None,
             selected_permissions: Vec::new(),
+            error_assign_permissions: None,
+            loading_assign_permissions: false,
+            message: None,
         }
     }
 
@@ -211,17 +223,44 @@ impl Component for ModalAssignPermissions {
 
                 ConsoleService::info(&format!("new selected permissions = {:?}", self.selected_permissions));
 
-                // self.selected_permissions
-                // .clone()
-                // .iter()
-                // .filter(|data| {
-                //     data
-                // })
-                // .map(|data| {
-                //     data.clone()
-                // })
-                // .collect::<>()
-                // .len()
+                true
+            }
+            Msg::RequestAssignPermissions => {
+                #[derive(Serialize, Debug, Clone, PartialEq)]
+                struct DataAssignPermissions {
+                    permissions: Vec<SelectedPermission>
+                }
+                let data_assign_permissions = DataAssignPermissions {
+                    permissions: self.selected_permissions.clone()
+                };
+                let request = Request::post(format!("{}/api/v2/users/{}/permissions", API_URL, self.user_id))
+                    .header("access_token", self.access_token.clone())
+                    .header("Content-Type", "application/json")
+                    .body(Json(&data_assign_permissions))
+                    .expect("Could not build request");
+                let callback = self.link.callback(
+                    |response: Response<Json<Result<String, anyhow::Error>>>| {
+                        let Json(data) = response.into_body();
+                        // ConsoleService::info(&format!("{:?}", data));
+                        match data{
+                            Ok(dataok) => Msg::GetResponseAssignPermissions(dataok), 
+                            Err(error) => {
+                                Msg::ResponseError(error.to_string(), StateError::RequestAssignPermissions)
+                            }
+                        }
+                    }
+                );
+
+                let task = FetchService::fetch(request, callback).expect("failed to start request");
+                self.fetch_task = Some(task);
+                self.error_assign_permissions = None;
+                self.loading_assign_permissions = true;
+                true
+            }
+            Msg::GetResponseAssignPermissions(message) => {
+                self.fetch_task = None;
+                self.loading_assign_permissions = false;
+                self.message = Some(message);
                 true
             }
             Msg::ResponseError(message, state) => {
@@ -229,6 +268,10 @@ impl Component for ModalAssignPermissions {
                     StateError::RequestApis => {
                         self.loading_get_apis = false;
                         self.error_get_apis = Some(message);
+                    }
+                    StateError::RequestAssignPermissions => {
+                        self.loading_assign_permissions = false;
+                        self.error_assign_permissions = Some(message);
                     }
                 }
                 self.fetch_task = None;
@@ -312,11 +355,41 @@ impl Component for ModalAssignPermissions {
                         <div class="modal-footer">
                             <button
                                 type="button"
-                                class="btn btn-primary"
-                                disabled={self.loading_get_apis}
+                                class=format!("btn {} btn-primary position-relative", if self.loading_assign_permissions {"loading"} else {""} )
+                                onclick=self.link.callback(|_| Msg::RequestAssignPermissions)
+                                disabled={ self.loading_assign_permissions }
                             >
-                                {"Add Permissions"}
+                                <div class="telkom-label">
+                                    {"Add Permissions"}
+                                </div>
+                                <div class="telkom-spinner telkom-center">
+                                    <div class="spinner-border spinner-border-sm" role="status"/>
+                                </div>
                             </button>
+                        </div>
+                        {
+                            if self.message.is_some() {
+                                html! {
+                                    <div class="alert alert-success" role="alert">
+                                        { self.message.clone().unwrap() }
+                                    </div>
+                                }
+                            } else {
+                                html! {}
+                            }
+                        }
+                        {
+                            if self.error_assign_permissions.is_some() {
+                                html! {
+                                    <div class="alert alert-warning" role="alert">
+                                        { self.error_assign_permissions.clone().unwrap() }
+                                    </div>
+                                }
+                            } else {
+                                html! {}
+                            }
+                        }
+                        <div class="modal-footer">
                         </div>
                     </div>
                 </div>

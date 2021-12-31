@@ -420,7 +420,7 @@ impl Component for UserTabPermissions {
                     { self.modal_delete_permission() }
 
 
-                    <ModalAssignPermissions user_permissions=self.user_permissions.clone() />
+                    <ModalAssignPermissions user_permissions=self.user_permissions.clone() user_id=self.user_id.clone() />
 
 
 
