@@ -3,16 +3,21 @@ use yew::{
     format::{ Json, Nothing },
     services::{
         ConsoleService,
-        fetch::{FetchService, FetchTask, Request, Response},
+        fetch::{FetchService, FetchTask, Request, Response, StatusCode},
+        storage::{ StorageService, Area },
     },
     agent::Bridged,
     Bridge,
 };
 use crate::app::AppRoute;
+
+use crate::types::LocalStorage;
+use crate::types::LOCALSTORAGE_KEY;
+
 use yew_router::{agent::RouteRequest::ChangeRoute, service::RouteService, prelude::*};
 use crate::types::{
 	application::{ AppDetails, RefreshToken,
-    //  SigningKeys,
+     SigningKeys,
     JwtConfiguration  },
 	ResponseMessage,
 };
@@ -65,6 +70,7 @@ pub struct TabSettings {
   loading_delete_app: bool,
   error_delete_app: Option<String>,
   route_service: RouteService,
+  access_token: String,
   // router_agent: Box<dyn Bridge<RouteAgent>>,
   // tenant_id: String,
 }
@@ -84,6 +90,34 @@ impl Component for TabSettings {
     type Properties = AppsTabSettingsProps;
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
+
+
+      let storage = StorageService::new(Area::Local).expect("storage was disabled");
+      let localstorage_data = {
+          if let Json(Ok(data)) = storage.restore(LOCALSTORAGE_KEY) {
+              ConsoleService::info(&format!("{:?}", data));
+              data
+          } else {
+              ConsoleService::info("token does not exist");
+              LocalStorage {
+                  username: None,
+                  email: None,
+                  token: None,
+              }
+          }
+      };
+
+      ConsoleService::info(&format!("{:?}", localstorage_data));
+
+      // IF LOCALSTORAGE EXISTS
+      // UPDATE STATE
+      let mut access_token = String::from("");
+      if let Some(_) = localstorage_data.token {
+          access_token = localstorage_data.token.unwrap();
+      } else {
+          
+      }
+
         TabSettings {
           app_details: props.app_details,
           link,
@@ -93,6 +127,7 @@ impl Component for TabSettings {
           loading_delete_app: false,
           error_delete_app: None,
           route_service: RouteService::new(),
+          access_token,
           // router_agent: RouteAgent::bridge(link.callback(|_| Msg::Ignore)),
           // tenant_id: "kmzway87aa".to_string()
         }
@@ -127,9 +162,9 @@ impl Component for TabSettings {
             Data::AuthenticationMethod => {
                 self.app_details.token_endpoint_auth_method = input;
             }
-            Data::LoginUrl => {
-                self.app_details.callbacks = input;
-            }
+            // Data::LoginUrl => {
+            //     self.app_details.callbacks = input;
+            // }
             // Data::AllowedUrls => {
             //     self.app_details.callbacks = input;
             // }
@@ -187,9 +222,9 @@ impl Component for TabSettings {
         }
         Msg::Save => {
           ConsoleService::info(&format!("{:?}", self.app_details));
-          let request = Request::patch(format!("http://127.0.0.1:8080/api/v1/1/clients/{}", self.app_details.client_id))
+          let request = Request::patch(format!("https://evening-cliffs-55855.herokuapp.com/api/v2/clients/{}", self.app_details.client_id))
               .header("Content-Type", "application/json")
-              .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
+              .header("access_token", self.access_token.clone())
               .body(Json(&self.app_details))
               .expect("Could not build request.");
           let callback = self.link.callback(|response: Response<Json<Result<AppDetails, anyhow::Error>>>| {
@@ -232,24 +267,47 @@ impl Component for TabSettings {
           true
         }
         Msg::Delete => {
-          let request = Request::delete(format!("http://127.0.0.1:8080/api/v1/1/clients/{}", self.app_details.client_id))
+          let request = Request::delete(format!("https://evening-cliffs-55855.herokuapp.com/api/v2/clients/{}", self.app_details.client_id))
               .header("Content-Type", "application/json")
-              .header("access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhleWthbGxAZ21haWwuY29tIiwiZXhwIjoxNjQzMDk0MTA0fQ.G_kEzjOwrzI_qD8Tco_4HTgXctsz4kUccl4e92WNZb8")
+              .header("access_token", self.access_token.clone())
               .body(Nothing)
               .expect("Could not build request.");
           let callback = self.link.callback(|response: Response<Json<Result<(), anyhow::Error>>>| {
-          let Json(data) = response.into_body();
-          match data {
-              Ok(dataok) => {
-                  ConsoleService::info(&format!("{:?}", dataok));
-                  // self.router_agent.send(ChangeRoute(<yew_router::route::Route<_> as Trait>::ApplicationHome {self.tenant_id}));
+      
+          let (meta, Json(data)) = response.into_parts();
+          let status_number = meta.status.as_u16();
+
+          match status_number {
+              204 => {
+                  ConsoleService::info("status code is 204");
+                  ConsoleService::info("api is deleted");
                   Msg::RedirectToApp
               }
-              Err(error) => {
-                  ConsoleService::info(&error.to_string());
-                  Msg::ResponseError(error.to_string(), StateError::Delete)
+              _ => {
+                  ConsoleService::info("status code is not 204");
+                  match data {
+                      Ok(dataok) => {
+                          ConsoleService::info(&format!("{:?}", dataok));
+                          Msg::RedirectToApp
+                      }
+                      Err(error) => {
+                          ConsoleService::info(&error.to_string());
+                          Msg::ResponseError(error.to_string(), StateError::Delete)
+                      }
+                  }
               }
           }
+          // match data {
+          //     Ok(dataok) => {
+          //         ConsoleService::info(&format!("{:?}", dataok));
+          //         // self.router_agent.send(ChangeRoute(<yew_router::route::Route<_> as Trait>::ApplicationHome {self.tenant_id}));
+          //         Msg::RedirectToApp
+          //     }
+          //     Err(error) => {
+          //         ConsoleService::info(&error.to_string());
+          //         Msg::ResponseError(error.to_string(), StateError::Delete)
+          //     }
+          // }
           });
           let task = FetchService::fetch(request, callback).expect("failed to start request");
           self.loading_delete_app = true;
@@ -273,28 +331,41 @@ impl Component for TabSettings {
 
     fn view(&self) -> Html {
       let AppDetails {
-            tenant,
-            global,
-            is_token_endpoint_ip_header_trusted,
-            name,
-            is_first_party,
-            oidc_conformant,
-            sso_disabled,
-            cross_origin_auth,
-            refresh_token,
-            encrypted,
-            allowed_clients,
-            callbacks,
-            // signing_keys,
-            client_id,
-            callback_url_template,
-            client_secret,
-            jwt_configuration,
-            client_aliases,
-            token_endpoint_auth_method,
-            app_type,
-            grant_types,
-            custom_login_page_on,
+          tenant,
+          global,
+          is_token_endpoint_ip_header_trusted,
+          name,
+          is_first_party,
+          description,
+          oidc_conformant,
+          sso_disabled,
+          cross_origin_auth,
+          allowed_origins,
+          web_origins,
+          logo_uri,
+          sso,
+          cross_origin_loc,
+          custom_login_page,
+          custom_login_page_preview,
+          form_template,
+          initiate_login_uri,
+          organization_usage,
+          organization_require_behavior,
+          refresh_token,
+          encrypted,
+          allowed_clients,
+          callbacks,
+          signing_keys,
+          client_id,
+          callback_url_template,
+          client_secret,
+          jwt_configuration,
+          client_aliases,
+          token_endpoint_auth_method,
+          app_type,
+          grant_types,
+          custom_login_page_on,
+          allowed_logout_urls,
         } = self.app_details.clone();
 
         html! {

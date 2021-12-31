@@ -37,6 +37,7 @@ pub struct RegisterPage {
     register_input: RegisterInput,
     link: ComponentLink<Self>,
     fetch_task: Option<FetchTask>,
+    loading_register: bool,
 }
 
 pub enum Msg {
@@ -64,6 +65,7 @@ impl Component for RegisterPage {
             register_input,
             link,
             fetch_task: None,
+            loading_register: false,
         }
     }
 
@@ -112,6 +114,7 @@ impl Component for RegisterPage {
                         });
                 let task = FetchService::fetch(request, callback).expect("failed to start request");
                 self.fetch_task = Some(task);
+                self.loading_register = true;
 
                 true
             }
@@ -148,6 +151,7 @@ impl Component for RegisterPage {
                         ConsoleService::info(&format!("error = {}", error.to_string()));
                     }
                 }
+                self.loading_register = false;
                 true
             }
         }
@@ -245,14 +249,28 @@ impl Component for RegisterPage {
                         <h1 class="h5 mb-2 fw-normal fs-6">{"By clicking any of the Sign Up buttons,"}</h1>
                         <h1 class="h5 mb-2 fw-normal fs-6">{"I agree to the"} <a class="ms-2" href="">{"terms of service"}</a> </h1>
                     </div>
-        
+
                     <button
-                        class="w-75 btn btn-lg btn-primary mt-3 fs-6"
-                        type="submit"
-                        onclick=self.link.callback(|_| {Msg::Register})
+                        type="button"
+                        class=format!("btn btn-lg btn-primary w-75 mt-3 fs-6 position-relative {}", if self.loading_register {"loading"} else {""} )
+                        onclick=self.link.callback(|_| Msg::Register)
+                        disabled={ if self.loading_register {true} else {false} }
                     >
-                        {"Sign Up"}
+                        <div class="telkom-label">
+                            {"Sign Up"}
+                        </div>
+                        <div class="telkom-spinner telkom-center">
+                            <div class="spinner-border spinner-border-sm" role="status"/>
+                        </div>
                     </button>
+        
+                    // <button
+                    //     class="w-75 btn btn-lg btn-primary mt-3 fs-6"
+                    //     type="submit"
+                    //     onclick=self.link.callback(|_| {Msg::Register})
+                    // >
+                    //     {"Sign Up"}
+                    // </button>
 
 
 
