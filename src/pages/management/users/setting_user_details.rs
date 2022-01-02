@@ -299,9 +299,9 @@ impl Component for UserTabDetails {
         html! {
             <>
             <div class="mt-4">
-                <div class="card">
+                <div class="card p-3">
                     <div class="card-body">
-                        <div class="container">
+                        <div>
                             <div class="row">
                                 <div class="col-4 col-md-4 col-lg-4">
                                     <p class="text-muted mb-1">{"Name"}</p>
@@ -351,7 +351,7 @@ impl Component for UserTabDetails {
         </div>
         
         <div class="mt-4">
-            <div class="card">
+            <div class="card p-3">
                 <div class="card-body">
                     <p class="fw-bold">{"Multi-Factor Authentication"}</p>
                     <div class="p-4" style="background-color: rgb(239,240,242)">
@@ -362,7 +362,7 @@ impl Component for UserTabDetails {
         </div>
 
         <div class="mt-4">
-            <div class="card">
+            <div class="card p-3">
                 <div class="card-body p-4">
                     <p class="fw-bold fs-4">{"Identity Provider Attributes"}</p>
                     <div class="mb-3">

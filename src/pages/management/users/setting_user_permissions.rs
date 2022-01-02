@@ -7,6 +7,7 @@ use yew::{
         storage::{ StorageService, Area }
     },
 };
+use serde::Serialize;
 use crate::components::loading2::Loading2;
 use crate::pages::management::users::modal_assign_permissions::ModalAssignPermissions;
 use crate::configs::server::API_URL;
@@ -196,37 +197,85 @@ impl Component for UserTabPermissions {
             }
             Msg::Delete => {
                 // remove permission from vector
-                let new_permissions: Vec<UserPermissions> = self.user_permissions
-                .iter()
-                .enumerate()
-                .filter(|(i, e)| {
-                    if self.index_permission_delete.is_some() {
-                        *i != self.index_permission_delete.unwrap()
-                    } else {
-                        true
-                    }
-                })
-                .map(|(_s, x)| {
-                    x.clone()
-                })
-                .collect();
-                ConsoleService::info(&format!("new permissions = {:?}", new_permissions));
+                // let new_permissions: Vec<UserPermissions> = self.user_permissions
+                // .iter()
+                // .enumerate()
+                // .filter(|(i, e)| {
+                //     if self.index_permission_delete.is_some() {
+                //         *i != self.index_permission_delete.unwrap()
+                //     } else {
+                //         true
+                //     }
+                // })
+                // .map(|(_s, x)| {
+                //     x.clone()
+                // })
+                // .collect();
+                // ConsoleService::info(&format!("new permissions = {:?}", new_permissions));
 
-                let request = Request::delete(format!("{}/users/tenant_id/users/auth0|7CYXV0aDAlN0M2MTM3MTIyMTAxY2VmYTAwNzM0NzRmYmI/permissions", API_URL))
-                    .header("access_token", "telkomidtelkomdomain")
+                // let request = Request::delete(format!("{}/users/tenant_id/users/auth0|7CYXV0aDAlN0M2MTM3MTIyMTAxY2VmYTAwNzM0NzRmYmI/permissions", API_URL))
+                //     .header("access_token", "telkomidtelkomdomain")
+                //     .header("Content-Type", "application/json")
+                //     .body(Json(&new_permissions))
+                //     .expect("could not build request");
+                // let callback = self.link.callback(|response: Response<Json<Result<ResponseMessage, anyhow::Error>>>|{
+                //     let Json(data) = response.into_body();
+                //     match data{
+                //         Ok(dataok) => {
+                //             ConsoleService::info(&format!("{:?}", dataok));
+                //             Msg::RequestUserPermissions
+                //         }
+                //         Err(error) => {
+                //             ConsoleService::info(&error.to_string());
+                //             Msg::ResponseError(error.to_string(), StateError::Delete)
+                //         }
+                //     }
+                // });
+                // let task = FetchService::fetch(request, callback).expect("failed to start request");
+                // self.loading_delete_permissions = true;
+                // self.fetch_task = Some(task);
+                // true
+
+                #[derive(Serialize, Debug, Clone, PartialEq)]
+                struct SelectedPermission {
+                    permission_name: String,
+                    resource_server_identifier: String,
+                }
+                #[derive(Serialize, Debug, Clone, PartialEq)]
+                struct DataDeletePermissions {
+                    permissions: Vec<SelectedPermission>,
+                }
+
+                let data_delete_permissions = DataDeletePermissions {
+                    permissions: vec![
+                        SelectedPermission {
+                            permission_name: self.user_permissions[self.index_permission_delete.unwrap()].permission_name.clone(),
+                            resource_server_identifier: self.user_permissions[self.index_permission_delete.unwrap()].resource_server_identifier.clone()
+                        }
+                    ]
+                };
+                let request = Request::delete(format!("{}/api/v2/users/{}/permissions", API_URL, self.user_id))
+                    .header("access_token", self.access_token.clone())
                     .header("Content-Type", "application/json")
-                    .body(Json(&new_permissions))
+                    .body(Json(&data_delete_permissions))
                     .expect("could not build request");
-                let callback = self.link.callback(|response: Response<Json<Result<ResponseMessage, anyhow::Error>>>|{
-                    let Json(data) = response.into_body();
-                    match data{
-                        Ok(dataok) => {
-                            ConsoleService::info(&format!("{:?}", dataok));
+                let callback = self.link.callback(|response: Response<Json<Result<(), anyhow::Error>>>|{
+                    let (meta, Json(data)) = response.into_parts();
+                    let status_number = meta.status.as_u16();
+
+                    match status_number {
+                        204 => {
                             Msg::RequestUserPermissions
                         }
-                        Err(error) => {
-                            ConsoleService::info(&error.to_string());
-                            Msg::ResponseError(error.to_string(), StateError::Delete)
+                        _ => {
+                            match data {
+                                Ok(dataok) => {
+                                    Msg::RequestUserPermissions
+                                }
+                                Err(error) => {
+                                    Msg::ResponseError(error.to_string(), StateError::Delete)
+                                }
+                            }
                         }
                     }
                 });
@@ -399,9 +448,10 @@ impl Component for UserTabPermissions {
 
                     {
                         if self.loading_get_user_permission {
+                        // if true {
                             html!{
-                                <div style="position: relative; margin-top:6rem;">
-                                    <Loading2 width = 21 />
+                                <div style="margin-top:6rem;">
+                                    <Loading2 width = 45 />
                                 </div>
                             }
                         } else if self.error_user_permission_list.is_some() {
@@ -440,7 +490,7 @@ impl UserTabPermissions {
         .enumerate()
         .map(|(i, user)|{
            html! {
-               <tr>
+               <tr class="align-middle">
                     <th scope="row">{&user.permission_name}</th>
                     <td>{&user.description}</td>
                     <td>{&user.resource_server_name}</td>

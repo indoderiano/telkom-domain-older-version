@@ -229,36 +229,42 @@ impl Component for ModalAssignPermissions {
                 true
             }
             Msg::RequestAssignPermissions => {
-                #[derive(Serialize, Debug, Clone, PartialEq)]
-                struct DataAssignPermissions {
-                    permissions: Vec<SelectedPermission>
-                }
-                let data_assign_permissions = DataAssignPermissions {
-                    permissions: self.selected_permissions.clone()
-                };
-                let request = Request::post(format!("{}/api/v2/users/{}/permissions", API_URL, self.user_id))
-                    .header("access_token", self.access_token.clone())
-                    .header("Content-Type", "application/json")
-                    .body(Json(&data_assign_permissions))
-                    .expect("Could not build request");
-                let callback = self.link.callback(
-                    |response: Response<Json<Result<String, anyhow::Error>>>| {
-                        let Json(data) = response.into_body();
-                        // ConsoleService::info(&format!("{:?}", data));
-                        match data{
-                            Ok(dataok) => Msg::GetResponseAssignPermissions(dataok), 
-                            Err(error) => {
-                                Msg::ResponseError(error.to_string(), StateError::RequestAssignPermissions)
+                // VALIDATION
+                if self.selected_permissions.len() == 0 {
+                    self.link.send_message(Msg::ResponseError(String::from("There is no permission to assign"), StateError::RequestAssignPermissions));
+                    false
+                } else {
+                    #[derive(Serialize, Debug, Clone, PartialEq)]
+                    struct DataAssignPermissions {
+                        permissions: Vec<SelectedPermission>
+                    }
+                    let data_assign_permissions = DataAssignPermissions {
+                        permissions: self.selected_permissions.clone()
+                    };
+                    let request = Request::post(format!("{}/api/v2/users/{}/permissions", API_URL, self.user_id))
+                        .header("access_token", self.access_token.clone())
+                        .header("Content-Type", "application/json")
+                        .body(Json(&data_assign_permissions))
+                        .expect("Could not build request");
+                    let callback = self.link.callback(
+                        |response: Response<Json<Result<String, anyhow::Error>>>| {
+                            let Json(data) = response.into_body();
+                            // ConsoleService::info(&format!("{:?}", data));
+                            match data{
+                                Ok(dataok) => Msg::GetResponseAssignPermissions(dataok), 
+                                Err(error) => {
+                                    Msg::ResponseError(error.to_string(), StateError::RequestAssignPermissions)
+                                }
                             }
                         }
-                    }
-                );
-
-                let task = FetchService::fetch(request, callback).expect("failed to start request");
-                self.fetch_task = Some(task);
-                self.error_assign_permissions = None;
-                self.loading_assign_permissions = true;
-                true
+                    );
+    
+                    let task = FetchService::fetch(request, callback).expect("failed to start request");
+                    self.fetch_task = Some(task);
+                    self.error_assign_permissions = None;
+                    self.loading_assign_permissions = true;
+                    true
+                }
             }
             Msg::GetResponseAssignPermissions(message) => {
                 self.fetch_task = None;
@@ -447,71 +453,79 @@ impl ModalAssignPermissions {
         // ConsoleService::info(&format!("user permissions = {:?}", self.user_permissions));
 
         if self.option_permissions.is_some() {
-            html! {
-                <div
-                    class="border border-1 rounded p-3 mt-3"
-                    style="max-height: 250px; overflow-y: scroll;"
-                >
-                    {
-                        
-                        self.option_permissions
-                        .clone()
-                        .unwrap()
-                        .iter()
-                        .enumerate()
-                        .filter(|(index, permission)| {
-                            let mut already_assigned = false;
-                            if self.selected_api.is_some() {
-                                for user_permission in self.user_permissions.clone() {
-                                    // ConsoleService::info(&format!("permission {:?}", permission.value));
-                                    if user_permission.permission_name == permission.value && user_permission.resource_server_name == self.selected_api.clone().unwrap().name {
-                                        // ConsoleService::info(&format!("permission {:?} is already assigned", permission.value));
-                                        already_assigned = true;
+            if self.option_permissions.clone().unwrap().len() > 0 {
+                html! {
+                    <div
+                        class="border border-1 rounded p-3 mt-3"
+                        style="max-height: 250px; overflow-y: scroll;"
+                    >
+                        {
+                            
+                            self.option_permissions
+                            .clone()
+                            .unwrap()
+                            .iter()
+                            .enumerate()
+                            .filter(|(index, permission)| {
+                                let mut already_assigned = false;
+                                if self.selected_api.is_some() {
+                                    for user_permission in self.user_permissions.clone() {
+                                        // ConsoleService::info(&format!("permission {:?}", permission.value));
+                                        if user_permission.permission_name == permission.value && user_permission.resource_server_name == self.selected_api.clone().unwrap().name {
+                                            // ConsoleService::info(&format!("permission {:?} is already assigned", permission.value));
+                                            already_assigned = true;
+                                        }
                                     }
                                 }
-                            }
-                            !already_assigned
-                        })
-                        .map(|(index, permission)| {
-                            let checked = self.selected_permissions
-                            .clone()
-                            .iter()
-                            .any(|selected_permission| {
-                                *selected_permission.permission_name == permission.value
-                            });
-
-                            html! {
-                                <div
-                                    class="d-inline-block m-2"
-                                    onclick=self.link.callback(move |_| Msg::SelectPermission(index.clone()))
-                                >
-                                    <input
-                                        type="checkbox"
-                                        class="btn-check"
-                                    />
-                                    <label
-                                        class="btn btn-outline-secondary"
-                                        for="btn-check-outlined"
+                                !already_assigned
+                            })
+                            .map(|(index, permission)| {
+                                let checked = self.selected_permissions
+                                .clone()
+                                .iter()
+                                .any(|selected_permission| {
+                                    *selected_permission.permission_name == permission.value
+                                });
+    
+                                html! {
+                                    <div
+                                        class="d-inline-block m-2"
+                                        onclick=self.link.callback(move |_| Msg::SelectPermission(index.clone()))
                                     >
-                                        <div class="form-check form-check-inline">
-                                            <input
-                                                class="form-check-input"
-                                                type="checkbox"
-                                                // id="inlineCheckbox1"
-                                                // value="option1"
-                                                checked={checked}
-                                            />
-                                            <label
-                                                class="form-check-label text-dark"
-                                                for="inlineCheckbox1"
-                                            >{ permission.value.clone() }</label>
-                                        </div>
-                                    </label>
-                                </div>
-                            }
-                        }).collect::<Vec<Html>>()
-                    }
-                </div>
+                                        <input
+                                            type="checkbox"
+                                            class="btn-check"
+                                        />
+                                        <label
+                                            class="btn btn-outline-secondary"
+                                            for="btn-check-outlined"
+                                        >
+                                            <div class="form-check form-check-inline">
+                                                <input
+                                                    class="form-check-input"
+                                                    type="checkbox"
+                                                    // id="inlineCheckbox1"
+                                                    // value="option1"
+                                                    checked={checked}
+                                                />
+                                                <label
+                                                    class="form-check-label text-dark"
+                                                    for="inlineCheckbox1"
+                                                >{ permission.value.clone() }</label>
+                                            </div>
+                                        </label>
+                                    </div>
+                                }
+                            }).collect::<Vec<Html>>()
+                        }
+                    </div>
+                }
+            } else {
+                html! {
+                    <div>
+                        {"There is no permission in this Resource Server"}
+                    </div>
+                }
             }
         } else {
             html! {}
