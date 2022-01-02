@@ -8,4 +8,4 @@ pub mod setting_user_auth_app;
 pub mod setting_user_permissions;
 pub mod setting_user_roles;
 pub mod modal_assign_permissions;
-
+pub mod modal_assign_roles;

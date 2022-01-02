@@ -8,6 +8,7 @@ use yew::{
     },
 };
 use crate::components::loading2::Loading2;
+use crate::pages::management::users::modal_assign_roles::ModalAssignRoles;
 use crate::configs::server::API_URL;
 use crate::types::{
     users::{ UserRole, UserDetails },
@@ -222,7 +223,15 @@ impl Component for UserTabRoles {
                         <p>{"All Roles assigned to this User."}</p>
                     </div>
                     <div class="col d-flex justify-content-end">
-                        <button type="button" class="btn btn-primary">{"Assign Roles"}</button>
+                        <button
+                            type="button"
+                            class="btn btn-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#assignRoles"
+                            // onclick=self.link.callback(|_| Msg::RequestApis)
+                        >
+                            {"Assign Roles"}
+                        </button>
                     </div>
                 </div>
 
@@ -270,6 +279,7 @@ impl Component for UserTabRoles {
                 }
             </div>
 
+            // MODAL DELETE ROLE
             <div
                 class=format!("modal fade {}", if self.show_modal_delete_role {"show"} else {""})
                 // id="exampleModal"
@@ -353,7 +363,12 @@ impl Component for UserTabRoles {
                     </div>
                 </div>
             </div>
+
+            // MODAL ASSIGN ROLES
+            <ModalAssignRoles user_roles=self.user_roles.clone() user_id=self.user_details.user_id.clone() />
         </div>
+
+
         <div
             class=format!("modal-backdrop fade {}", if self.show_modal_delete_role {"show"} else {""})
             onclick=self.link.callback(move |_| Msg::ShowModalDeleteRole(false, None))
