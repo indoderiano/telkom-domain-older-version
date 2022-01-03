@@ -462,7 +462,7 @@ impl Component for UserTabPermissions {
                                 </div>
                             }
                         } else {
-                            html! { }
+                            html! {}
                         }
                     }
 
