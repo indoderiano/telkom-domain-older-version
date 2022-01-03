@@ -211,7 +211,7 @@ impl Component for ModalAssignPermissions {
                     .filter(|data| {
                         **data != selected_permission
                     })
-                    .map (|data| {
+                    .map(|data| {
                         data.clone()
                     })
                     .collect::<Vec<SelectedPermission>>();

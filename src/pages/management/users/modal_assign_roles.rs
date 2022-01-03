@@ -28,19 +28,24 @@ pub struct ModalAssignRolesProps {
 }
 
 pub struct ModalAssignRoles {
+    // SERVICES
     link: ComponentLink<Self>,
     fetch_task: Option<FetchTask>,
-    access_token: String,
 
+    // DATA
+    access_token: String,
     user_roles: Vec<UserRole>,
     user_id: String,
+    roles: Vec<Role>,
+    selected_roles: Vec<Role>,
+
+    // LAYOUT STATE
     loading_get_roles: bool,
     error_get_roles: Option<String>,
-    roles: Vec<Role>,
-    selected_roles: Vec<String>,
-    error_assign_roles: Option<String>,
     loading_assign_roles: bool,
+    error_assign_roles: Option<String>,
     message: Option<String>,
+    is_select_roles_open: bool,
 }
 
 pub enum StateError {
@@ -51,7 +56,9 @@ pub enum Msg {
     RequestRoles,
     GetRoles(Vec<Role>),
 
+    ClickSelectRoles,
     SelectRole(String),
+    UnselectRole(String),
     RequestAssignRoles,
     GetResponseAssignRoles,
     ResponseError(String, StateError),
@@ -97,6 +104,7 @@ impl Component for ModalAssignRoles {
             roles: Vec::new(),
             // selected_api_id: None,
             // selected_api_name: None,
+            is_select_roles_open: false,
             selected_roles: Vec::new(),
             error_assign_roles: None,
             loading_assign_roles: false,
@@ -142,24 +150,57 @@ impl Component for ModalAssignRoles {
                 self.fetch_task = None;
                 true
             }
-            Msg::SelectRole(id) => {
-                ConsoleService::info(&format!("role id = {}", id));
+            Msg::ClickSelectRoles => {
+                self.is_select_roles_open = !self.is_select_roles_open;
+                true
+            }
+            Msg::SelectRole(index) => {
+                self.is_select_roles_open = false;
+                ConsoleService::info(&format!("role index = {}", index));
+                let index_integer = index.parse::<usize>().unwrap();
                 // VALIDATION
-                // IF ROLE ALREADY SELECTED, THEN NOTHING HAPPENS
+                // IF ROLE ALREADY SELECTED, THEN REMOVE ROLE FROM SELECTED ROLES
                 if self.selected_roles
                 .clone()
                 .iter()
-                .any(|data_id| {
-                    *data_id == id
+                .any(|data| {
+                    *data.id == self.roles[index_integer].id
                 })
                 {
-                    // NOTHING HAPPENS
+                    // REMOVE ROLES
+                    let new_selected_roles = self.selected_roles
+                    .clone()
+                    .iter()
+                    .filter(|data| {
+                        *data.id != self.roles[index_integer].id
+                    })
+                    .map(|data| {
+                        data.clone()
+                    })
+                    .collect();
+
+                    self.selected_roles = new_selected_roles;
                 } else {
-                    self.selected_roles.push(id);
+                    self.selected_roles.push(self.roles[index_integer].clone());
                 }
 
-                ConsoleService::info(&format!("new selected roles id = {:?}", self.selected_roles));
+                // ConsoleService::info(&format!("new selected roles id = {:?}", self.selected_roles));
                 
+                true
+            }
+            Msg::UnselectRole(id) => {
+                let new_selected_roles = self.selected_roles
+                .clone()
+                .iter()
+                .filter(|data| {
+                    *data.id != id
+                })
+                .map(|data| {
+                    data.clone()
+                })
+                .collect();
+
+                self.selected_roles = new_selected_roles;
                 true
             }
             Msg::RequestAssignRoles => {
@@ -173,7 +214,13 @@ impl Component for ModalAssignRoles {
                         roles: Vec<String>
                     }
                     let data_assign_roles = DataAssignRoles {
-                        roles: self.selected_roles.clone()
+                        roles: self.selected_roles
+                        .clone()
+                        .iter()
+                        .map(|data| {
+                            data.id.clone()
+                        })
+                        .collect()
                     };
                     let request = Request::post(format!("{}/api/v2/users/{}/roles", API_URL, self.user_id))
                         .header("access_token", self.access_token.clone())
@@ -250,7 +297,7 @@ impl Component for ModalAssignRoles {
                 >
                     <div class="modal-content pt-4 pe-5 pb-4 ps-5">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">{"Add Permissions"}</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">{"Add Roles"}</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         {
@@ -277,28 +324,64 @@ impl Component for ModalAssignRoles {
                             } else {
                                 html! {
                                     <div class="modal-body">
-                                        <label for="exampleDataList" class="form-label">{"Select permissions from existing APIs"}</label>
+                                        <label for="exampleDataList" class="form-label">{"Select roles to assign to this user"}</label>
                                         // <input class="form-control" list="listAPIOptions" id="exampleDataList" placeholder="Select an API..."/>
-                                        <select
-                                            // id="listAPIOptions"
-                                            class="form-select mb-2"
-                                            aria-label="Select Api"
-                                            onchange=self.link.callback(|e| {
-                                                if let ChangeData::Select(select) = e {
-                                                    let value = select.value();
-                                                    // Msg::Input(value, DataUserCreate::Connection)
-                                                    Msg::SelectRole(value)
-                                                } else {
-                                                    Msg::SelectRole(String::from("no index"))
-                                                    // Msg::Input(String::from("no value"), DataUserCreate::Connection)
+                                        
+
+                                        <div class="dropdown">
+                                            <button
+                                                class="form-select text-start"
+                                                style="padding: 0.125rem 2.25rem 0.125rem 0.25rem; min-height: 40px;"
+                                                type="button"
+                                                // id="dropdownRoles"
+                                                // data-bs-toggle="dropdown"
+                                                aria-expanded="false"
+                                                onclick=self.link.callback(|_| Msg::ClickSelectRoles)
+                                            >
+                                                {
+                                                    if self.selected_roles.len() == 0 {
+                                                        html! {}
+                                                    } else {
+                                                        html! {
+                                                            <>
+                                                                { self.view_selected_roles() }
+                                                            </>
+                                                        }
+                                                    }
                                                 }
-                                            })
-                                        >
-                                            <option>
-                                                {"-- Select Role --"}
-                                            </option>
-                                            { self.view_option_roles() }
-                                        </select>
+                                                <span class="ms-1">
+                                                    { "Select Role" }
+                                                </span>
+                                            </button>
+                                            <ul
+                                                class=format!("dropdown-menu w-100 {}", if self.is_select_roles_open {"show"} else {""})
+                                                // aria-labelledby="dropdownRoles"
+                                            >
+                                                { self.view_option_roles() }
+                                            </ul>
+                                        </div>
+
+                                        
+                                        // <select
+                                        //     // id="listAPIOptions"
+                                        //     class="form-select mb-2"
+                                        //     aria-label="Select Api"
+                                        //     onchange=self.link.callback(|e| {
+                                        //         if let ChangeData::Select(select) = e {
+                                        //             let value = select.value();
+                                        //             // Msg::Input(value, DataUserCreate::Connection)
+                                        //             Msg::SelectRole(value)
+                                        //         } else {
+                                        //             Msg::SelectRole(String::from("no index"))
+                                        //             // Msg::Input(String::from("no value"), DataUserCreate::Connection)
+                                        //         }
+                                        //     })
+                                        // >
+                                        //     <option>
+                                        //         {"-- Select Role --"}
+                                        //     </option>
+                                        //     { self.view_option_roles() }
+                                        // </select>
                                     </div>
                                 }
                             }
@@ -358,18 +441,55 @@ impl ModalAssignRoles {
         self.roles
         .clone()
         .iter()
-        .map(|role| {
+        .enumerate()
+        .map(|(index, role)| {
             let Role {
                 id,
                 name,
                 description: _,
             } = role.clone();
             html! {
-                <option
-                    value={id}
+                <li
+                    onclick=self.link.callback(move |_| Msg::SelectRole(index.to_string()))
                 >
-                    { name }
-                </option>
+                    <a class="dropdown-item" href="#">{ name }</a>
+                </li>
+            }
+        }).collect()
+    }
+    fn view_selected_roles(&self) -> Vec<Html> {
+        self.selected_roles
+        .clone()
+        .iter()
+        .map(|role| {
+            let Role {
+                id,
+                name,
+                description: _
+            } = role.clone();
+            html! {
+                <div
+                    class="d-inline-block me-1"
+                >
+                    <label
+                        class="btn btn-outline-secondary align-middle"
+                        style="font-size: 12px;"
+                        for="btn-check-outlined"
+                    >
+                        <label
+                            class="form-check-label text-dark"
+                            for="inlineCheckbox1"
+                        >{ name.clone() }</label>
+                        <button
+                            type="button"
+                            class="btn-close ms-1"
+                            style="font-size: 9px;"
+                            onclick=self.link.callback(move |_| Msg::UnselectRole(id.clone()))
+                            // data-bs-dismiss="modal"
+                            // aria-label="Close"
+                        />
+                    </label>
+                </div>
             }
         }).collect()
     }
