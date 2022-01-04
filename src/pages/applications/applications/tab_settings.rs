@@ -9,6 +9,10 @@ use yew::{
     agent::Bridged,
     Bridge,
 };
+use crate::components::{
+  developers_note::DevelopersNote,
+  tag_inactive::TagInactive,
+};
 use crate::app::AppRoute;
 
 use crate::types::LocalStorage;
@@ -739,6 +743,7 @@ impl Component for TabSettings {
 
             <div class="mb-5 mt-3">
               <div class="col-md-12 p-2 text-center">
+                <DevelopersNote message="There is still bugfix, work in progress"/>
                 <button
                   type="button"
                   class=format!("btn {} btn-primary position-relative", if self.loading_update_app {"loading"} else {""} )
@@ -823,7 +828,14 @@ impl Component for TabSettings {
             {"All authorized apps will need to be updated with the new client secret."}
           </div>
           <div>
-            <button type="button" class="btn btn-danger m-auto p-2">{"Delete"}</button>
+            <button
+              type="button"
+              class="btn btn-danger m-auto p-2"
+              disabled={true}
+            >
+              {"Rotate"}
+              <TagInactive/>
+            </button>
 
           </div>
         </div>
