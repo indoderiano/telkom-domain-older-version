@@ -189,6 +189,7 @@ impl Component for ModalAssignRoles {
                 true
             }
             Msg::UnselectRole(id) => {
+                self.is_select_roles_open = true;
                 let new_selected_roles = self.selected_roles
                 .clone()
                 .iter()
@@ -442,6 +443,28 @@ impl ModalAssignRoles {
         .clone()
         .iter()
         .enumerate()
+        .filter(|(index, role)| {
+            ConsoleService::info(&format!("user roles = {:?}", self.user_roles));
+            ConsoleService::info(&format!("selected roles = {:?}", self.selected_roles));
+            // ONLY RETURN ROLE THAT IS NOT IN SELECTED OR IN USER ROLES
+            if self.user_roles
+            .clone()
+            .iter()
+            .any(|user_role| {
+                *user_role.id == role.id
+            }) {
+                false
+            } else if self.selected_roles
+            .clone()
+            .iter()
+            .any(|selected_role| {
+                *selected_role.id == role.id
+            }) {
+                false
+            } else {
+                true
+            }
+        })
         .map(|(index, role)| {
             let Role {
                 id,
