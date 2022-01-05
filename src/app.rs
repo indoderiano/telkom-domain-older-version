@@ -63,13 +63,12 @@ pub enum AppRoute {
     GettingStarted,
     #[to = "/activity"]
     Activity,
-    #[to = "/{tenant_id}/apis/{resource_server_id}/settings"]
+    #[to = "/apis/{resource_server_id}/settings"]
     ApisSettings {
-        tenant_id: String,
         resource_server_id: String,
     },
-    #[to = "/{tenant_id}/apis"]
-    ApisHome { tenant_id: String },
+    #[to = "/apis"]
+    ApisHome,
     #[to = "/{tenant_id}/applications/{app_id}/settings"]
     ApplicationSettings { tenant_id: String, app_id: String },
     #[to = "/{tenant_id}/applications"]
@@ -275,17 +274,17 @@ impl Component for App {
                         html! {<HomePage/>}
                     }
                 }
-                AppRoute::ApisHome { tenant_id } => {
+                AppRoute::ApisHome => {
                     if is_logged_in {
-                        html! {<ApisHome tenant_id=tenant_id />}
+                        html! {<ApisHome/>}
                     } else {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}
                     }
                 },
-                AppRoute::ApisSettings{ tenant_id, resource_server_id } => {
+                AppRoute::ApisSettings{ resource_server_id } => {
                     if is_logged_in {
-                        html! {<ApisSettings tenant_id=tenant_id resource_server_id=resource_server_id />}
+                        html! {<ApisSettings resource_server_id=resource_server_id />}
                     } else {
                         route_service.set_route("/", ());
                         html! {<HomePage/>}

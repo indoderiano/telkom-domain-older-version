@@ -15,7 +15,10 @@ use serde::Serialize;
 use crate::types::LocalStorage;
 use crate::types::LOCALSTORAGE_KEY;
 
-use crate::components::loading2::Loading2;
+use crate::components::{
+    loading2::Loading2,
+    developers_note::DevelopersNote,
+};
 use crate::configs::server::API_URL;
 use yew_router::components::RouterAnchor;
 
@@ -328,6 +331,7 @@ impl RolesCreated {
     fn view_content(&self) -> Html {
         html! {
             <div class="mt-5">
+                <DevelopersNote message="There is still bugs, work in progress"/>
                 <table class="table">
                     <thead>
                         <tr>

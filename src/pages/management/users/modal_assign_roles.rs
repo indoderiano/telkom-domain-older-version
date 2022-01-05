@@ -258,9 +258,16 @@ impl Component for ModalAssignRoles {
                 }
             }
             Msg::GetResponseAssignRoles => {
+                // SERVICE
                 self.fetch_task = None;
+
+                // DATA
+                self.selected_roles = Vec::new();
+
+                // LAYOUT
                 self.loading_assign_roles = false;
                 self.message = Some(String::from("Roles are assigned to user"));
+                self.is_select_roles_open = false;
                 true
             }
             Msg::ResponseError(message, state) => {
@@ -439,11 +446,10 @@ impl Component for ModalAssignRoles {
 
 impl ModalAssignRoles {
     fn view_option_roles(&self) -> Vec<Html> {
-        self.roles
+        let option_roles = self.roles
         .clone()
         .iter()
-        .enumerate()
-        .filter(|(index, role)| {
+        .filter(|role| {
             ConsoleService::info(&format!("user roles = {:?}", self.user_roles));
             ConsoleService::info(&format!("selected roles = {:?}", self.selected_roles));
             // ONLY RETURN ROLE THAT IS NOT IN SELECTED OR IN USER ROLES
@@ -465,20 +471,59 @@ impl ModalAssignRoles {
                 true
             }
         })
-        .map(|(index, role)| {
-            let Role {
-                id,
-                name,
-                description: _,
-            } = role.clone();
-            html! {
-                <li
-                    onclick=self.link.callback(move |_| Msg::SelectRole(index.to_string()))
-                >
-                    <a class="dropdown-item" href="#">{ name }</a>
-                </li>
-            }
-        }).collect()
+        .map(|role| {
+            role.clone()
+        }).collect::<Vec<Role>>();
+
+        if option_roles.len() == 0 {
+            vec![
+                html!{
+                    <li class="ps-2">
+                        {"There is no role available"}
+                    </li>
+                }
+            ]
+        } else {
+            self.roles
+            .clone()
+            .iter()
+            .enumerate()
+            .filter(|(index, role)| {
+                // ONLY RETURN ROLE THAT IS NOT IN SELECTED OR IN USER ROLES
+                if self.user_roles
+                .clone()
+                .iter()
+                .any(|user_role| {
+                    *user_role.id == role.id
+                }) {
+                    false
+                } else if self.selected_roles
+                .clone()
+                .iter()
+                .any(|selected_role| {
+                    *selected_role.id == role.id
+                }) {
+                    false
+                } else {
+                    true
+                }
+            })
+            .map(|(index, role)| {
+                let Role {
+                    id,
+                    name,
+                    description: _,
+                } = role.clone();
+                html! {
+                    <li
+                        onclick=self.link.callback(move |_| Msg::SelectRole(index.to_string()))
+                    >
+                        <a class="dropdown-item" href="#">{ name }</a>
+                    </li>
+                }
+            }).collect()
+        }
+
     }
     fn view_selected_roles(&self) -> Vec<Html> {
         self.selected_roles

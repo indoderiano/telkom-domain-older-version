@@ -106,7 +106,7 @@ impl Component for Sidebar {
                                                           </Anchor>
                                                       </li>
                                                       <li class="jss74">
-                                                          <Anchor route=AppRoute::ApisHome{ tenant_id: tenant_id.clone() } >
+                                                          <Anchor route=AppRoute::ApisHome >
                                                               <a title="APIs" class="jss76 jss77" href="#"
                                                                   ><span class="jss80 jss81"></span><span
                                                                   class="jss79">{"APIs"}</span>

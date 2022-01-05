@@ -16,15 +16,17 @@ use yew::services::{
 
 use crate::types::api::{ ApiDetails, ResponseApiDetails };
 use crate::configs::server::API_URL;
-use crate::components::loading2::Loading2;
-
+use crate::components::{
+    loading2::Loading2,
+    developers_note::DevelopersNote,
+};
 use crate::types::LocalStorage;
 use crate::types::LOCALSTORAGE_KEY;
 
 
 #[derive(Clone, Debug, Eq, PartialEq, Properties)]
 pub struct ApisSettingsProps {
-    pub tenant_id: String,
+    // pub tenant_id: String,
     pub resource_server_id: String,
     // api_title: ApiTitle,
 }
@@ -57,7 +59,7 @@ impl Component for ApisSettings {
     type Properties = ApisSettingsProps;
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        ConsoleService::info(&format!("Api Settings props, tenant id = {}", props.tenant_id));
+        // ConsoleService::info(&format!("Api Settings props, tenant id = {}", props.tenant_id));
         ConsoleService::info(&format!("Api Settings props, api id = {}", props.resource_server_id));
 
         let storage = StorageService::new(Area::Local).expect("storage was disabled");
@@ -160,7 +162,7 @@ impl Component for ApisSettings {
                 style="max-width: 1048px; font-size:14px;"
             >
                 <Anchor
-                    route=AppRoute::ApisHome{ tenant_id }
+                    route=AppRoute::ApisHome
                     classes="text-decoration-none domain-link-dark"
                 >
                     <i class="bi bi-arrow-left me-2"></i>
@@ -271,6 +273,8 @@ impl ApisSettings {
                         </div>
                     </div>
                 </div>
+
+                <DevelopersNote message="Only the following tabs are working, 'Settings'"/>
 
                 <div
                     class="mb-4"
