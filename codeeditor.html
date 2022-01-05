@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://codemirror.net/lib/codemirror.js"></script>
+    <link rel="stylesheet" href="https://codemirror.net/lib/codemirror.css" />
+    <script src="https://codemirror.net/mode/javascript/javascript.js"></script>
+    <script src="index.js"></script>
+</head>
+
+<body>
+    <textarea id="editor">
+var editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
+        mode: "javascript",
+        lineNumbers: true,
+    });
+    editor.save()</textarea
+    >
+  </body>
+</html>

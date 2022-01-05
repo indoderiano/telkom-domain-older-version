@@ -1,8 +1,16 @@
 use yew::prelude::*;
 use yewdux::prelude::WithDispatch;
 use crate::components::landing_page_navtop::LandingPageNavTop;
+use yew::html::Classes;
+use css_in_rust::Style;
 
-pub struct HomePage {}
+pub struct HomePage {
+    style: Style,
+}
+
+pub fn parser(style: Style) -> Classes {
+    Classes::from(style.to_string())
+}
 
 pub enum Msg {}
 
@@ -11,7 +19,11 @@ impl Component for HomePage {
     type Properties = ();
 
     fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
-        HomePage {}
+        let style = Style::create("home_page", include_str!("home_page.scss"))
+            .expect("An error occured while creating the style.");
+        HomePage {
+            style
+        }
     }
 
     fn update(&mut self, _msg: Self::Message) -> ShouldRender {
@@ -24,25 +36,15 @@ impl Component for HomePage {
 
     fn view(&self) -> Html {
         html! {
-            <>
+            <div class=parser(self.style.clone())>
                 <WithDispatch<LandingPageNavTop>/>
                 <div class="container">
                     <div class="row">
                         <div class="col">
-                            <div 
-                                style=
-                                "margin: 1cm 0cm 0cm 3cm;
-                                font-weight: 700;
-                                font-size: 48px
-                                ">
+                            <div class="col-content">
                                 {"We're protecting your digital life"}
                             </div>
-                            <div 
-                                style=
-                                "margin: 1cm 0cm 0cm 3cm;
-                                font-weight: 700;
-                                font-size: 48px
-                                ">
+                            <div class="col-content">
                                 {"The cybersecurity at your hand itself"}
                             </div>
                         </div>
@@ -57,7 +59,7 @@ impl Component for HomePage {
                         </div>
                     </div>
                 </div>
-            </>
+            </div>
         }
     }
 }
